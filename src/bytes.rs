@@ -181,6 +181,10 @@ mod tests {
         for n in [0_u64, 42, 0xefbeadde, thread_rng().gen()] {
             let bytes: [u8; 32] = concat_bytes!(32, [&[0_u8; 24], &n.to_be_bytes()]);
             assert_eq!(&hex::encode(&bytes).parse::<Bytes32>().unwrap().0, &bytes);
+            assert_eq!(
+                &hex::encode(&n.to_be_bytes()).parse::<Bytes32>().unwrap().0,
+                &bytes
+            );
         }
     }
 
