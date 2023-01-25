@@ -1,0 +1,21 @@
+[package]
+name = "toolshed"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = "1.0.68"
+bs58 = "0.4.0"
+faster-hex = "0.6.1"
+firestorm = { version = "0.5.1", optional = true }
+graphql-parser = { version = "0.4.0", optional = true }
+serde = { version = "1.0.152", features = ["derive"] }
+sha3 = "0.10.6"
+
+[dev-dependencies]
+hex = "0.4.3"
+rand = { version = "0.8.5", features = ["small_rng"] }
+
+[features]
+default = ["graphql"]
+graphql = ["dep:firestorm", "dep:graphql-parser"]
