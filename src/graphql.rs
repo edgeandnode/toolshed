@@ -7,8 +7,11 @@ use serde::{
     ser::{SerializeMap, SerializeSeq},
     Deserialize, Deserializer, Serialize, Serializer,
 };
-use std::collections::{BTreeMap, HashMap};
 use std::convert::TryInto as _;
+use std::{
+    collections::{BTreeMap, HashMap},
+    ops::Deref,
+};
 
 pub mod http {
     use serde::Deserialize;
@@ -81,6 +84,13 @@ pub struct QueryVariables(
     )]
     pub HashMap<String, StaticValue>,
 );
+
+impl Deref for QueryVariables {
+    type Target = HashMap<String, StaticValue>;
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
 
 #[derive(Serialize, Deserialize)]
 #[serde(untagged, remote = "StaticValue")]
