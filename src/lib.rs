@@ -2,6 +2,7 @@ pub mod bytes;
 pub mod epoch_cache;
 #[cfg(feature = "graphql")]
 pub mod graphql;
+#[cfg(feature = "url")]
 pub mod url;
 
 pub use anyhow;
