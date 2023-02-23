@@ -4,5 +4,5 @@ This repo contains a collection of Rust modules that are shared between The Grap
 services. Some may eventually grow to a point where they deserve their own crate.
 
 ```toml
-toolshed = { git = "https://github.com/edgeandnode/toolshed", tag = "v0.1.1" }
+toolshed = { git = "https://github.com/edgeandnode/toolshed", tag = "v0.1.2" }
 ```
