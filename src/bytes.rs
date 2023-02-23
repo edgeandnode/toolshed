@@ -60,7 +60,7 @@ macro_rules! bytes_wrapper {
         }
         impl std::fmt::Debug for $id {
             fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-                let mut bytes = [0_u8; $len];
+                let mut bytes = [0_u8; $len * 2];
                 faster_hex::hex_encode(&self.0, &mut bytes).unwrap();
                 write!(f, "0x{}", unsafe {std::str::from_utf8_unchecked(&bytes)})
             }
@@ -186,6 +186,13 @@ mod tests {
                 &bytes
             );
         }
+    }
+
+    #[test]
+    fn hex_encode() {
+        let encoded = "0x67486e65165b1474898247760a4b852d70d95782c6325960e5b6b4fd82fed1bd";
+        let bytes = encoded.parse::<Bytes32>().unwrap();
+        assert_eq!(encoded, &bytes.to_string());
     }
 
     #[test]
