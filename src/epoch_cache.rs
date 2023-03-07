@@ -15,9 +15,12 @@ impl<K: Eq + Hash, V, const C: u8> EpochCache<K, V, C> {
         Self(HashMap::new())
     }
 
-    #[cfg(test)]
     pub fn len(&self) -> usize {
         self.0.len()
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.len() == 0
     }
 
     /// WARNING: This will not observe the use of the value for the current epoch.
