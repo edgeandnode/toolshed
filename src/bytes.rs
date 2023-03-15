@@ -50,6 +50,7 @@ macro_rules! bytes_wrapper {
             fn from_str(s: &str) -> Result<Self, Self::Err> {
                 let s = s.trim_start_matches("0x");
                 let mut input = std::io::Cursor::new(['0' as u8; $len * 2]);
+                anyhow::ensure!(s.len() <= $len * 2, "input too long");
                 input.set_position(($len * 2) - s.len() as u64);
                 std::io::Write::write_all(&mut input, s.as_bytes())?;
 
@@ -186,6 +187,16 @@ mod tests {
                 &bytes
             );
         }
+    }
+
+    #[test]
+    fn parse_too_long() {
+        assert!("0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef"
+            .parse::<Address>()
+            .is_ok());
+        assert!("0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefd"
+            .parse::<Address>()
+            .is_err());
     }
 
     #[test]
