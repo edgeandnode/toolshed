@@ -1,28 +1,28 @@
 use std::{fmt, str::FromStr};
 
-use ethers_core::{
-    abi::Hash,
-    types::{Address, H256},
-};
-use serde::Deserialize;
+use alloy_primitives::{Address, BlockHash, BlockNumber, B256};
+use serde::{Deserialize, Serialize};
+use serde_with::{DeserializeFromStr, SerializeDisplay};
 use sha3::{
     digest::{Digest as _, Update as _},
     Keccak256,
 };
 
-#[derive(Clone, Debug, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 pub struct BlockPointer {
-    pub number: u64,
-    pub hash: Hash,
+    pub number: BlockNumber,
+    pub hash: BlockHash,
 }
 
-#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub struct SubgraphId(pub H256);
+#[derive(
+    Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, SerializeDisplay, DeserializeFromStr,
+)]
+pub struct SubgraphId(pub B256);
 
 impl FromStr for SubgraphId {
     type Err = &'static str;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        fn parse_v1(s: &str) -> Option<H256> {
+        fn parse_v1(s: &str) -> Option<B256> {
             // Attempt to decode v1 format: '0x' <hex account_id> '-' <decimal sequence_id>
             let (account_id, sequence_id) = s.split_once('-')?;
             let account: Address = account_id.parse().ok()?;
@@ -31,13 +31,13 @@ impl FromStr for SubgraphId {
             let sequence_number = sequence_id.parse::<u64>().ok()?.to_be_bytes();
             sequence_word[24..].copy_from_slice(&sequence_number);
             let hash: [u8; 32] = Keccak256::default()
-                .chain(account.as_ref())
+                .chain(account.0)
                 .chain(sequence_word)
                 .finalize()
                 .into();
             Some(hash.into())
         }
-        fn parse_v2(s: &str) -> Option<H256> {
+        fn parse_v2(s: &str) -> Option<B256> {
             // Attempt to decode v2 format: base58 of sha256 hash
             let mut hash = [0_u8; 32];
             let len = bs58::decode(s).onto(&mut hash).ok()?;
@@ -56,7 +56,7 @@ impl FromStr for SubgraphId {
 
 impl fmt::Display for SubgraphId {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.write_str(&bs58::encode(self.0.as_bytes()).into_string())
+        f.write_str(&bs58::encode(self.0.as_slice()).into_string())
     }
 }
 
@@ -67,8 +67,10 @@ impl fmt::Debug for SubgraphId {
 }
 
 /// subgraph deployment hash, encoded/decoded using its CIDv0 representation
-#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub struct DeploymentId(pub H256);
+#[derive(
+    Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, SerializeDisplay, DeserializeFromStr,
+)]
+pub struct DeploymentId(pub B256);
 
 impl FromStr for DeploymentId {
     type Err = bs58::decode::Error;
@@ -85,7 +87,7 @@ impl fmt::Display for DeploymentId {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let mut buf = [0_u8; 34];
         buf[0..2].copy_from_slice(&[0x12, 0x20]);
-        buf[2..].copy_from_slice(self.0.as_bytes());
+        buf[2..].copy_from_slice(self.0.as_slice());
         f.write_str(&bs58::encode(buf).into_string())
     }
 }
@@ -98,7 +100,7 @@ impl fmt::Debug for DeploymentId {
 
 #[test]
 fn subgraph_id_encode() {
-    let bytes: H256 = "0x67486e65165b1474898247760a4b852d70d95782c6325960e5b6b4fd82fed1bd"
+    let bytes: B256 = "0x67486e65165b1474898247760a4b852d70d95782c6325960e5b6b4fd82fed1bd"
         .parse()
         .unwrap();
     let v1 = "0xdeadbeef678b513255cea949017921c8c9f6ef82-1";
@@ -117,7 +119,7 @@ fn subgraph_id_encode() {
 #[test]
 fn deployment_id_encode() {
     let ipfs_hash = "QmWmyoMoctfbAaiEs2G46gpeUmhqFRDW6KWo64y5r581Vz";
-    let hash: H256 = "0x7d5a99f603f231d53a4f39d1521f98d2e8bb279cf29bebfd0687dc98458e7f89"
+    let hash: B256 = "0x7d5a99f603f231d53a4f39d1521f98d2e8bb279cf29bebfd0687dc98458e7f89"
         .parse()
         .unwrap();
 
