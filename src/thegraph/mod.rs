@@ -1,4 +1,4 @@
-use std::{cmp, fmt, str::FromStr};
+use std::{fmt, str::FromStr};
 
 use ethers_core::{
     abi::Hash,
@@ -10,19 +10,13 @@ use sha3::{
     Keccak256,
 };
 
-#[derive(Clone, Debug, Deserialize, Eq, PartialEq)]
+#[derive(Clone, Debug, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
 pub struct BlockPointer {
     pub number: u64,
     pub hash: Hash,
 }
 
-impl PartialOrd for BlockPointer {
-    fn partial_cmp(&self, other: &Self) -> Option<cmp::Ordering> {
-        self.number.partial_cmp(&other.number)
-    }
-}
-
-#[derive(Clone, Copy, PartialEq, Eq)]
+#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct SubgraphId(pub H256);
 
 impl FromStr for SubgraphId {
@@ -73,7 +67,7 @@ impl fmt::Debug for SubgraphId {
 }
 
 /// subgraph deployment hash, encoded/decoded using its CIDv0 representation
-#[derive(Clone, Copy, PartialEq, Eq)]
+#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct DeploymentId(pub H256);
 
 impl FromStr for DeploymentId {
