@@ -41,9 +41,6 @@ impl FromStr for SubgraphId {
             // Attempt to decode v2 format: base58 of sha256 hash
             let mut hash = [0_u8; 32];
             let len = bs58::decode(s).onto(&mut hash).ok()?;
-            if len < hash.len() {
-                return None;
-            }
             hash.rotate_right(32 - len);
             Some(hash.into())
         }
