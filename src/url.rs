@@ -4,7 +4,7 @@ use std::{fmt, ops::Deref, str::FromStr};
 
 /// A Url wrapper that is Debug formatted using Display
 #[repr(transparent)]
-#[derive(Clone)]
+#[derive(Clone, Hash, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Url(pub url::Url);
 
 impl fmt::Debug for Url {
