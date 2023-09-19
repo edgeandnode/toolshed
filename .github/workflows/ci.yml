@@ -28,8 +28,6 @@ jobs:
 
       - name: Cache rust cargo build files
         uses: Leafwing-Studios/cargo-cache@v1
-        with:
-          cache-group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
 
       - run: cargo fmt --all -- --check
 
@@ -48,8 +46,6 @@ jobs:
 
       - name: Cache rust cargo build files
         uses: Leafwing-Studios/cargo-cache@v1
-        with:
-          cache-group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
 
       - run: cargo clippy --all --all-targets --all-features
 
@@ -67,8 +63,6 @@ jobs:
 
       - name: Cache rust cargo build files
         uses: Leafwing-Studios/cargo-cache@v1
-        with:
-          cache-group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
 
       - name: check (release)
         run: cargo check --release --all --all-targets --all-features
@@ -87,8 +81,6 @@ jobs:
 
       - name: Cache rust cargo build files
         uses: Leafwing-Studios/cargo-cache@v1
-        with:
-          cache-group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
 
       - name: Unit tests
         run: cargo test --verbose --workspace --lib -- --nocapture
