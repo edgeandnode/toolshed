@@ -1,2 +1,13 @@
-/target
-/Cargo.lock
+## IDEs and Editors
+.idea/
+.vscode/
+
+## Rust
+debug/
+target/
+**/*.rs.bk
+Cargo.lock
+*.pdb
+
+## Project
+test-outputs/

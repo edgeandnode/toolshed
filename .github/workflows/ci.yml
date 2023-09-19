@@ -1,71 +1,89 @@
-name: Continuous Integration
-
+name: ci
 on:
-  push:
-    branches: [master]
   pull_request:
-    types: [opened, synchronize, reopened]
+  push:
+    branches: [ master ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
 
 env:
   CARGO_TERM_COLOR: always
   RUST_BACKTRACE: full
 
 jobs:
-  unit-tests:
-    name: unit tests
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    env:
-      RUSTFLAGS: "-D warnings"
-    steps:
-      - uses: actions/checkout@v2
-      - uses: Swatinem/rust-cache@v2
-      - name: unit tests
-        uses: actions-rs/cargo@v1
-        with:
-          command: test
-          args: --verbose --workspace -- --nocapture
-
   rustfmt:
-    name: rustfmt
     runs-on: ubuntu-latest
     timeout-minutes: 10
     env:
       RUSTFLAGS: "-D warnings"
     steps:
-      - uses: actions/checkout@v2
-
-      - name: rustfmt
-        uses: actions-rs/cargo@v1
+      - uses: actions/checkout@v3
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
         with:
-          command: fmt
-          args: --all -- --check
+          toolchain: stable
+          components: rustfmt
+
+      - name: Cache rust cargo build files
+        uses: Leafwing-Studios/cargo-cache@v1
+
+      - run: cargo fmt --all -- --check
 
   clippy:
-    name: clippy
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
       RUSTFLAGS: "-D warnings"
     steps:
-      - uses: actions/checkout@v2
-      - uses: Swatinem/rust-cache@v2
-      - name: clippy
-        uses: actions-rs/cargo@v1
+      - uses: actions/checkout@v3
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
         with:
-          command: clippy
+          toolchain: stable
+          components: clippy
+
+      - name: Cache rust cargo build files
+        uses: Leafwing-Studios/cargo-cache@v1
+
+      - run: cargo clippy --all --all-targets --all-features
 
   release-check:
-    name: release check
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
       RUSTFLAGS: "-D warnings"
     steps:
-      - uses: actions/checkout@v2
-      - uses: Swatinem/rust-cache@v2
-      - name: release check
-        uses: actions-rs/cargo@v1
+      - uses: actions/checkout@v3
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
         with:
-          command: check
-          args: --release
+          toolchain: stable
+
+      - name: Cache rust cargo build files
+        uses: Leafwing-Studios/cargo-cache@v1
+
+      - name: check (release)
+        run: cargo check --release --all --all-targets --all-features
+
+  tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      RUSTFLAGS: "-D warnings"
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: stable
+
+      - name: Cache rust cargo build files
+        uses: Leafwing-Studios/cargo-cache@v1
+
+      - name: Unit tests
+        run: cargo test --verbose --workspace --lib -- --nocapture
+
+      - name: Integration tests
+        run: cargo test --verbose --workspace --tests '*' -- --nocapture
