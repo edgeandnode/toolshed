@@ -1,22 +1,4 @@
-[package]
-name = "toolshed"
-version = "0.2.2"
-edition = "2021"
-
-[dependencies]
-bs58 = "0.5.0"
-alloy-primitives = { version = "0.3.1", features = ["serde"] }
-firestorm = { version = "0.5.1", optional = true }
-graphql-parser = { version = "0.4.0", optional = true }
-serde = { version = "1.0.152", features = ["derive"] }
-sha3 = "0.10.6"
-url = { version = "2.4.0", optional = true }
-serde_with = "3.2.0"
-
-[dev-dependencies]
-rand = { version = "0.8.5", features = ["small_rng"] }
-
-[features]
-default = ["graphql", "url"]
-graphql = ["dep:firestorm", "dep:graphql-parser"]
-url = ["dep:url"]
+[workspace]
+members = [
+    "toolshed",
+]
