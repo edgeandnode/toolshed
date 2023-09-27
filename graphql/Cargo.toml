@@ -1,0 +1,15 @@
+[package]
+name = "graphql"
+description = "A collection of GraphQL related Rust modules that are share between The Graph's network services"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.61.0"
+
+[features]
+default = ["http"]
+http = []
+
+[dependencies]
+firestorm = "0.5"
+graphql-parser = "0.4"
+serde = { version = "1.0", features = ["derive"] }
