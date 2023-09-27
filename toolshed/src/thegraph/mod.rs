@@ -1,3 +1,5 @@
+pub mod attestation;
+
 use std::{fmt, str::FromStr};
 
 use alloy_primitives::{Address, BlockHash, BlockNumber, B256};
