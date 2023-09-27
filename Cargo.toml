@@ -1,4 +1,3 @@
 [workspace]
-members = [
-    "toolshed",
-]
+resolver = "2"
+members = ["toolshed"]
