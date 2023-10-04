@@ -3,6 +3,7 @@ pub mod attestation;
 use std::{fmt, fmt::LowerHex, str::FromStr};
 
 use alloy_primitives::{Address, BlockHash, BlockNumber, B256};
+use async_graphql::{InputValueError, InputValueResult, Scalar, ScalarType, Value};
 use serde::{Deserialize, Serialize};
 use serde_with::{DeserializeFromStr, SerializeDisplay};
 use sha3::{
@@ -136,6 +137,22 @@ impl fmt::Debug for DeploymentId {
 impl LowerHex for DeploymentId {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         fmt::LowerHex::fmt(&self.0, f)
+    }
+}
+
+#[Scalar]
+impl ScalarType for DeploymentId {
+    fn parse(value: Value) -> InputValueResult<Self> {
+        if let Value::String(value) = &value {
+            Ok(DeploymentId::from_str(value)?)
+        } else {
+            Err(InputValueError::expected_type(value))
+        }
+    }
+
+    fn to_value(&self) -> Value {
+        // Convert to Qm...
+        Value::String(self.to_string())
     }
 }
 
