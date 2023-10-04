@@ -1,6 +1,6 @@
 pub mod attestation;
 
-use std::{fmt, str::FromStr};
+use std::{fmt, fmt::LowerHex, str::FromStr};
 
 use alloy_primitives::{Address, BlockHash, BlockNumber, B256};
 use serde::{Deserialize, Serialize};
@@ -9,6 +9,7 @@ use sha3::{
     digest::{Digest as _, Update as _},
     Keccak256,
 };
+use thiserror::Error;
 
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 pub struct BlockPointer {
@@ -71,14 +72,49 @@ impl fmt::Debug for SubgraphId {
 )]
 pub struct DeploymentId(pub B256);
 
+#[derive(Debug, Clone, PartialEq, Eq, Error)]
+pub enum DeploymentIdError {
+    #[error("invalid IPFS / CIDv0 hash length {length}: {value} (length must be 46)")]
+    InvalidIpfsHashLength { value: String, length: usize },
+    #[error("invalid IPFS / CIDv0 hash \"{value}\": {error}")]
+    InvalidIpfsHash {
+        value: String,
+        error: bs58::decode::Error,
+    },
+    #[error("invalid hex string \"{value}\": {error}")]
+    InvalidHexString { value: String, error: String },
+}
+
 impl FromStr for DeploymentId {
-    type Err = bs58::decode::Error;
-    fn from_str(cid_v0: &str) -> Result<Self, Self::Err> {
-        let mut decoded = [0_u8; 34];
-        bs58::decode(cid_v0).onto(&mut decoded)?;
-        let mut bytes = [0_u8; 32];
-        bytes.copy_from_slice(&decoded[2..]);
-        Ok(Self(bytes.into()))
+    type Err = DeploymentIdError;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if s.starts_with("Qm") {
+            // Attempt to decode IPFS hash
+            if s.len() != 46 {
+                return Err(DeploymentIdError::InvalidIpfsHashLength {
+                    value: s.to_string(),
+                    length: s.len(),
+                });
+            }
+            let mut decoded = [0_u8; 34];
+            bs58::decode(s)
+                .onto(&mut decoded)
+                .map_err(|e| DeploymentIdError::InvalidIpfsHash {
+                    value: s.to_string(),
+                    error: e,
+                })?;
+            let mut bytes = [0_u8; 32];
+            bytes.copy_from_slice(&dbg!(decoded)[2..]);
+            Ok(Self(bytes.into()))
+        } else {
+            // Attempt to decode 32-byte hex string
+            Ok(s.parse::<B256>()
+                .map(Self)
+                .map_err(|e| DeploymentIdError::InvalidHexString {
+                    value: s.to_string(),
+                    error: format!("{}", e),
+                })?)
+        }
     }
 }
 
@@ -94,6 +130,12 @@ impl fmt::Display for DeploymentId {
 impl fmt::Debug for DeploymentId {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}", self)
+    }
+}
+
+impl LowerHex for DeploymentId {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        fmt::LowerHex::fmt(&self.0, f)
     }
 }
 
@@ -116,20 +158,39 @@ fn subgraph_id_encode() {
 }
 
 #[test]
-fn deployment_id_encode() {
-    let ipfs_hash = "QmWmyoMoctfbAaiEs2G46gpeUmhqFRDW6KWo64y5r581Vz";
-    let hash: B256 = "0x7d5a99f603f231d53a4f39d1521f98d2e8bb279cf29bebfd0687dc98458e7f89"
-        .parse()
-        .unwrap();
+fn deployment_id_decode_and_encode() {
+    let cid = "QmWmyoMoctfbAaiEs2G46gpeUmhqFRDW6KWo64y5r581Vz";
+    let id_from_cid = DeploymentId::from_str(cid).expect("parsing from IPFS hash");
 
-    let id1 = DeploymentId(hash);
-    let id2: DeploymentId = ipfs_hash
-        .parse()
-        .expect("failed to create DeploymentId from CIDv0");
+    let hex = "0x7d5a99f603f231d53a4f39d1521f98d2e8bb279cf29bebfd0687dc98458e7f89";
+    let id_from_hex = DeploymentId::from_str(hex).expect("parsing from hex string");
 
-    assert_eq!(id1.to_string(), ipfs_hash);
-    assert_eq!(id1.0, hash);
-    assert_eq!(id2.to_string(), ipfs_hash);
-    assert_eq!(id2.0, hash);
-    assert_eq!(id1, id2);
+    let bytes: B256 = hex.parse().expect("parsing hex string into bytes");
+
+    assert_eq!(id_from_cid, id_from_hex);
+
+    assert_eq!(id_from_cid.to_string(), cid);
+    assert_eq!(id_from_hex.to_string(), cid);
+
+    assert_eq!(format!("{id_from_cid:#x}"), hex);
+    assert_eq!(format!("{id_from_hex:#x}"), hex);
+
+    assert_eq!(id_from_cid.0, bytes);
+    assert_eq!(id_from_hex.0, bytes);
+
+    assert_eq!(
+        DeploymentId::from_str("QmA"),
+        Err(DeploymentIdError::InvalidIpfsHashLength {
+            value: "QmA".to_string(),
+            length: 3
+        })
+    );
+
+    assert_eq!(
+        DeploymentId::from_str("0x"),
+        Err(DeploymentIdError::InvalidHexString {
+            value: "0x".to_string(),
+            error: "Invalid string length".to_string()
+        })
+    );
 }
