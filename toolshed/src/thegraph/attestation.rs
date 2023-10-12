@@ -51,9 +51,9 @@ pub fn create(
     response: &str,
 ) -> Attestation {
     let msg = Receipt {
-        requestCID: keccak256(request).0,
-        responseCID: keccak256(response).0,
-        subgraphDeploymentID: deployment.0 .0,
+        requestCID: keccak256(request),
+        responseCID: keccak256(response),
+        subgraphDeploymentID: deployment.0,
     };
     let hash = msg.eip712_signing_hash(domain);
     let (signature, recovery) = signer.sign_prehash_recoverable(&hash.0).unwrap();
@@ -93,9 +93,9 @@ pub fn verify(
         return Err(VerificationError::InvalidResponseHash);
     }
     let msg = Receipt {
-        requestCID: attestation.request_cid.0,
-        responseCID: attestation.response_cid.0,
-        subgraphDeploymentID: attestation.deployment.0,
+        requestCID: attestation.request_cid,
+        responseCID: attestation.response_cid,
+        subgraphDeploymentID: attestation.deployment,
     };
     let signing_hash: B256 = msg.eip712_signing_hash(domain);
     let signature = Signature {
