@@ -1,12 +1,12 @@
 use serde::Deserialize;
 
-#[derive(Deserialize)]
+#[derive(Debug, Deserialize)]
 pub struct Response<T> {
     pub data: Option<T>,
     pub errors: Option<Vec<Error>>,
 }
 
-#[derive(Deserialize)]
+#[derive(Debug, Deserialize)]
 pub struct Error {
     pub message: String,
 }
