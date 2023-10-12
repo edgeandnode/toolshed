@@ -58,8 +58,8 @@ pub fn create(
     let hash = msg.eip712_signing_hash(domain);
     let (signature, recovery) = signer.sign_prehash_recoverable(&hash.0).unwrap();
     Attestation {
-        request_cid: msg.requestCID.into(),
-        response_cid: msg.responseCID.into(),
+        request_cid: msg.requestCID,
+        response_cid: msg.responseCID,
         deployment: deployment.0,
         r: FixedBytes(signature.r().to_bytes().into()),
         s: FixedBytes(signature.s().to_bytes().into()),
