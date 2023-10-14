@@ -105,7 +105,7 @@ impl FromStr for DeploymentId {
                     error: e,
                 })?;
             let mut bytes = [0_u8; 32];
-            bytes.copy_from_slice(&dbg!(decoded)[2..]);
+            bytes.copy_from_slice(&decoded[2..]);
             Ok(Self(bytes.into()))
         } else {
             // Attempt to decode 32-byte hex string
