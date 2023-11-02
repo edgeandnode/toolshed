@@ -3,10 +3,11 @@
   extends: [
     "config:base",
     ":semanticCommits",
-    ":semanticCommitTypeAll(chore)"
+    ":semanticCommitTypeAll(chore)",
+    "helpers:pinGitHubActionDigests",
   ],
   schedule: [
-    "before 6am on monday",
+    "before 6am every weekday",
   ],
   rebaseStalePrs: true,
   lockFileMaintenance: {
