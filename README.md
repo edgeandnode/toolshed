@@ -15,3 +15,8 @@ services.
     ```toml
     graphql = { git = "https://github.com/edgeandnode/toolshed", tag = "graphql-v0.1.0" }
     ```
+* **graphql-http:** A _reqwest_ based GraphQL-over-HTTP client.
+
+    ```toml
+    graphql-http = { git = "https://github.com/eandn/toolshed", tag = "graphql-http-v0.1.0" }
+    ```

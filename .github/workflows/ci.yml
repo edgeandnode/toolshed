@@ -83,7 +83,7 @@ jobs:
         uses: Leafwing-Studios/cargo-cache@5edda26afa3d28be5d6ee87d4c69c246e3ee37fb # v1
 
       - name: Unit tests
-        run: cargo test --verbose --workspace --lib -- --nocapture
+        run: cargo test --verbose --workspace --all-features --lib -- --nocapture
 
       - name: Integration tests
-        run: cargo test --verbose --workspace --tests '*' -- --nocapture
+        run: cargo test --verbose --workspace --all-features --tests '*' -- --nocapture

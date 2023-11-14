@@ -1,0 +1,26 @@
+[package]
+name = "graphql-http"
+description = "A reqwest based GraphQL-over-HTTP client"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.63.0"
+
+[features]
+http-reqwest = ["dep:async-trait", "dep:thiserror", "dep:reqwest"]
+compat-graphql-client = ["dep:graphql_client"]
+compat-graphql-parser = ["dep:graphql-parser"]
+
+[dependencies]
+anyhow = "1.0.75"
+async-trait = { version = "0.1", optional = true }
+graphql-parser = { version = "0.4.0", optional = true }
+graphql_client = { version = "0.13.0", optional = true }
+reqwest = { version = "0.11", optional = true }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+thiserror = { version = "1.0", optional = true }
+
+[dev-dependencies]
+assert_matches = "1.5.0"
+indoc = "2.0.4"
+tokio = { version = "1.32", features = ["rt", "macros", "time"] }
