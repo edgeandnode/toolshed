@@ -7,7 +7,7 @@ use ethers_core::{
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
-use super::DeploymentId;
+use super::deployment_id::DeploymentId;
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Attestation {
@@ -113,7 +113,7 @@ pub fn verify(
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
     use super::*;
 
     fn domain() -> Eip712Domain {
