@@ -12,7 +12,7 @@ pub const GRAPHQL_LEGACY_RESPONSE_MEDIA_TYPE: &str = "application/json";
 /// [7.1.2 Errors](https://spec.graphql.org/draft/#sec-Errors) and the
 /// [Error Result Format](https://spec.graphql.org/draft/#sec-Errors.Error-Result-Format) subsection
 /// of the GraphQL specification.
-#[derive(Debug, serde::Deserialize)]
+#[derive(Debug, serde::Deserialize, serde::Serialize)]
 pub struct Error {
     /// A short, human-readable description of the problem.
     ///
@@ -57,7 +57,7 @@ pub struct Error {
 }
 
 /// A location describing the beginning of the associated syntax element causing the error.
-#[derive(Debug, serde::Deserialize)]
+#[derive(Debug, serde::Deserialize, serde::Serialize)]
 pub struct ErrorLocation {
     pub line: usize,
     pub column: usize,
