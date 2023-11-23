@@ -18,5 +18,5 @@ services.
 * **graphql-http:** A _reqwest_ based GraphQL-over-HTTP client.
 
     ```toml
-    graphql-http = { git = "https://github.com/eandn/toolshed", tag = "graphql-http-v0.1.0" }
+    graphql-http = { git = "https://github.com/eandn/toolshed", tag = "graphql-http-v0.1.1" }
     ```
