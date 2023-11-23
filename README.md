@@ -13,7 +13,7 @@ services.
 * **graphql:** A collection of GraphQL related Rust modules that are share between The Graph's network services.
 
     ```toml
-    graphql = { git = "https://github.com/edgeandnode/toolshed", tag = "graphql-v0.1.0" }
+    graphql = { git = "https://github.com/edgeandnode/toolshed", tag = "graphql-v0.2.0" }
     ```
 * **graphql-http:** A _reqwest_ based GraphQL-over-HTTP client.
 
