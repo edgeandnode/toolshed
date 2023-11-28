@@ -1,7 +1,7 @@
 [package]
 name = "graphql"
 description = "A collection of GraphQL related Rust modules that are share between The Graph's network services"
-version = "0.2.0"
+version = "0.3.0"
 edition = "2021"
 rust-version = "1.61.0"
 
