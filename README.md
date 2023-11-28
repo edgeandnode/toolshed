@@ -8,7 +8,7 @@ services.
 * **toolshed:** A collection of rust modules that are shared between The Graph's network services.
 
     ```toml
-    toolshed = { git = "https://github.com/edgeandnode/toolshed", tag = "v0.2.3" }
+    toolshed = { git = "https://github.com/edgeandnode/toolshed", tag = "v0.3.0" }
     ```
 * **graphql:** A collection of GraphQL related Rust modules that are share between The Graph's network services.
 
