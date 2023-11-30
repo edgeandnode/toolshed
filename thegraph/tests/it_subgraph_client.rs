@@ -3,12 +3,12 @@
 
 use assert_matches::assert_matches;
 use serde::Deserialize;
-use toolshed::thegraph::{BlockPointer, SubgraphId};
 use toolshed::url::Url;
 
 use thegraph::client::queries::meta::{send_subgraph_meta_query, SubgraphMetaQueryResponse};
 use thegraph::client::queries::page::{send_subgraph_page_query, BlockHeight};
 use thegraph::client::Client as SubgraphClient;
+use thegraph::types::{BlockPointer, SubgraphId};
 
 /// Test helper to parse a URL.
 fn test_url(url: &str) -> Url {

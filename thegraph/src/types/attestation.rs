@@ -1,13 +1,21 @@
-use alloy_primitives::{keccak256, Address, FixedBytes, B256, U256};
-use alloy_sol_types::{Eip712Domain, SolStruct};
-use ethers_core::{
-    k256::ecdsa::SigningKey,
-    types::{RecoveryMessage, Signature},
-};
+pub use alloy_primitives::Address;
+use alloy_primitives::{keccak256, FixedBytes};
+pub use alloy_sol_types::Eip712Domain;
+use alloy_sol_types::SolStruct;
+pub use ethers_core::k256::ecdsa::SigningKey;
+use ethers_core::types::{RecoveryMessage, Signature};
+use lazy_static::lazy_static;
 use serde::{Deserialize, Serialize};
-use thiserror::Error;
 
 use super::deployment_id::DeploymentId;
+use super::primitives::{B256, U256};
+
+lazy_static! {
+    static ref ATTESTATION_EIP712_DOMAIN_SALT: B256 =
+        "a070ffb1cd7409649bf77822cce74495468e06dbfaef09556838bf188679b9c2"
+            .parse()
+            .expect("invalid eip712 domain salt");
+}
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Attestation {
@@ -17,6 +25,7 @@ pub struct Attestation {
     pub response_cid: B256,
     #[serde(rename = "subgraphDeploymentID")]
     pub deployment: B256,
+    // TODO: Use DeploymentId?
     pub r: B256,
     pub s: B256,
     pub v: u8,
@@ -31,15 +40,12 @@ alloy_sol_types::sol! {
 }
 
 pub fn eip712_domain(chain_id: U256, dispute_manager: Address) -> Eip712Domain {
-    let salt: B256 = "a070ffb1cd7409649bf77822cce74495468e06dbfaef09556838bf188679b9c2"
-        .parse()
-        .unwrap();
     Eip712Domain {
         name: Some("Graph Protocol".into()),
         version: Some("0".into()),
         chain_id: Some(chain_id),
         verifying_contract: Some(dispute_manager),
-        salt: Some(salt),
+        salt: Some(*ATTESTATION_EIP712_DOMAIN_SALT),
     }
 }
 
@@ -53,21 +59,21 @@ pub fn create(
     let msg = Receipt {
         requestCID: keccak256(request),
         responseCID: keccak256(response),
-        subgraphDeploymentID: deployment.0,
+        subgraphDeploymentID: deployment.into(),
     };
     let hash = msg.eip712_signing_hash(domain);
     let (signature, recovery) = signer.sign_prehash_recoverable(&hash.0).unwrap();
     Attestation {
         request_cid: msg.requestCID,
         response_cid: msg.responseCID,
-        deployment: deployment.0,
+        deployment: deployment.into(),
         r: FixedBytes(signature.r().to_bytes().into()),
         s: FixedBytes(signature.s().to_bytes().into()),
         v: recovery.to_byte(),
     }
 }
 
-#[derive(Debug, Clone, Copy, Hash, PartialEq, Eq, Error)]
+#[derive(Debug, Clone, Copy, Hash, PartialEq, Eq, thiserror::Error)]
 pub enum VerificationError {
     #[error("invalid request hash")]
     InvalidRequestHash,
@@ -92,6 +98,7 @@ pub fn verify(
     if attestation.response_cid != keccak256(response) {
         return Err(VerificationError::InvalidResponseHash);
     }
+
     let msg = Receipt {
         requestCID: attestation.request_cid,
         responseCID: attestation.response_cid,
@@ -106,9 +113,11 @@ pub fn verify(
     let signer = signature
         .recover(RecoveryMessage::Hash(signing_hash.0.into()))
         .map_err(|_| VerificationError::FailedSignerRecovery)?;
+
     if signer.0 != expected_signer {
         return Err(VerificationError::RecoveredSignerNotExpected);
     }
+
     Ok(())
 }
 
@@ -162,7 +171,7 @@ mod tests {
             response_cid: "435cd288e3694b535549c3af56ad805c149f92961bf84a1c647f7d86fc2431b4"
                 .parse()
                 .unwrap(),
-            deployment: deployment().0,
+            deployment: deployment().into(),
             r: "e1fb47e7f0b278d4c88564c3a3b46180e476edcb2b783f253f3eec3b36f8fd4f"
                 .parse()
                 .unwrap(),

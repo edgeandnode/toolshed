@@ -1,11 +1,8 @@
-use alloy_primitives::{Address, B256};
+use alloy_primitives::Address;
 use serde_with::{DeserializeFromStr, SerializeDisplay};
 use sha3::{Digest as _, Keccak256};
 
-#[derive(
-    Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, SerializeDisplay, DeserializeFromStr,
-)]
-pub struct SubgraphId(pub B256);
+use super::primitives::B256;
 
 /// Attempt to parse a Subgraph ID in v1 format:
 /// ```text
@@ -42,6 +39,35 @@ fn parse_v2(value: &str) -> Option<B256> {
     let len = bs58::decode(value).onto(&mut hash).ok()?;
     hash.rotate_right(32 - len);
     Some(hash.into())
+}
+
+#[derive(
+    Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, SerializeDisplay, DeserializeFromStr,
+)]
+pub struct SubgraphId(B256);
+
+impl From<B256> for SubgraphId {
+    fn from(bytes: B256) -> Self {
+        Self(bytes)
+    }
+}
+
+impl From<SubgraphId> for B256 {
+    fn from(id: SubgraphId) -> Self {
+        id.0
+    }
+}
+
+impl From<&SubgraphId> for B256 {
+    fn from(id: &SubgraphId) -> Self {
+        id.0
+    }
+}
+
+impl AsRef<B256> for SubgraphId {
+    fn as_ref(&self) -> &B256 {
+        &self.0
+    }
 }
 
 impl std::str::FromStr for SubgraphId {
