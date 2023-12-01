@@ -1,4 +1,4 @@
-use crate::graphql::{Document, IntoDocumentWithVariables};
+use crate::graphql::{Document, IntoDocument, IntoDocumentWithVariables};
 
 /// The media type for GraphQL-over-HTTP requests. As specified in the section
 /// [4.1 Media Types](https://graphql.github.io/graphql-over-http/draft/#sec-Media-Types)
@@ -40,7 +40,7 @@ impl IntoRequestParameters for RequestParameters {
     }
 }
 
-// Any type implementing `IntoQueryWithVariables` (or `IntoQuery`) can be converted into
+// Any type implementing `IntoDocumentWithVariables` (or `IntoDocument`) can be converted into
 // `RequestParameters`.
 impl<T> IntoRequestParameters for T
 where
@@ -61,6 +61,29 @@ where
             operation_name: None,
             variables: variables.unwrap_or_default(),
             extensions: Default::default(),
+        }
+    }
+}
+
+#[cfg(feature = "async-graphql")]
+// Support converting from `async_graphql::Request` to `RequestParameters`.
+impl IntoRequestParameters for async_graphql::Request {
+    fn into_request_parameters(self) -> RequestParameters {
+        let variables = match serde_json::to_value(self.variables) {
+            Ok(serde_json::Value::Object(vars)) => vars,
+            _ => serde_json::Map::new(),
+        };
+
+        let extensions = match serde_json::to_value(self.extensions) {
+            Ok(serde_json::Value::Object(vars)) => vars,
+            _ => serde_json::Map::new(),
+        };
+
+        RequestParameters {
+            query: self.query.into_document(),
+            operation_name: self.operation_name,
+            variables,
+            extensions,
         }
     }
 }
