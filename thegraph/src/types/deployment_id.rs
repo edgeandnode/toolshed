@@ -73,6 +73,12 @@ impl From<B256> for DeploymentId {
     }
 }
 
+impl From<[u8; 32]> for DeploymentId {
+    fn from(value: [u8; 32]) -> Self {
+        Self(B256::from(value))
+    }
+}
+
 impl From<DeploymentId> for B256 {
     fn from(id: DeploymentId) -> Self {
         id.0

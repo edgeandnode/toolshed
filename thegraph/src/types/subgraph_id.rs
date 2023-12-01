@@ -52,6 +52,12 @@ impl From<B256> for SubgraphId {
     }
 }
 
+impl From<[u8; 32]> for SubgraphId {
+    fn from(value: [u8; 32]) -> Self {
+        Self(B256::from(value))
+    }
+}
+
 impl From<SubgraphId> for B256 {
     fn from(id: SubgraphId) -> Self {
         id.0
