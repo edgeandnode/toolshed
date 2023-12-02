@@ -9,8 +9,8 @@ rust-version = "1.67.1"
 subgraph-client = ["dep:tracing", "dep:indoc", "dep:serde_json", "toolshed/url", "dep:reqwest", "graphql-http/http-reqwest"]
 
 [dependencies]
-alloy-primitives = { version = "0.5.1", features = ["serde"] }
-alloy-sol-types = "0.5.1"
+alloy-primitives = { version = "0.5.2", features = ["serde"] }
+alloy-sol-types = "0.5.2"
 async-graphql = "6.0.11"
 bs58 = "0.5.0"
 ethers-core = { version = "2.0.11", default-features = false }
