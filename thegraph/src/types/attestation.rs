@@ -25,7 +25,6 @@ pub struct Attestation {
     pub response_cid: B256,
     #[serde(rename = "subgraphDeploymentID")]
     pub deployment: B256,
-    // TODO: Use DeploymentId?
     pub r: B256,
     pub s: B256,
     pub v: u8,
