@@ -1,5 +1,6 @@
-use alloy_primitives::{BlockHash, BlockNumber};
 use serde::{Deserialize, Serialize};
+
+pub use alloy_primitives::{BlockHash, BlockNumber};
 
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 pub struct BlockPointer {

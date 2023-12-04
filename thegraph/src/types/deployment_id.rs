@@ -2,13 +2,6 @@ use alloy_primitives::B256;
 use async_graphql::Scalar;
 use serde_with::{DeserializeFromStr, SerializeDisplay};
 
-/// A Subgraph's Deployment ID represents unique identifier for a deployed subgraph on The Graph.
-/// This is the content ID of the subgraph's manifest.
-#[derive(
-    Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, SerializeDisplay, DeserializeFromStr,
-)]
-pub struct DeploymentId(pub B256);
-
 fn parse_cidv0(value: &str) -> Result<B256, DeploymentIdError> {
     if value.len() != 46 {
         return Err(DeploymentIdError::InvalidIpfsHashLength {
@@ -65,6 +58,43 @@ pub enum DeploymentIdError {
     /// Invalid hex string format. The input hex string could not be decoded.
     #[error("invalid hex string \"{value}\": {error}")]
     InvalidHexString { value: String, error: String },
+}
+
+/// A Subgraph's Deployment ID represents unique identifier for a deployed subgraph on The Graph.
+/// This is the content ID of the subgraph's manifest.
+#[derive(
+    Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, SerializeDisplay, DeserializeFromStr,
+)]
+pub struct DeploymentId(B256);
+
+impl From<B256> for DeploymentId {
+    fn from(bytes: B256) -> Self {
+        Self(bytes)
+    }
+}
+
+impl From<[u8; 32]> for DeploymentId {
+    fn from(value: [u8; 32]) -> Self {
+        Self(B256::from(value))
+    }
+}
+
+impl From<DeploymentId> for B256 {
+    fn from(id: DeploymentId) -> Self {
+        id.0
+    }
+}
+
+impl From<&DeploymentId> for B256 {
+    fn from(id: &DeploymentId) -> Self {
+        id.0
+    }
+}
+
+impl AsRef<B256> for DeploymentId {
+    fn as_ref(&self) -> &B256 {
+        &self.0
+    }
 }
 
 impl std::str::FromStr for DeploymentId {
