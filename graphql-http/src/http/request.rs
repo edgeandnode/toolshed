@@ -40,7 +40,7 @@ impl IntoRequestParameters for RequestParameters {
     }
 }
 
-// Any type implementing `IntoQueryWithVariables` (or `IntoQuery`) can be converted into
+// Any type implementing `IntoDocumentWithVariables` (or `IntoDocument`) can be converted into
 // `RequestParameters`.
 impl<T> IntoRequestParameters for T
 where
