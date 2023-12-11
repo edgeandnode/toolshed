@@ -55,3 +55,39 @@ pub mod compat_graphql_client {
         }
     }
 }
+
+#[cfg(feature = "compat-async-graphql")]
+pub mod compat_async_graphql {
+    use async_graphql::Request;
+
+    use crate::graphql::IntoDocument;
+    use crate::http::request::{IntoRequestParameters, RequestParameters};
+
+    // Implement `IntoRequestParameters` for `async_graphql::Request` so that we can seamlessly
+    // support `async_graphql` requests.
+    impl IntoRequestParameters for Request {
+        fn into_request_parameters(self) -> RequestParameters {
+            let query = self.query.into_document();
+
+            // Serialize the `async_graphql::Request` _variables_ and _extensions_ fields to JSON
+            // objects. If the serialization fails, or if the result is not a JSON object, avoid
+            // sending an invalid JSON to the server.
+            let variables = match serde_json::to_value(self.variables) {
+                Ok(serde_json::Value::Object(vars)) => vars,
+                _ => Default::default(),
+            };
+
+            let extensions = match serde_json::to_value(self.extensions) {
+                Ok(serde_json::Value::Object(vars)) => vars,
+                _ => Default::default(),
+            };
+
+            RequestParameters {
+                query,
+                operation_name: self.operation_name,
+                variables,
+                extensions,
+            }
+        }
+    }
+}
