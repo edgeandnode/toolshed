@@ -6,7 +6,7 @@ edition = "2021"
 rust-version = "1.67.1"
 
 [features]
-subgraph-client = ["dep:tracing", "dep:indoc", "dep:serde_json", "toolshed/url", "dep:reqwest", "graphql-http/http-reqwest"]
+subgraph-client = ["dep:tracing", "dep:indoc", "dep:serde_json", "dep:toolshed", "toolshed/url", "dep:reqwest", "dep:graphql-http", "graphql-http/http-reqwest"]
 
 [dependencies]
 alloy-primitives = { version = "0.5", features = ["serde"] }
