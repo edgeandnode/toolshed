@@ -6,7 +6,6 @@
 debug/
 target/
 **/*.rs.bk
-Cargo.lock
 *.pdb
 
 ## Project
