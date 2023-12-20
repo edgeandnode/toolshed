@@ -49,17 +49,19 @@ use base64::{prelude::BASE64_URL_SAFE_NO_PAD, Engine as _};
 use ethers::signers::Wallet;
 use ethers_core::k256::ecdsa::SigningKey;
 use ethers_core::types::Signature;
+use serde_with::formats::CommaSeparator;
+use serde_with::{FromInto, StringWithSeparator};
 
-use crate::types::Address;
+use crate::types::{Address, DeploymentId, SubgraphId};
 
 /// Claims that are encoded in an auth token.
 #[serde_with::serde_as]
-#[serde_with::skip_serializing_none]
 #[derive(Debug, Clone, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub struct AuthTokenClaims {
     /// Chain ID (EIP-155) of the chain on which the subscriptions contract is deployed.
-    #[serde_as(as = "serde_with::FromInto<u64>")]
-    pub chain_id: Chain,
+    #[serde_as(as = "FromInto<u64>")]
+    #[serde(rename = "chain_id")]
+    pub chain: Chain,
 
     /// Address of the subscriptions contract.
     pub contract: Address,
@@ -73,32 +75,80 @@ pub struct AuthTokenClaims {
     ///
     /// Required when the authorized `signer` is not the `user` associated with a subscription. When
     /// omitted, the `signer` is implied to be equal to the `user`.
+    #[serde(skip_serializing_if = "Option::is_none")]
     #[serde(default)]
     pub user: Option<Address>,
 
     /// Optional name of the subscription.
+    #[serde(skip_serializing_if = "Option::is_none")]
     #[serde(default)]
     pub name: Option<String>,
 
-    /// Comma-separated list of subgraphs that can be queried with this auth token.
+    /// List of subgraphs that can be queried with this auth token.
+    #[serde_as(as = "StringWithSeparator::<CommaSeparator, SubgraphId>")]
+    #[serde(skip_serializing_if = "Vec::is_empty")]
     #[serde(default)]
-    pub allowed_subgraphs: Option<String>,
+    pub allowed_subgraphs: Vec<SubgraphId>,
 
-    /// Comma-separated list of subgraph deployments that can be queried with this auth token.
+    /// List of subgraph deployments that can be queried with this auth token.
+    #[serde_as(as = "StringWithSeparator::<CommaSeparator, DeploymentId>")]
+    #[serde(skip_serializing_if = "Vec::is_empty")]
     #[serde(default)]
-    pub allowed_deployments: Option<String>,
+    pub allowed_deployments: Vec<DeploymentId>,
 
-    /// Comma-separated list of origin domains that can send queries with this auth token.
+    /// List of origin domains that can send queries with this auth token.
+    #[serde_as(as = "StringWithSeparator::<CommaSeparator, String>")]
+    #[serde(skip_serializing_if = "Vec::is_empty")]
     #[serde(default)]
-    pub allowed_domains: Option<String>,
+    pub allowed_domains: Vec<String>,
 }
 
 impl AuthTokenClaims {
+    /// Returns the EIP-155 [Chain] on which the subscriptions contract is deployed.
+    pub fn chain(&self) -> Chain {
+        self.chain
+    }
+
+    /// Returns the chain ID (EIP-155) of the [Chain] on which the subscriptions contract is deployed.
+    pub fn chain_id(&self) -> u64 {
+        self.chain.id()
+    }
+
+    /// Returns the address of the subscriptions contract.
+    pub fn contract(&self) -> Address {
+        self.contract
+    }
+
+    /// Returns the signer address that is authorized to sign the auth token.
+    pub fn signer(&self) -> Address {
+        self.signer
+    }
+
     /// Returns the user address that the auth token is for.
     ///
     /// If the `user` field is not set, the `signer` is address is returned.
     pub fn user(&self) -> Address {
         self.user.unwrap_or(self.signer)
+    }
+
+    /// Returns the name of the subscription.
+    pub fn name(&self) -> Option<&str> {
+        self.name.as_deref()
+    }
+
+    /// Returns the list of subgraphs that can be queried with this auth token.
+    pub fn allowed_subgraphs(&self) -> &[SubgraphId] {
+        &self.allowed_subgraphs
+    }
+
+    /// Returns the list of subgraph deployments that can be queried with this auth token.
+    pub fn allowed_deployments(&self) -> &[DeploymentId] {
+        &self.allowed_deployments
+    }
+
+    /// Returns the list of origin domains that can send queries with this auth token.
+    pub fn allowed_domains(&self) -> &[String] {
+        &self.allowed_domains
     }
 
     /// Returns the verification message that must be signed by the signer address.
@@ -116,17 +166,35 @@ impl AuthTokenClaims {
     fn to_verification_message(&self) -> String {
         let mut cursor = Cursor::<Vec<u8>>::default();
 
-        if let Some(allowed_deployments) = self.allowed_deployments.as_deref() {
+        if !self.allowed_deployments.is_empty() {
+            let allowed_deployments = self
+                .allowed_deployments
+                .iter()
+                .map(|deployment| deployment.to_string())
+                .collect::<Vec<_>>()
+                .join(",");
             writeln!(&mut cursor, "allowed_deployments: {}", allowed_deployments).unwrap();
         }
-        if let Some(allowed_domains) = self.allowed_domains.as_deref() {
+        if !self.allowed_domains.is_empty() {
+            let allowed_domains = self
+                .allowed_domains
+                .iter()
+                .map(|domain| domain.to_string())
+                .collect::<Vec<_>>()
+                .join(",");
             writeln!(&mut cursor, "allowed_domains: {}", allowed_domains).unwrap();
         }
-        if let Some(allowed_subgraphs) = self.allowed_subgraphs.as_deref() {
+        if !self.allowed_subgraphs.is_empty() {
+            let allowed_subgraphs = self
+                .allowed_subgraphs
+                .iter()
+                .map(|subgraph| subgraph.to_string())
+                .collect::<Vec<_>>()
+                .join(",");
             writeln!(&mut cursor, "allowed_subgraphs: {}", allowed_subgraphs).unwrap();
         }
 
-        writeln!(&mut cursor, "chain_id: {}", self.chain_id.id()).unwrap();
+        writeln!(&mut cursor, "chain_id: {}", self.chain.id()).unwrap();
         writeln!(&mut cursor, "contract: {:?}", self.contract).unwrap();
 
         if let Some(name) = self.name.as_deref() {
@@ -268,7 +336,7 @@ mod tests {
     #[test]
     fn serialize_claims_into_verification_message() {
         //* Given
-        let chain_id = Chain::dev();
+        let chain = Chain::dev();
         let contract: Address = "0xe7f1725e7734ce288f8367e1bb143e90bb3f0512"
             .parse()
             .expect("invalid contract address");
@@ -279,14 +347,14 @@ mod tests {
         let wallet_address: Address = wallet.address().as_fixed_bytes().into();
 
         let claims = AuthTokenClaims {
-            chain_id,
+            chain,
             contract,
             signer: wallet_address,
             user: None,
             name: None,
-            allowed_subgraphs: None,
-            allowed_deployments: None,
-            allowed_domains: None,
+            allowed_subgraphs: vec![],
+            allowed_deployments: vec![],
+            allowed_domains: vec![],
         };
 
         let expected_message = indoc::indoc! {"
@@ -303,9 +371,71 @@ mod tests {
     }
 
     #[test]
-    fn encode_claims_and_sign_the_auth_token() {
+    fn serialize_claims_with_extras_into_verification_message() {
         //* Given
-        let chain_id = Chain::dev();
+        let chain = Chain::dev();
+        let contract: Address = "0xe7f1725e7734ce288f8367e1bb143e90bb3f0512"
+            .parse()
+            .expect("invalid contract address");
+
+        let wallet =
+            Wallet::from_str("0x4f3edf983ac636a65a842ce7c78d9aa706d3b113bce9c46f30d7d21715b23b1d")
+                .expect("invalid private key");
+        let wallet_address: Address = wallet.address().as_fixed_bytes().into();
+
+        let allowed_subgraphs = vec![
+            // https://thegraph.com/explorer/subgraphs/8yHBZUvXcKkZnZM7SDSgcRMtbtNwgUQfM37cA37h7cet?view=Overview&chain=mainnet
+            "8yHBZUvXcKkZnZM7SDSgcRMtbtNwgUQfM37cA37h7cet"
+                .parse()
+                .expect("invalid subgraph id"),
+            // https://thegraph.com/explorer/subgraphs/AQHJdvUMkPfSxi6Q2LxXYjWXjGvfCST8DFFYE4VUKtU6?view=Overview&chain=arbitrum-one
+            "AQHJdvUMkPfSxi6Q2LxXYjWXjGvfCST8DFFYE4VUKtU6"
+                .parse()
+                .expect("invalid subgraph id"),
+        ];
+        let allowed_deployments = vec![
+            // https://thegraph.com/explorer/subgraphs/8yHBZUvXcKkZnZM7SDSgcRMtbtNwgUQfM37cA37h7cet?view=Overview&chain=mainnet
+            "QmRbgjyzEgfxGbodu6itfkXCQ5KA9oGxKscrcQ9QuF88oT"
+                .parse()
+                .expect("invalid deployment id"),
+            // https://thegraph.com/explorer/subgraphs/AQHJdvUMkPfSxi6Q2LxXYjWXjGvfCST8DFFYE4VUKtU6?view=Overview&chain=arbitrum-one
+            "QmZ9kr5Cjepmdrj5EJnmfsneiJtok7rVpk81KUmZzFzkvp"
+                .parse()
+                .expect("invalid deployment id"),
+        ];
+        let allowed_domains = vec!["thegraph.com".into(), "testnet.thegraph.com".into()];
+
+        let claims = AuthTokenClaims {
+            chain,
+            contract,
+            signer: wallet_address,
+            user: None,
+            name: None,
+            allowed_subgraphs,
+            allowed_deployments,
+            allowed_domains,
+        };
+
+        let expected_message = indoc::indoc! {"
+            allowed_deployments: QmRbgjyzEgfxGbodu6itfkXCQ5KA9oGxKscrcQ9QuF88oT,QmZ9kr5Cjepmdrj5EJnmfsneiJtok7rVpk81KUmZzFzkvp
+            allowed_domains: thegraph.com,testnet.thegraph.com
+            allowed_subgraphs: 8yHBZUvXcKkZnZM7SDSgcRMtbtNwgUQfM37cA37h7cet,AQHJdvUMkPfSxi6Q2LxXYjWXjGvfCST8DFFYE4VUKtU6
+            chain_id: 1337
+            contract: 0xe7f1725e7734ce288f8367e1bb143e90bb3f0512
+            signer: 0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1
+        "};
+
+        //* When
+        let result = claims.to_verification_message();
+
+        //* Then
+        assert_eq!(result, expected_message);
+    }
+
+    #[test]
+    fn encode_required_claims_and_sign_the_auth_token() {
+        //* Given
+        let chain = Chain::dev();
         let contract: Address = "0xe7f1725e7734ce288f8367e1bb143e90bb3f0512"
             .parse()
             .expect("invalid contract address");
@@ -316,23 +446,93 @@ mod tests {
         let wallet_address: Address = wallet.address().as_fixed_bytes().into();
 
         let claims = AuthTokenClaims {
-            chain_id,
+            chain,
             contract,
             signer: wallet_address,
             user: None,
             name: None,
-            allowed_subgraphs: None,
-            allowed_deployments: None,
-            allowed_domains: None,
+            allowed_subgraphs: vec![],
+            allowed_deployments: vec![],
+            allowed_domains: vec![],
         };
 
-        let expected_auth_token = "o2hjaGFpbl9pZBkFOWhjb250cmFjdFTn8XJedzTOKI-DZ-G7FD6Quz8FEmZzaWduZXJUkPi_akefMg6tB0QRpLDnlE6oycGJ0BmGU8gFyjO7ELgWvEc4WV1LpCUNpL4MGJTUXtzR9gktyGqD-yln-rRyPh9Pkfem5vXcgbLeni0Vdg--Gf14HA";
+        // NOTE: CBOR serialization output manually verified using https://cbor.nemo157.com/
+        let expected_auth_token = "o2hjaGFpbl9pZBkFOWhjb250cmFjdFTn8XJedzTOKI-DZ-G7FD6Quz8FEmZzaWd\
+                                        uZXJUkPi_akefMg6tB0QRpLDnlE6oycGJ0BmGU8gFyjO7ELgWvEc4WV1LpCUNpL\
+                                        4MGJTUXtzR9gktyGqD-yln-rRyPh9Pkfem5vXcgbLeni0Vdg--Gf14HA";
 
         //* When
         let result = encode_auth_token(&claims, &wallet);
 
         //* Then
         assert_matches!(result, Ok(auth_token) => {
+            assert_eq!(auth_token, expected_auth_token);
+        });
+    }
+
+    #[test]
+    fn encode_extra_claims_and_sign_the_auth_token() {
+        //* Given
+        let chain = Chain::dev();
+        let contract: Address = "0xe7f1725e7734ce288f8367e1bb143e90bb3f0512"
+            .parse()
+            .expect("invalid contract address");
+
+        let wallet =
+            Wallet::from_str("0x4f3edf983ac636a65a842ce7c78d9aa706d3b113bce9c46f30d7d21715b23b1d")
+                .expect("invalid private key");
+        let wallet_address: Address = wallet.address().as_fixed_bytes().into();
+
+        let allowed_subgraphs = vec![
+            // https://thegraph.com/explorer/subgraphs/8yHBZUvXcKkZnZM7SDSgcRMtbtNwgUQfM37cA37h7cet?view=Overview&chain=mainnet
+            "8yHBZUvXcKkZnZM7SDSgcRMtbtNwgUQfM37cA37h7cet"
+                .parse()
+                .expect("invalid subgraph id"),
+            // https://thegraph.com/explorer/subgraphs/AQHJdvUMkPfSxi6Q2LxXYjWXjGvfCST8DFFYE4VUKtU6?view=Overview&chain=arbitrum-one
+            "AQHJdvUMkPfSxi6Q2LxXYjWXjGvfCST8DFFYE4VUKtU6"
+                .parse()
+                .expect("invalid subgraph id"),
+        ];
+        let allowed_deployments = vec![
+            // https://thegraph.com/explorer/subgraphs/8yHBZUvXcKkZnZM7SDSgcRMtbtNwgUQfM37cA37h7cet?view=Overview&chain=mainnet
+            "QmRbgjyzEgfxGbodu6itfkXCQ5KA9oGxKscrcQ9QuF88oT"
+                .parse()
+                .expect("invalid deployment id"),
+            // https://thegraph.com/explorer/subgraphs/AQHJdvUMkPfSxi6Q2LxXYjWXjGvfCST8DFFYE4VUKtU6?view=Overview&chain=arbitrum-one
+            "QmZ9kr5Cjepmdrj5EJnmfsneiJtok7rVpk81KUmZzFzkvp"
+                .parse()
+                .expect("invalid deployment id"),
+        ];
+        let allowed_domains = vec!["thegraph.com".into(), "testnet.thegraph.com".into()];
+
+        let claims = AuthTokenClaims {
+            chain,
+            contract,
+            signer: wallet_address,
+            user: None,
+            name: None,
+            allowed_subgraphs,
+            allowed_deployments,
+            allowed_domains,
+        };
+
+        // NOTE: CBOR serialization output manually verified using https://cbor.nemo157.com/
+        let expected_auth_token = "pmhjaGFpbl9pZBkFOWhjb250cmFjdFTn8XJedzTOKI-DZ-G7FD6Quz8FEmZzaWd\
+                                        uZXJUkPi_akefMg6tB0QRpLDnlE6oycFxYWxsb3dlZF9zdWJncmFwaHN4WTh5SE\
+                                        JaVXZYY0trWm5aTTdTRFNnY1JNdGJ0TndnVVFmTTM3Y0EzN2g3Y2V0LEFRSEpkd\
+                                        lVNa1BmU3hpNlEyTHhYWWpXWGpHdmZDU1Q4REZGWUU0VlVLdFU2c2FsbG93ZWRf\
+                                        ZGVwbG95bWVudHN4XVFtUmJnanl6RWdmeEdib2R1Nml0ZmtYQ1E1S0E5b0d4S3N\
+                                        jcmNROVF1Rjg4b1QsUW1aOWtyNUNqZXBtZHJqNUVKbm1mc25laUp0b2s3clZwaz\
+                                        gxS1VtWnpGemt2cG9hbGxvd2VkX2RvbWFpbnN4IXRoZWdyYXBoLmNvbSx0ZXN0b\
+                                        mV0LnRoZWdyYXBoLmNvbTZ01E75a5j_z_9HBYABzMwIqsXbQJBaM3gRJ6HALqeZ\
+                                        Xj-pASMlOboCUCqhoFVpucKycQ4oL54zL2jnasIHwekb";
+
+        //* When
+        let result = encode_auth_token(&claims, &wallet);
+
+        //* Then
+        assert_matches!(result, Ok(auth_token) => {
+            println!("auth_token: {}", auth_token);
             assert_eq!(auth_token, expected_auth_token);
         });
     }
@@ -364,7 +564,7 @@ mod tests {
     #[test]
     fn parse_valid_auth_token() {
         //* Given
-        let expected_chain_id = Chain::dev();
+        let expected_chain = Chain::dev();
         let expected_contract: Address = "0xe7f1725e7734ce288f8367e1bb143e90bb3f0512"
             .parse()
             .expect("invalid contract address");
@@ -381,7 +581,7 @@ mod tests {
         //* Then
         assert_matches!(result, Ok((claims, _signature)) => {
             // Assert auth_token claims
-            assert_eq!(claims.chain_id, expected_chain_id);
+            assert_eq!(claims.chain, expected_chain);
             assert_eq!(claims.contract, expected_contract);
             assert_eq!(claims.signer, expected_user);
             assert_eq!(claims.user, None);
@@ -393,7 +593,7 @@ mod tests {
     #[test]
     fn verify_invalid_auth_token_claims() {
         //* Given
-        let chain_id = Chain::dev();
+        let chain = Chain::dev();
         let contract: Address = "0xe7f1725e7734ce288f8367e1bb143e90bb3f0512"
             .parse()
             .expect("invalid contract address");
@@ -408,14 +608,14 @@ mod tests {
             .expect("invalid signer address");
 
         let claims = AuthTokenClaims {
-            chain_id,
+            chain,
             contract,
             signer,
             user: None,
             name: None,
-            allowed_subgraphs: None,
-            allowed_deployments: None,
-            allowed_domains: None,
+            allowed_subgraphs: vec![],
+            allowed_deployments: vec![],
+            allowed_domains: vec![],
         };
 
         // Encode the auth_token and parse it back.
@@ -433,7 +633,7 @@ mod tests {
     #[test]
     fn verify_valid_auth_token_claims() {
         //* Given
-        let chain_id = Chain::dev();
+        let chain = Chain::dev();
         let contract: Address = "0xe7f1725e7734ce288f8367e1bb143e90bb3f0512"
             .parse()
             .expect("invalid contract address");
@@ -444,14 +644,14 @@ mod tests {
         let wallet_address: Address = wallet.address().as_fixed_bytes().into();
 
         let claims = AuthTokenClaims {
-            chain_id,
+            chain,
             contract,
             signer: wallet_address,
             user: None,
             name: None,
-            allowed_subgraphs: None,
-            allowed_deployments: None,
-            allowed_domains: None,
+            allowed_subgraphs: vec![],
+            allowed_deployments: vec![],
+            allowed_domains: vec![],
         };
 
         // Encode the auth_token and parse it back.
