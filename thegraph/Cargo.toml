@@ -6,8 +6,22 @@ edition = "2021"
 rust-version = "1.67.1"
 
 [features]
-subgraph-client = ["dep:tracing", "dep:indoc", "dep:serde_json", "dep:toolshed", "toolshed/url", "dep:reqwest", "dep:graphql-http", "graphql-http/http-reqwest"]
-subscriptions = ["dep:base64", "dep:serde_cbor_2", "dep:alloy-chains", "dep:ethers"]
+subgraph-client = [
+    "dep:tracing",
+    "dep:indoc",
+    "dep:serde_json",
+    "dep:toolshed",
+    "toolshed/url",
+    "dep:reqwest",
+    "dep:graphql-http",
+    "graphql-http/http-reqwest",
+]
+subscriptions = [
+    "dep:base64",
+    "dep:serde_cbor_2",
+    "dep:alloy-chains",
+    "dep:ethers",
+]
 
 [dependencies]
 alloy-chains = { version = "0.1", features = ["serde"], optional = true }
@@ -18,7 +32,7 @@ base64 = { version = "0.21", optional = true }
 bs58 = "0.5"
 ethers = { version = "2.0", default-features = false, optional = true }
 ethers-core = { version = "2.0", default-features = false }
-graphql-http = { git = "https://github.com/edgeandnode/toolshed.git", tag = "graphql-http-v0.1.1", optional = true }
+graphql-http = { path = "../graphql-http", optional = true }
 indoc = { version = "2.0", optional = true }
 lazy_static = "1.4"
 reqwest = { version = "0.11", optional = true }
@@ -28,7 +42,7 @@ serde_json = { version = "1.0", optional = true, features = ["raw_value"] }
 serde_with = "3.4"
 sha3 = "0.10"
 thiserror = "1.0"
-toolshed = { git = "https://github.com/edgeandnode/toolshed.git", tag = "v0.4.0", optional = true }
+toolshed = { path = "../toolshed", optional = true }
 tracing = { version = "0.1", optional = true }
 
 [dev-dependencies]

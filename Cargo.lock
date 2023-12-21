@@ -1514,19 +1514,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "graphql-http"
-version = "0.1.1"
-source = "git+https://github.com/edgeandnode/toolshed.git?tag=graphql-http-v0.1.1#1eb97feb7b188324529926300135ffe723989c10"
-dependencies = [
- "anyhow",
- "async-trait",
- "reqwest",
- "serde",
- "serde_json",
- "thiserror",
-]
-
-[[package]]
 name = "graphql-introspection-query"
 version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3226,7 +3213,7 @@ dependencies = [
  "bs58",
  "ethers",
  "ethers-core",
- "graphql-http 0.1.1 (git+https://github.com/edgeandnode/toolshed.git?tag=graphql-http-v0.1.1)",
+ "graphql-http",
  "indoc",
  "lazy_static",
  "reqwest",
@@ -3238,7 +3225,7 @@ dependencies = [
  "test-with",
  "thiserror",
  "tokio",
- "toolshed 0.4.0 (git+https://github.com/edgeandnode/toolshed.git?tag=v0.4.0)",
+ "toolshed",
  "tracing",
 ]
 
@@ -3426,23 +3413,6 @@ dependencies = [
  "sha3",
  "thiserror",
  "tokio",
- "url",
-]
-
-[[package]]
-name = "toolshed"
-version = "0.4.0"
-source = "git+https://github.com/edgeandnode/toolshed.git?tag=v0.4.0#aa885d38818101d4c30d4869ab060f8c2c29f13b"
-dependencies = [
- "alloy-primitives",
- "alloy-sol-types",
- "async-graphql",
- "bs58",
- "ethers-core",
- "serde",
- "serde_with",
- "sha3",
- "thiserror",
  "url",
 ]
 
