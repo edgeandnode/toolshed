@@ -1498,6 +1498,19 @@ dependencies = [
 [[package]]
 name = "graphql-http"
 version = "0.1.1"
+source = "git+https://github.com/edgeandnode/toolshed.git?tag=graphql-http-v0.1.1#1eb97feb7b188324529926300135ffe723989c10"
+dependencies = [
+ "anyhow",
+ "async-trait",
+ "reqwest",
+ "serde",
+ "serde_json",
+ "thiserror",
+]
+
+[[package]]
+name = "graphql-http"
+version = "0.2.0"
 dependencies = [
  "anyhow",
  "assert_matches",
@@ -1511,19 +1524,6 @@ dependencies = [
  "serde_json",
  "thiserror",
  "tokio",
-]
-
-[[package]]
-name = "graphql-http"
-version = "0.1.1"
-source = "git+https://github.com/edgeandnode/toolshed.git?tag=graphql-http-v0.1.1#1eb97feb7b188324529926300135ffe723989c10"
-dependencies = [
- "anyhow",
- "async-trait",
- "reqwest",
- "serde",
- "serde_json",
- "thiserror",
 ]
 
 [[package]]
@@ -3246,7 +3246,7 @@ dependencies = [
  "bs58",
  "ethers",
  "ethers-core",
- "graphql-http 0.1.1 (git+https://github.com/edgeandnode/toolshed.git?tag=graphql-http-v0.1.1)",
+ "graphql-http 0.1.1",
  "indoc",
  "lazy_static",
  "reqwest",
