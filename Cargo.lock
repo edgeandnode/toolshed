@@ -604,15 +604,15 @@ checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 
 [[package]]
 name = "chrono"
-version = "0.4.31"
+version = "0.4.32"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7f2c685bad3eb3d45a01354cedb7d5faa66194d1d58ba6e267a8de788f79db38"
+checksum = "41daef31d7a747c5c847246f36de49ced6f7403b4cdabc807a97b5cc184cda7a"
 dependencies = [
  "android-tzdata",
  "iana-time-zone",
  "num-traits",
  "serde",
- "windows-targets 0.48.5",
+ "windows-targets 0.52.0",
 ]
 
 [[package]]
@@ -1498,19 +1498,6 @@ dependencies = [
 
 [[package]]
 name = "graphql-http"
-version = "0.2.0"
-source = "git+https://github.com/edgeandnode/toolshed.git?tag=graphql-http-v0.2.0#94b7b1982bb1d95300975e40c25d3c7f78107ce2"
-dependencies = [
- "anyhow",
- "async-trait",
- "reqwest",
- "serde",
- "serde_json",
- "thiserror",
-]
-
-[[package]]
-name = "graphql-http"
 version = "0.2.1"
 dependencies = [
  "anyhow",
@@ -1525,6 +1512,19 @@ dependencies = [
  "serde_json",
  "thiserror",
  "tokio",
+]
+
+[[package]]
+name = "graphql-http"
+version = "0.2.1"
+source = "git+https://github.com/edgeandnode/toolshed.git?tag=graphql-http-v0.2.1#b2ba62e7eedf24b98f999797c4955527de6c3e64"
+dependencies = [
+ "anyhow",
+ "async-trait",
+ "reqwest",
+ "serde",
+ "serde_json",
+ "thiserror",
 ]
 
 [[package]]
@@ -3253,7 +3253,7 @@ dependencies = [
  "bs58",
  "ethers",
  "ethers-core",
- "graphql-http 0.2.0",
+ "graphql-http 0.2.1 (git+https://github.com/edgeandnode/toolshed.git?tag=graphql-http-v0.2.1)",
  "indoc",
  "lazy_static",
  "reqwest",
