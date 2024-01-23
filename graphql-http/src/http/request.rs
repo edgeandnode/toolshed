@@ -35,6 +35,7 @@ pub trait IntoRequestParameters {
 }
 
 impl IntoRequestParameters for RequestParameters {
+    #[inline]
     fn into_request_parameters(self) -> RequestParameters {
         self
     }
