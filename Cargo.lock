@@ -3294,7 +3294,6 @@ dependencies = [
  "serde_cbor_2",
  "serde_json",
  "serde_with",
- "sha3",
  "test-with",
  "thiserror",
  "tokio",
