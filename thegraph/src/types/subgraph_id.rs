@@ -1,6 +1,5 @@
+use alloy_primitives::B256;
 use serde_with::{DeserializeFromStr, SerializeDisplay};
-
-use super::primitives::B256;
 
 #[derive(
     Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, SerializeDisplay, DeserializeFromStr,
