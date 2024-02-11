@@ -84,6 +84,27 @@ pub enum VerificationError {
     RecoveredSignerNotExpected,
 }
 
+pub fn recover_allocation(
+    domain: &Eip712Domain,
+    attestation: &Attestation,
+) -> Result<Address, VerificationError> {
+    let msg = Receipt {
+        requestCID: attestation.request_cid,
+        responseCID: attestation.response_cid,
+        subgraphDeploymentID: attestation.deployment,
+    };
+    let signing_hash: B256 = msg.eip712_signing_hash(domain);
+    let signature = Signature {
+        r: attestation.r.0.into(),
+        s: attestation.s.0.into(),
+        v: attestation.v.into(),
+    };
+    signature
+        .recover(RecoveryMessage::Hash(signing_hash.0.into()))
+        .map_err(|_| VerificationError::FailedSignerRecovery)
+        .map(|bytes| Address::from(bytes.0))
+}
+
 pub fn verify(
     domain: &Eip712Domain,
     attestation: &Attestation,
@@ -98,22 +119,8 @@ pub fn verify(
         return Err(VerificationError::InvalidResponseHash);
     }
 
-    let msg = Receipt {
-        requestCID: attestation.request_cid,
-        responseCID: attestation.response_cid,
-        subgraphDeploymentID: attestation.deployment,
-    };
-    let signing_hash: B256 = msg.eip712_signing_hash(domain);
-    let signature = Signature {
-        r: attestation.r.0.into(),
-        s: attestation.s.0.into(),
-        v: attestation.v.into(),
-    };
-    let signer = signature
-        .recover(RecoveryMessage::Hash(signing_hash.0.into()))
-        .map_err(|_| VerificationError::FailedSignerRecovery)?;
-
-    if signer.0 != expected_signer {
+    let signer = recover_allocation(domain, attestation)?;
+    if &signer != expected_signer {
         return Err(VerificationError::RecoveredSignerNotExpected);
     }
 
