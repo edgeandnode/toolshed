@@ -108,7 +108,7 @@ where
     Ok(values.into_iter().map(|v| v.0).collect())
 }
 
-fn serialize_list<S>(list: &Vec<StaticValue>, ser: S) -> Result<S::Ok, S::Error>
+fn serialize_list<S>(list: &[StaticValue], ser: S) -> Result<S::Ok, S::Error>
 where
     S: Serializer,
 {
