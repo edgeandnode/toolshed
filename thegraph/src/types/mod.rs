@@ -11,3 +11,6 @@ pub mod block_pointer;
 pub mod deployment_id;
 pub mod poi;
 pub mod subgraph_id;
+
+pub use alloy_primitives;
+pub use alloy_primitives::{Address, FixedBytes, B256, U256};
