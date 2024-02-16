@@ -1,4 +1,4 @@
-use alloy_primitives::{keccak256, FixedBytes};
+use alloy_primitives::keccak256;
 pub use alloy_sol_types::Eip712Domain;
 use alloy_sol_types::SolStruct;
 pub use ethers_core::k256::ecdsa::SigningKey;
@@ -7,8 +7,7 @@ use lazy_static::lazy_static;
 use serde::{Deserialize, Serialize};
 
 use super::deployment_id::DeploymentId;
-pub use super::primitives::Address;
-use super::primitives::{B256, U256};
+use super::{Address, FixedBytes, B256, U256};
 
 lazy_static! {
     static ref ATTESTATION_EIP712_DOMAIN_SALT: B256 =
