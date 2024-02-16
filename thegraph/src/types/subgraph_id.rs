@@ -76,14 +76,14 @@ mod tests {
 
     #[test]
     fn parse_valid_v2_id() {
-        //// Given
+        //* Given
         let valid_id = ID_V2;
         let expected_id = EXPECTED_ID_BYTES.parse::<B256>().unwrap();
 
-        //// When
+        //* When
         let parsed_id = valid_id.parse::<SubgraphId>();
 
-        //// Then
+        //* Then
         assert_matches!(parsed_id, Ok(id) => {
             assert_eq!(id.0, expected_id);
         });
@@ -91,14 +91,14 @@ mod tests {
 
     #[test]
     fn decode_subgraph_id_from_v2_string() {
-        //// Given
+        //* Given
         let valid_id = ID_V2;
         let expected_id = EXPECTED_ID_BYTES.parse::<B256>().unwrap();
 
-        //// When
+        //* When
         let parsed_id = valid_id.parse::<SubgraphId>();
 
-        //// Then
+        //* Then
         assert_matches!(parsed_id, Ok(id) => {
             assert_eq!(id.0, expected_id);
         });
@@ -106,13 +106,13 @@ mod tests {
 
     #[test]
     fn decode_failure_on_invalid_string() {
-        //// Given
+        //* Given
         let invalid_id = "invalid";
 
-        //// When
+        //* When
         let parsed_id = invalid_id.parse::<SubgraphId>();
 
-        //// Then
+        //* Then
         assert_matches!(parsed_id, Err(err) => {
             assert_eq!(err, "invalid subgraph ID");
         });
@@ -120,14 +120,14 @@ mod tests {
 
     #[test]
     fn subgraph_equality() {
-        //// Given
+        //* Given
         let expected_id = SubgraphId(EXPECTED_ID_BYTES.parse().unwrap());
         let expected_repr = ID_V2;
 
-        //// When
+        //* When
         let parsed_id = ID_V2.parse::<SubgraphId>();
 
-        //// Then
+        //* Then
         assert_matches!(parsed_id, Ok(id) => {
             // Assert the IDs internal representation is correct
             assert_eq!(id, expected_id);

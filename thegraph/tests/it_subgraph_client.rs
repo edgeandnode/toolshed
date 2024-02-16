@@ -1,5 +1,4 @@
 #![cfg(feature = "subgraph-client")]
-#![allow(clippy::four_forward_slashes)]
 
 use assert_matches::assert_matches;
 use serde::Deserialize;
@@ -23,19 +22,19 @@ fn test_query_key() -> String {
 #[test_with::env(THEGRAPH_TEST_QUERY_KEY)]
 #[tokio::test]
 async fn send_subgraph_meta_query_request() {
-    //// Given
+    //* Given
     let ticket = test_query_key();
 
     let http_client = reqwest::Client::new();
     let subgraph_url = test_url("https://gateway.thegraph.com/api/deployments/id/QmRbgjyzEgfxGbodu6itfkXCQ5KA9oGxKscrcQ9QuF88oT");
 
-    //// When
+    //* When
     let req_fut = send_subgraph_meta_query(&http_client, subgraph_url, Some(&ticket));
     let res = tokio::time::timeout(std::time::Duration::from_secs(10), req_fut)
         .await
         .expect("Timeout on subgraph meta query");
 
-    //// Then
+    //* Then
     // Assert the query succeeded and we get a non-empty block number and hash.
     assert_matches!(res, Ok(SubgraphMetaQueryResponse { meta }) => {
         assert!(meta.block.number > 0);
@@ -46,7 +45,7 @@ async fn send_subgraph_meta_query_request() {
 #[test_with::env(THEGRAPH_TEST_QUERY_KEY)]
 #[tokio::test]
 async fn send_subgraph_page_query_request() {
-    //// Given
+    //* Given
     const PAGE_REQUEST_BATCH_SIZE: usize = 6;
 
     let ticket = test_query_key();
@@ -69,7 +68,7 @@ async fn send_subgraph_page_query_request() {
         }
         "#;
 
-    //// When
+    //* When
     let req_fut = send_subgraph_page_query(
         &http_client,
         subgraph_url,
@@ -83,7 +82,7 @@ async fn send_subgraph_page_query_request() {
         .await
         .expect("Timeout on subgraph meta query");
 
-    //// Then
+    //* Then
     assert_matches!(res, Ok(Ok(resp)) => {
         // Assert meta data is present and valid.
         assert!(resp.meta.block.number > 0);
@@ -97,7 +96,7 @@ async fn send_subgraph_page_query_request() {
 #[test_with::env(THEGRAPH_TEST_QUERY_KEY)]
 #[tokio::test]
 async fn client_send_query() {
-    //// Given
+    //* Given
     let ticket = test_query_key();
 
     let http_client = reqwest::Client::new();
@@ -120,13 +119,13 @@ async fn client_send_query() {
         meta: Meta,
     }
 
-    //// When
+    //* When
     let req_fut = client.query::<SubgraphMetaQueryResponse>(SUBGRAPH_META_QUERY_DOCUMENT);
     let res = tokio::time::timeout(std::time::Duration::from_secs(10), req_fut)
         .await
         .expect("Timeout on subgraph meta query");
 
-    //// Then
+    //* Then
     // Assert the query succeeded and we get a non-empty block number and hash.
     assert_matches!(res, Ok(SubgraphMetaQueryResponse { meta }) => {
         assert!(meta.block.number > 0);
@@ -137,7 +136,7 @@ async fn client_send_query() {
 #[test_with::env(THEGRAPH_TEST_QUERY_KEY)]
 #[tokio::test]
 async fn send_subgraph_paginated() {
-    //// Given
+    //* Given
     let ticket = test_query_key();
     let subgraph_url = test_url("https://gateway.thegraph.com/api/deployments/id/QmRbgjyzEgfxGbodu6itfkXCQ5KA9oGxKscrcQ9QuF88oT");
 
@@ -168,13 +167,13 @@ async fn send_subgraph_paginated() {
         pub id: SubgraphId,
     }
 
-    //// When
+    //* When
     let req_fut = client.paginated_query::<Subgraph>(SUBGRAPHS_QUERY_DOCUMENT);
     let res = tokio::time::timeout(std::time::Duration::from_secs(10), req_fut)
         .await
         .expect("Timeout on subgraph paginated query");
 
-    //// Then
+    //* Then
     // Assert the query succeeded and we got a non-empty list of active subscriptions.
     assert_matches!(res, Ok(vec) => {
         assert!(!vec.is_empty());

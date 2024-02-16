@@ -161,14 +161,14 @@ mod tests {
 
     #[test]
     fn parse_valid_cidv0() {
-        //// Given
+        //* Given
         let valid_cid = VALID_CID;
         let expected_bytes = VALID_HEX.parse::<B256>().unwrap();
 
-        //// When
+        //* When
         let parsed_id = parse_cidv0(valid_cid);
 
-        //// Then
+        //* Then
         assert_matches!(parsed_id, Ok(id) => {
             assert_eq!(id, expected_bytes);
         });
@@ -176,13 +176,13 @@ mod tests {
 
     #[test]
     fn parse_invalid_lenght_cidv0() {
-        //// Given
+        //* Given
         let invalid_cid = "QmA";
 
-        //// When
+        //* When
         let parsed_id = parse_cidv0(invalid_cid);
 
-        //// Then
+        //* Then
         assert_matches!(parsed_id, Err(err) => {
             assert_eq!(err, DeploymentIdError::InvalidIpfsHashLength {
                 value: invalid_cid.to_string(),
@@ -193,13 +193,13 @@ mod tests {
 
     #[test]
     fn parse_invalid_encoding_cidv0() {
-        //// Given
+        //* Given
         let invalid_cid = "QmfVqZ9gPyMdU6TznRUh+Y0ui7J5zym+v9BofcmEWOf4k=";
 
-        //// When
+        //* When
         let parsed_id = parse_cidv0(invalid_cid);
 
-        //// Then
+        //* Then
         assert_matches!(parsed_id, Err(err) => {
             assert_eq!(err, DeploymentIdError::InvalidIpfsHash {
                 value: invalid_cid.to_string(),
@@ -213,14 +213,14 @@ mod tests {
 
     #[test]
     fn parse_valid_hexstr() {
-        //// Given
+        //* Given
         let valid_hex = VALID_HEX;
         let expected_bytes = VALID_HEX.parse::<B256>().unwrap();
 
-        //// When
+        //* When
         let parsed_id = parse_hexstr(valid_hex);
 
-        //// Then
+        //* Then
         assert_matches!(parsed_id, Ok(id) => {
             assert_eq!(id, expected_bytes);
         });
@@ -228,13 +228,13 @@ mod tests {
 
     #[test]
     fn parse_invalid_hexstr() {
-        //// Given
+        //* Given
         let invalid_hex = "0x0123456789ABCDEF";
 
-        //// When
+        //* When
         let parsed_id = parse_hexstr(invalid_hex);
 
-        //// Then
+        //* Then
         assert_matches!(parsed_id, Err(err) => {
             assert_eq!(err, DeploymentIdError::InvalidHexString {
                 value: invalid_hex.to_string(),
@@ -245,31 +245,31 @@ mod tests {
 
     #[test]
     fn format_into_cidv0() {
-        //// Given
+        //* Given
         let bytes = VALID_HEX.parse::<B256>().unwrap();
         let expected_cid = VALID_CID;
 
-        //// When
+        //* When
         let cid = format_cidv0(bytes);
 
-        //// Then
+        //* Then
         assert_eq!(cid, expected_cid);
     }
 
     #[test]
     fn deployment_id_equality() {
-        //// Given
+        //* Given
         let valid_cid = VALID_CID;
         let valid_hex = VALID_HEX;
 
         let expected_id = DeploymentId(VALID_HEX.parse().unwrap());
         let expected_repr = VALID_CID;
 
-        //// When
+        //* When
         let parsed_id1 = DeploymentId::from_str(valid_cid);
         let parsed_id2 = DeploymentId::from_str(valid_hex);
 
-        //// Then
+        //* Then
         assert_matches!((parsed_id1, parsed_id2), (Ok(id1), Ok(id2)) => {
             // Assert the two IDs internal representation is correct
             assert_eq!(id1, expected_id);
