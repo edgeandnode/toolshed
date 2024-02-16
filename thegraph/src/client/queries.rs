@@ -1,7 +1,7 @@
 use graphql_http::http::request::IntoRequestParameters;
 use graphql_http::http_client::{ReqwestExt, ResponseResult};
 use serde::de::DeserializeOwned;
-use toolshed::url::Url;
+use url::Url;
 
 /// Send an authenticated GraphQL query to a subgraph.
 pub async fn send_query<T>(
@@ -13,7 +13,7 @@ pub async fn send_query<T>(
 where
     T: DeserializeOwned,
 {
-    let mut builder = client.post(url.0);
+    let mut builder = client.post(url);
 
     if let Some(ticket) = ticket {
         builder = builder.bearer_auth(ticket)
@@ -48,7 +48,7 @@ where
 pub mod meta {
     use crate::types::BlockPointer;
     use serde::Deserialize;
-    use toolshed::url::Url;
+    use url::Url;
 
     use super::send_query;
 
@@ -82,7 +82,7 @@ pub mod page {
     use graphql_http::http_client::ResponseResult;
     use serde::{Deserialize, Serialize};
     use serde_json::value::RawValue;
-    use toolshed::url::Url;
+    use url::Url;
 
     use indoc::indoc;
 

@@ -3,7 +3,7 @@ use graphql_http::graphql::IntoDocument;
 use graphql_http::http::request::IntoRequestParameters;
 use graphql_http::http_client::ResponseError;
 use serde::de::Deserialize;
-use toolshed::url::Url;
+use url::Url;
 
 use crate::types::BlockPointer;
 
