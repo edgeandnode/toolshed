@@ -15,7 +15,7 @@ const TEST_SERVER_URL: &str = "https://swapi-graphql.netlify.app/.netlify/functi
 
 #[tokio::test]
 async fn send_valid_graphql_request_no_variables() {
-    //// Given
+    //* Given
     let client = reqwest::Client::new();
     let server_url: Url = TEST_SERVER_URL.parse().unwrap();
 
@@ -53,14 +53,14 @@ async fn send_valid_graphql_request_no_variables() {
         release_date: String,
     }
 
-    //// When
+    //* When
     let req_fut = client.post(server_url).send_graphql::<QueryResponse>(query);
     let response = tokio::time::timeout(Duration::from_secs(30), req_fut)
         .await
         .expect("Request timed out")
         .expect("Request failed");
 
-    //// Then
+    //* Then
     assert_matches!(response, Ok(QueryResponse { all_films: AllFilms { films } }) => {
         assert_eq!(films.len(), 6);
 
@@ -84,7 +84,7 @@ async fn send_valid_graphql_request_no_variables() {
 
 #[tokio::test]
 async fn send_valid_graphql_request_with_variables() {
-    //// Given
+    //* Given
     let client = reqwest::Client::new();
     let server_url: Url = TEST_SERVER_URL.parse().unwrap();
 
@@ -138,7 +138,7 @@ async fn send_valid_graphql_request_with_variables() {
         release_date: String,
     }
 
-    //// When
+    //* When
     let req_fut = client
         .post(server_url)
         .send_graphql::<QueryResponse>(FilmRequest::new(1));
@@ -147,7 +147,7 @@ async fn send_valid_graphql_request_with_variables() {
         .expect("Request timed out")
         .expect("Request failed");
 
-    //// Then
+    //* Then
     assert_matches!(response, Ok(QueryResponse { film }) => {
         assert_eq!(film.title, "A New Hope");
         assert_eq!(film.director, "George Lucas");

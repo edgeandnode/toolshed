@@ -32,7 +32,7 @@ mod test_queries {
 
 #[tokio::test]
 async fn send_valid_graphql_request_no_variables() {
-    //// Given
+    //* Given
     let client = reqwest::Client::new();
     let server_url: Url = TEST_SERVER_URL.parse().unwrap();
 
@@ -66,7 +66,7 @@ async fn send_valid_graphql_request_no_variables() {
         release_date: String,
     }
 
-    //// When
+    //* When
     // Build the GraphQL query
     let query = test_queries::AllFilms::build_query(test_queries::all_films::Variables {});
 
@@ -76,7 +76,7 @@ async fn send_valid_graphql_request_no_variables() {
         .expect("Request timed out")
         .expect("Request failed");
 
-    //// Then
+    //* Then
     assert_matches!(response, Ok(QueryResponse { all_films: QueryResponseAllFilms { films } }) => {
         assert_eq!(films.len(), 6);
 
@@ -100,7 +100,7 @@ async fn send_valid_graphql_request_no_variables() {
 
 #[tokio::test]
 async fn send_valid_graphql_request_with_variables() {
-    //// Given
+    //* Given
     let client = reqwest::Client::new();
     let server_url: Url = TEST_SERVER_URL.parse().unwrap();
 
@@ -129,7 +129,7 @@ async fn send_valid_graphql_request_with_variables() {
         release_date: String,
     }
 
-    //// When
+    //* When
     // Build the GraphQL query
     let request =
         test_queries::FilmByFilmId::build_query(test_queries::film_by_film_id::Variables {
@@ -144,7 +144,7 @@ async fn send_valid_graphql_request_with_variables() {
         .expect("Request timed out")
         .expect("Request failed");
 
-    //// Then
+    //* Then
     assert_matches!(response, Ok(QueryResponse { film }) => {
         assert_eq!(film.title, "A New Hope");
         assert_eq!(film.director, "George Lucas");
