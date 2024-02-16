@@ -3297,8 +3297,8 @@ dependencies = [
  "test-with",
  "thiserror",
  "tokio",
- "toolshed 0.5.0 (git+https://github.com/edgeandnode/toolshed.git?tag=toolshed-v0.5.0)",
  "tracing",
+ "url",
 ]
 
 [[package]]
@@ -3499,16 +3499,6 @@ name = "toolshed"
 version = "0.5.0"
 dependencies = [
  "tokio",
- "url",
-]
-
-[[package]]
-name = "toolshed"
-version = "0.5.0"
-source = "git+https://github.com/edgeandnode/toolshed.git?tag=toolshed-v0.5.0#211f7d7c4ede10f35b6ebd123a4d3ec8342c9f5e"
-dependencies = [
- "tokio",
- "url",
 ]
 
 [[package]]

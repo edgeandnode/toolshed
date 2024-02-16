@@ -2,7 +2,7 @@
 
 use assert_matches::assert_matches;
 use serde::Deserialize;
-use toolshed::url::Url;
+use url::Url;
 
 use thegraph::client::queries::meta::{send_subgraph_meta_query, SubgraphMetaQueryResponse};
 use thegraph::client::queries::page::{send_subgraph_page_query, BlockHeight};

@@ -5,11 +5,5 @@ version = "0.5.0"
 edition = "2021"
 rust-version = "1.65.0"
 
-
-[features]
-default = ["url"]
-url = ["dep:url"]
-
 [dependencies]
-url = { version = "2.5", optional = true }
 tokio = { version = "1.36", features = ["sync"] }
