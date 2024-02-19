@@ -49,7 +49,7 @@ jobs:
 
       - run: cargo clippy --all --all-targets --all-features
 
-  release-check:
+  check-release:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
@@ -88,11 +88,19 @@ jobs:
       - name: Integration tests
         run: cargo test --verbose --workspace --all-features --tests '*' -- --nocapture
 
-  # Check semver compatibility
+  # Check semver compatibility (on pull requests only)
   semver:
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
-    needs: [rustfmt, clippy, release-check, tests]
+    needs: [rustfmt, clippy, check-release, tests]
     steps:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
+
+      - name: Install cargo-semver-checks
+        uses: baptiste0928/cargo-install@1cd874a5478fdca35d868ccc74640c5aabbb8f1b # v3
+        with:
+          crate: cargo-semver-checks
+
       - name: Check semver
-        uses: obi1kenobi/cargo-semver-checks-action@48f4ef7da6d907d69d18249e0ba79aa98c61b9db # v2
+        run: cargo semver-checks --baseline-rev=${{ github.event.pull_request.base.sha }}
+
