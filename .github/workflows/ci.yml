@@ -2,7 +2,7 @@ name: ci
 on:
   pull_request:
   push:
-    branches: [ master ]
+    branches: [ main ]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
@@ -13,77 +13,31 @@ env:
   RUST_BACKTRACE: full
 
 jobs:
-  rustfmt:
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    env:
-      RUSTFLAGS: "-D warnings"
-    steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
-      - name: Setup Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          toolchain: stable
-          components: rustfmt
-
-      - name: Cache rust cargo build files
-        uses: Leafwing-Studios/cargo-cache@5edda26afa3d28be5d6ee87d4c69c246e3ee37fb # v1
-
-      - run: cargo fmt --all -- --check
-
-  clippy:
+  test:
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    env:
-      RUSTFLAGS: "-D warnings --force-warn deprecated --force-warn dead-code"
     steps:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
-      - name: Setup Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
+
+      - uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: stable
-          components: clippy
+          components: rustfmt, clippy
 
-      - name: Cache rust cargo build files
+      - name: Cache rust build files
         uses: Leafwing-Studios/cargo-cache@5edda26afa3d28be5d6ee87d4c69c246e3ee37fb # v1
 
-      - run: cargo clippy --all --all-targets --all-features
-
-  release-check:
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    env:
-      RUSTFLAGS: "-D warnings --force-warn deprecated --force-warn dead-code"
-    steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
-      - name: Setup Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          toolchain: stable
-
-      - name: Cache rust cargo build files
-        uses: Leafwing-Studios/cargo-cache@5edda26afa3d28be5d6ee87d4c69c246e3ee37fb # v1
+      - name: rustfmt
+        run: cargo fmt --all -- --check
 
       - name: check (release)
-        run: cargo check --release --all --all-targets --all-features
+        run: cargo check --workspace --all-targets --all-features --release
 
-  tests:
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    env:
-      RUSTFLAGS: "-D warnings --force-warn deprecated --force-warn dead-code"
-    steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
-      - name: Setup Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          toolchain: stable
+      - name: clippy
+        run: cargo clippy --workspace --all-targets --all-features -- -D warnings --force-warn deprecated --force-warn dead-code
 
-      - name: Cache rust cargo build files
-        uses: Leafwing-Studios/cargo-cache@5edda26afa3d28be5d6ee87d4c69c246e3ee37fb # v1
+      - name: unit-tests
+        run: cargo test --workspace --all-features --lib
 
-      - name: Unit tests
-        run: cargo test --verbose --workspace --all-features --lib -- --nocapture
-
-      - name: Integration tests
-        run: cargo test --verbose --workspace --all-features --tests '*' -- --nocapture
+      - name: integration-tests
+        run: cargo test --workspace --all-features --tests '*'
