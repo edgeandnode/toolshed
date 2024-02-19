@@ -35,7 +35,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
-      RUSTFLAGS: "-D warnings --force-warn deprecated --force-warn dead-code"
+      RUSTFLAGS: "-D warnings --force-warn deprecated --force-warn dead-code --no-deps"
     steps:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
       - name: Setup Rust toolchain
@@ -47,7 +47,7 @@ jobs:
       - name: Cache rust cargo build files
         uses: Leafwing-Studios/cargo-cache@5edda26afa3d28be5d6ee87d4c69c246e3ee37fb # v1
 
-      - run: cargo clippy --all --all-targets --all-features --no-deps
+      - run: cargo clippy --all --all-targets --all-features
 
   check-release:
     runs-on: ubuntu-latest
