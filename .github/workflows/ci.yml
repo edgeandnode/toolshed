@@ -2,7 +2,7 @@ name: ci
 on:
   pull_request:
   push:
-    branches: [ master ]
+    branches: [ main ]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
@@ -87,3 +87,12 @@ jobs:
 
       - name: Integration tests
         run: cargo test --verbose --workspace --all-features --tests '*' -- --nocapture
+
+  # Check semver compatibility
+  semver:
+    runs-on: ubuntu-latest
+    needs: [rustfmt, clippy, release-check, tests]
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
+      - name: Check semver
+        uses: obi1kenobi/cargo-semver-checks-action@48f4ef7da6d907d69d18249e0ba79aa98c61b9db # v2
