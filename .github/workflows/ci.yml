@@ -102,5 +102,5 @@ jobs:
           crate: cargo-semver-checks
 
       - name: Check semver
-        run: cargo semver-checks --baseline-rev=${{ github.event.pull_request.base.sha }}
+        run: cargo semver-checks --baseline-rev=${{ github.event.pull_request.base.sha }} --verbose
 
