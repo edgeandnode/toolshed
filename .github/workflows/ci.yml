@@ -35,7 +35,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
-      RUSTFLAGS: "-D warnings --force-warn deprecated --force-warn dead-code --no-deps"
+      RUSTFLAGS: "-D warnings --force-warn deprecated --force-warn dead-code"
     steps:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
       - name: Setup Rust toolchain
