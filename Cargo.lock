@@ -3497,9 +3497,6 @@ dependencies = [
 [[package]]
 name = "toolshed"
 version = "0.6.0"
-dependencies = [
- "tokio",
-]
 
 [[package]]
 name = "tower-service"
