@@ -1,0 +1,10 @@
+[package]
+name = "thegraph-core"
+description = "A collection of Rust modules shared between The Graph's network services"
+version = "0.0.0" # Reserved
+edition = "2021"
+authors = ["Lorenzo Delgado (LNSD) <lorenzo@edgeandnode.com>"]
+license = "MIT"
+readme = "README.md"
+
+[dependencies]

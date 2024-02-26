@@ -1,8 +1,9 @@
 [workspace]
 resolver = "2"
 members = [
-    "toolshed",
     "graphql",
     "graphql-http",
-    "thegraph"
+    "thegraph",
+    "thegraph-core",
+    "toolshed",
 ]
