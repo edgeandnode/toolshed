@@ -3301,6 +3301,18 @@ dependencies = [
 [[package]]
 name = "thegraph-core"
 version = "0.0.0"
+dependencies = [
+ "alloy-primitives",
+ "alloy-sol-types",
+ "assert_matches",
+ "async-graphql",
+ "bs58",
+ "ethers-core",
+ "lazy_static",
+ "serde",
+ "serde_with",
+ "thiserror",
+]
 
 [[package]]
 name = "thiserror"
