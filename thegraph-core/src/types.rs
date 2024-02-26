@@ -5,6 +5,12 @@ pub use alloy_primitives;
 pub use alloy_sol_types;
 pub use ethers_core;
 
+pub use attestation::*;
+pub use block_pointer::*;
+pub use deployment_id::*;
+pub use poi::*;
+pub use subgraph_id::*;
+
 pub mod attestation;
 pub mod block_pointer;
 pub mod deployment_id;
