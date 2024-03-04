@@ -2,8 +2,6 @@
 resolver = "2"
 members = [
     "graphql",
-    "graphql-http",
-    "thegraph",
     "thegraph-core",
     "thegraph-graphql-http",
     "toolshed",
