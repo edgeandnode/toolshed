@@ -26,7 +26,7 @@ alloy-chains = { version = "0.1", features = ["serde"], optional = true }
 alloy-primitives = { version = "0.6", features = ["serde"] }
 alloy-sol-types = "0.6"
 async-graphql = "7.0"
-base64 = { version = "0.21", optional = true }
+base64 = { version = "0.22", optional = true }
 bs58 = "0.5"
 ethers = { version = "2.0", default-features = false, optional = true }
 ethers-core = { version = "2.0", default-features = false }
