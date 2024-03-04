@@ -2,10 +2,11 @@
 name = "thegraph-core"
 description = "A collection of Rust modules shared between The Graph's network services"
 version = "0.1.0"
-edition = "2021"
+repository = "https://github.com/edgeandnode/toolshed"
 authors = ["Lorenzo Delgado (LNSD) <lorenzo@edgeandnode.com>"]
 license = "MIT"
-readme = "README.md"
+edition = "2021"
+rust-version = "1.71.1"
 
 [features]
 async-graphql-support = ["dep:async-graphql"]

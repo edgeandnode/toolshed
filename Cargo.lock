@@ -3315,6 +3315,23 @@ dependencies = [
 ]
 
 [[package]]
+name = "thegraph-graphql-http"
+version = "0.1.0"
+dependencies = [
+ "assert_matches",
+ "async-graphql",
+ "async-trait",
+ "graphql-parser",
+ "graphql_client",
+ "indoc",
+ "reqwest",
+ "serde",
+ "serde_json",
+ "thiserror",
+ "tokio",
+]
+
+[[package]]
 name = "thiserror"
 version = "1.0.57"
 source = "registry+https://github.com/rust-lang/crates.io-index"
