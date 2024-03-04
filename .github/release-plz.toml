@@ -8,3 +8,7 @@ release = false             # Disable release-plz for the workspace
 [[package]]
 name = "thegraph-core"
 release = true          # Enable release-plz for the package
+
+[[package]]
+name = "thegraph-graphql-http"
+release = true          # Enable release-plz for the package
