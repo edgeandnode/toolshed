@@ -136,12 +136,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "anyhow"
-version = "1.0.80"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5ad32ce52e4161730f7098c077cd2ed6229b5804ccf99e5366be1ab72a98b4e1"
-
-[[package]]
 name = "ark-ff"
 version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1496,36 +1490,6 @@ dependencies = [
  "firestorm",
  "graphql-parser",
  "serde",
-]
-
-[[package]]
-name = "graphql-http"
-version = "0.2.1"
-dependencies = [
- "assert_matches",
- "async-graphql",
- "async-trait",
- "graphql-parser",
- "graphql_client",
- "indoc",
- "reqwest",
- "serde",
- "serde_json",
- "thiserror",
- "tokio",
-]
-
-[[package]]
-name = "graphql-http"
-version = "0.2.1"
-source = "git+https://github.com/edgeandnode/toolshed.git?tag=graphql-http-v0.2.1#b2ba62e7eedf24b98f999797c4955527de6c3e64"
-dependencies = [
- "anyhow",
- "async-trait",
- "reqwest",
- "serde",
- "serde_json",
- "thiserror",
 ]
 
 [[package]]
@@ -3274,34 +3238,6 @@ dependencies = [
  "quote",
  "regex",
  "syn 2.0.52",
-]
-
-[[package]]
-name = "thegraph"
-version = "0.6.0"
-dependencies = [
- "alloy-chains",
- "alloy-primitives",
- "alloy-sol-types",
- "assert_matches",
- "async-graphql",
- "base64 0.21.7",
- "bs58",
- "ethers",
- "ethers-core",
- "graphql-http 0.2.1 (git+https://github.com/edgeandnode/toolshed.git?tag=graphql-http-v0.2.1)",
- "indoc",
- "lazy_static",
- "reqwest",
- "serde",
- "serde_cbor_2",
- "serde_json",
- "serde_with",
- "test-with",
- "thiserror",
- "tokio",
- "tracing",
- "url",
 ]
 
 [[package]]
