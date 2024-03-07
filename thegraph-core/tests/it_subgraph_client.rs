@@ -10,24 +10,27 @@ use thegraph_core::client::queries::page::{send_subgraph_page_query, BlockHeight
 use thegraph_core::client::Client as SubgraphClient;
 use thegraph_core::types::{BlockPointer, SubgraphId};
 
-/// Test helper to parse a URL.
-fn test_url(url: &str) -> Url {
-    url.parse().expect("Invalid URL")
+/// Test helper to get the test url from the environment.
+fn test_url() -> Url {
+    std::env::var("IT_TEST_SUBGRAPH_QUERY_URL")
+        .expect("Missing IT_TEST_SUBGRAPH_QUERY_URL")
+        .parse()
+        .expect("Invalid IT_TEST_SUBGRAPH_QUERY_URL")
 }
 
 /// Test helper to get the test query key from the environment.
 fn test_query_key() -> String {
-    std::env::var("IT_TEST_QUERY_KEY").expect("Missing IT_TEST_QUERY_KEY")
+    std::env::var("IT_TEST_SUBGRAPH_QUERY_AUTH").expect("Missing IT_TEST_SUBGRAPH_QUERY_AUTH")
 }
 
-#[test_with::env(IT_TEST_QUERY_KEY)]
+#[test_with::env(IT_TEST_SUBGRAPH_QUERY_URL, IT_TEST_SUBGRAPH_QUERY_AUTH)]
 #[tokio::test]
 async fn send_subgraph_meta_query_request() {
     //* Given
+    let subgraph_url = test_url();
     let ticket = test_query_key();
 
     let http_client = reqwest::Client::new();
-    let subgraph_url = test_url("https://gateway.thegraph.com/api/deployments/id/QmRbgjyzEgfxGbodu6itfkXCQ5KA9oGxKscrcQ9QuF88oT");
 
     //* When
     let req_fut = send_subgraph_meta_query(&http_client, subgraph_url, Some(&ticket));
@@ -43,16 +46,16 @@ async fn send_subgraph_meta_query_request() {
     });
 }
 
-#[test_with::env(IT_TEST_QUERY_KEY)]
+#[test_with::env(IT_TEST_SUBGRAPH_QUERY_URL, IT_TEST_SUBGRAPH_QUERY_AUTH)]
 #[tokio::test]
 async fn send_subgraph_page_query_request() {
     //* Given
     const PAGE_REQUEST_BATCH_SIZE: usize = 6;
 
     let ticket = test_query_key();
+    let subgraph_url = test_url();
 
     let http_client = reqwest::Client::new();
-    let subgraph_url = test_url("https://gateway.thegraph.com/api/deployments/id/QmRbgjyzEgfxGbodu6itfkXCQ5KA9oGxKscrcQ9QuF88oT");
 
     // Query all subgraph ids.
     const SUBGRAPHS_QUERY_DOCUMENT: &str = r#"
@@ -94,14 +97,14 @@ async fn send_subgraph_page_query_request() {
     });
 }
 
-#[test_with::env(IT_TEST_QUERY_KEY)]
+#[test_with::env(IT_TEST_SUBGRAPH_QUERY_URL, IT_TEST_SUBGRAPH_QUERY_AUTH)]
 #[tokio::test]
 async fn client_send_query() {
     //* Given
     let ticket = test_query_key();
 
     let http_client = reqwest::Client::new();
-    let subgraph_url = test_url("https://gateway.thegraph.com/api/deployments/id/QmRbgjyzEgfxGbodu6itfkXCQ5KA9oGxKscrcQ9QuF88oT");
+    let subgraph_url = test_url();
 
     let client = SubgraphClient::builder(http_client, subgraph_url)
         .with_auth_token(Some(ticket))
@@ -134,12 +137,12 @@ async fn client_send_query() {
     });
 }
 
-#[test_with::env(IT_TEST_QUERY_KEY)]
+#[test_with::env(IT_TEST_SUBGRAPH_QUERY_URL, IT_TEST_SUBGRAPH_QUERY_AUTH)]
 #[tokio::test]
 async fn send_subgraph_paginated() {
     //* Given
     let ticket = test_query_key();
-    let subgraph_url = test_url("https://gateway.thegraph.com/api/deployments/id/QmRbgjyzEgfxGbodu6itfkXCQ5KA9oGxKscrcQ9QuF88oT");
+    let subgraph_url = test_url();
 
     let http_client = reqwest::Client::new();
 
