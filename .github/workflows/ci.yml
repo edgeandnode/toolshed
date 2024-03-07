@@ -36,8 +36,27 @@ jobs:
       - name: clippy
         run: cargo clippy --workspace --all-targets --all-features -- -D warnings --force-warn deprecated --force-warn dead-code
 
+      ## Tests
+      # Install sops (needed for decrypting tests .env file)
+      - name: Setup sops
+        uses: nhedger/setup-sops@v2
+
+      # Install age (needed for decrypting tests .env file)
+      - name: Setup age
+        uses: alessiodionisi/setup-age-action@v1.3.0
+
       - name: unit-tests
-        run: cargo test --workspace --all-features --lib
+        uses: LNSD/sops-exec-action@v1
+        env:
+          SOPS_AGE_KEY: ${{ secrets.IT_TESTS_AGE_KEY }}
+        with:
+          env_file: .env
+          run: cargo test --workspace --all-features --lib
 
       - name: integration-tests
-        run: cargo test --workspace --all-features --tests '*'
+        uses: LNSD/sops-exec-action@v1
+        env:
+          SOPS_AGE_KEY: ${{ secrets.IT_TESTS_AGE_KEY }}
+        with:
+          env_file: .env
+          run: cargo test --workspace --all-features --test '*'
