@@ -3220,7 +3220,7 @@ dependencies = [
 
 [[package]]
 name = "thegraph-core"
-version = "0.2.2"
+version = "0.2.3"
 dependencies = [
  "alloy-chains",
  "alloy-primitives",
