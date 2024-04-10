@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.2](https://github.com/edgeandnode/toolshed/compare/thegraph-graphql-http-v0.1.1...thegraph-graphql-http-v0.1.2) - 2024-04-10
+
+### Other
+- *(thegraph-graphql-http)* update rust crate reqwest to v0.12 ([#152](https://github.com/edgeandnode/toolshed/pull/152))
+
 ## [0.1.1](https://github.com/edgeandnode/toolshed/compare/thegraph-graphql-http-v0.1.0...thegraph-graphql-http-v0.1.1) - 2024-04-10
 
 ### Other
