@@ -27,8 +27,8 @@ subscriptions = [
 
 [dependencies]
 alloy-chains = { version = "0.1.15", optional = true }
-alloy-primitives = { version = "0.6", features = ["serde"] }
-alloy-sol-types = "0.6"
+alloy-primitives = { version = "0.7", features = ["serde"] }
+alloy-sol-types = "0.7"
 async-graphql = { version = "7.0", optional = true }
 base64 = { version = "0.22", optional = true }
 bs58 = "0.5"
