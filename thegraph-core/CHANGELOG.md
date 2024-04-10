@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.4](https://github.com/edgeandnode/toolshed/compare/thegraph-core-v0.2.3...thegraph-core-v0.2.4) - 2024-04-10
+
+### Other
+- *(deps)* update rust crate reqwest to 0.12.3 ([#144](https://github.com/edgeandnode/toolshed/pull/144))
+
 ## [0.2.3](https://github.com/edgeandnode/toolshed/compare/thegraph-core-v0.2.2...thegraph-core-v0.2.3) - 2024-04-10
 
 ### Other
