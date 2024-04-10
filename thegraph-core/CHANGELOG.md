@@ -6,6 +6,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.3](https://github.com/edgeandnode/toolshed/compare/thegraph-core-v0.2.2...thegraph-core-v0.2.3) - 2024-04-10
+
+### Other
+- *(deps)* update alloy-rs core types monorepo to 0.7 ([#151](https://github.com/edgeandnode/toolshed/pull/151))
+- *(deps)* update rust crate indoc to 2.0.5 ([#146](https://github.com/edgeandnode/toolshed/pull/146))
+- *(deps)* update rust crate tokio to v1.37.0 ([#150](https://github.com/edgeandnode/toolshed/pull/150))
+- *(deps)* update rust crate serde_json to 1.0.115
+- *(deps)* update rust crate reqwest to 0.11.27 ([#143](https://github.com/edgeandnode/toolshed/pull/143))
+- *(deps)* update rust crate reqwest to 0.11.26 ([#140](https://github.com/edgeandnode/toolshed/pull/140))
+- *(deps)* update rust crate serde_with to 3.7 ([#138](https://github.com/edgeandnode/toolshed/pull/138))
+
 ## [0.2.2](https://github.com/edgeandnode/toolshed/compare/thegraph-core-v0.2.1...thegraph-core-v0.2.2) - 2024-03-11
 
 ### Other
