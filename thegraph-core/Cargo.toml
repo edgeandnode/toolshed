@@ -39,7 +39,7 @@ lazy_static = "1.4.0"
 reqwest = { version = "0.12", optional = true }
 serde = "1.0"
 serde_cbor_2 = { version = "0.12.0-dev", optional = true }
-serde_json = { version = "1.0.115", features = ["raw_value"], optional = true }
+serde_json = { version = "1.0.116", features = ["raw_value"], optional = true }
 serde_with = "3.7"
 thegraph-graphql-http = { version = "0.2", optional = true }
 thiserror = "1.0"
