@@ -24,8 +24,13 @@ pub enum RequestError {
     ResponseRecvError(reqwest::StatusCode, String),
 
     /// An error occurred while deserializing the GraphQL response.
-    #[error("Error deserializing GraphQL response body: {0}")]
-    ResponseDeserializationError(serde_json::Error),
+    #[error(
+        "Error deserializing GraphQL response. Unexpected response: {response}. Error: {error}"
+    )]
+    ResponseDeserializationError {
+        error: serde_json::Error,
+        response: String,
+    },
 }
 
 /// The possible errors results of a GraphQL-over-HTTP response.
@@ -223,8 +228,12 @@ mod reqwest_ext {
         })?;
 
         // Deserialize the response body.
-        let response = serde_json::from_slice(&response)
-            .map_err(RequestError::ResponseDeserializationError)?;
+        let response = serde_json::from_slice(&response).map_err(|error| {
+            RequestError::ResponseDeserializationError {
+                error,
+                response: String::from_utf8_lossy(&response).to_string(),
+            }
+        })?;
 
         Ok(process_response_body(response))
     }
