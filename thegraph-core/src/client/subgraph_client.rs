@@ -65,11 +65,7 @@ async fn send_paginated_query<T: for<'de> Deserialize<'de>>(
                         .iter()
                         .any(|err| err.contains("no block with that hash found"))
                     {
-                        tracing::info!("Reorg detected. Restarting query to try a new block.");
-
-                        last_id = None;
-                        query_block = None;
-                        continue;
+                        return Err("reorg detected".into());
                     }
 
                     return Err(errors.join(", "));
