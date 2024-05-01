@@ -6,6 +6,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.2](https://github.com/edgeandnode/toolshed/compare/thegraph-core-v0.3.1...thegraph-core-v0.3.2) - 2024-05-01
+
+### Fixed
+- *(subgraph_client)* fail fast on reorg detected ([#172](https://github.com/edgeandnode/toolshed/pull/172))
+
+### Other
+- *(deps)* update rust crate serde_with to 3.8 ([#166](https://github.com/edgeandnode/toolshed/pull/166))
+- *(deps)* update rust crate alloy-chains to 0.1.17 ([#165](https://github.com/edgeandnode/toolshed/pull/165))
+
 ## [0.3.1](https://github.com/edgeandnode/toolshed/compare/thegraph-core-v0.3.0...thegraph-core-v0.3.1) - 2024-04-22
 
 ### Other
