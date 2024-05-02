@@ -12,16 +12,16 @@ use super::queries::{
 };
 use crate::types::BlockPointer;
 
-const DEFAULT_SUBGRAPH_PAGE_QUERY_SIZE: usize = 200;
-
 async fn send_paginated_query<T: for<'de> Deserialize<'de>>(
     client: &reqwest::Client,
     subgraph_url: Url,
     query: impl IntoDocument + Clone,
     ticket: Option<&str>,
-    batch_size: usize,
+    page_size: usize,
     mut block_height: BlockHeight,
 ) -> Result<(Vec<T>, BlockPointer), String> {
+    debug_assert_ne!(page_size, 0, "page size must be greater than 0");
+
     // The last id of the previous batch.
     let mut last_id: Option<String> = None;
     // Block at which the query is executed.
@@ -36,7 +36,7 @@ async fn send_paginated_query<T: for<'de> Deserialize<'de>>(
             ticket,
             query.clone(),
             block_height,
-            batch_size,
+            page_size,
             last_id,
         )
         .await?;
@@ -95,9 +95,6 @@ pub struct Client {
     /// The latest block number that the subgraph has progressed to.
     /// This is set to 0 initially and updated after each paginated query.
     latest_block: BlockNumber,
-
-    /// The number of entities to fetch per paginated query.
-    page_size: usize,
 }
 
 impl Client {
@@ -113,7 +110,6 @@ impl Client {
             subgraph_url,
             auth_token: None,
             latest_block: 0,
-            page_size: DEFAULT_SUBGRAPH_PAGE_QUERY_SIZE,
         }
     }
 
@@ -149,6 +145,7 @@ impl Client {
     pub async fn paginated_query<T: for<'de> Deserialize<'de>>(
         &mut self,
         query: impl IntoDocument + Clone,
+        page_size: usize,
     ) -> Result<Vec<T>, String> {
         // Graph-node is rejecting values of `number_gte:0` on subgraphs with a larger `startBlock`.
         // This forces us to request the latest block number from the subgraph before sending the
@@ -171,7 +168,7 @@ impl Client {
             self.subgraph_url.clone(),
             query,
             self.auth_token.as_deref(),
-            self.page_size,
+            page_size,
             BlockHeight::NumberGte(self.latest_block),
         )
         .await?;
@@ -188,7 +185,6 @@ pub struct ClientBuilder {
     subgraph_url: Url,
     auth_token: Option<String>,
     latest_block: BlockNumber,
-    page_size: usize,
 }
 
 impl ClientBuilder {
@@ -198,7 +194,6 @@ impl ClientBuilder {
             subgraph_url,
             auth_token: None,
             latest_block: 0,
-            page_size: DEFAULT_SUBGRAPH_PAGE_QUERY_SIZE,
         }
     }
 
@@ -207,15 +202,6 @@ impl ClientBuilder {
     /// By default all requests are issued non-authenticated.
     pub fn with_auth_token(mut self, token: Option<String>) -> Self {
         self.auth_token = token;
-        self
-    }
-
-    /// Set the number of entities to fetch per page query.
-    ///
-    /// The default value is 200 entities per query.
-    pub fn with_page_size(mut self, size: usize) -> Self {
-        debug_assert_ne!(size, 0, "page size must be greater than 0");
-        self.page_size = size;
         self
     }
 
@@ -233,7 +219,6 @@ impl ClientBuilder {
             subgraph_url: self.subgraph_url,
             auth_token: self.auth_token,
             latest_block: self.latest_block,
-            page_size: self.page_size,
         }
     }
 }

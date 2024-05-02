@@ -172,7 +172,7 @@ async fn send_subgraph_paginated() {
     }
 
     //* When
-    let req_fut = client.paginated_query::<Subgraph>(SUBGRAPHS_QUERY_DOCUMENT);
+    let req_fut = client.paginated_query::<Subgraph>(SUBGRAPHS_QUERY_DOCUMENT, 200);
     let res = tokio::time::timeout(std::time::Duration::from_secs(10), req_fut)
         .await
         .expect("Timeout on subgraph paginated query");
