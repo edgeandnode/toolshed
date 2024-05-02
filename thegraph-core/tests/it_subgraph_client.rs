@@ -78,7 +78,7 @@ async fn send_subgraph_page_query_request() {
         subgraph_url,
         Some(&ticket),
         SUBGRAPHS_QUERY_DOCUMENT,
-        BlockHeight::new_with_block_number_gte(18627000),
+        BlockHeight::NumberGte(18627000),
         PAGE_REQUEST_BATCH_SIZE,
         None,
     );
