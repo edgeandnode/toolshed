@@ -5,13 +5,12 @@ use thegraph_graphql_http::http::request::IntoRequestParameters;
 use thegraph_graphql_http::http_client::ResponseError;
 use url::Url;
 
-use crate::types::BlockPointer;
-
 use super::queries::{
     meta::send_subgraph_meta_query,
     page::{send_subgraph_page_query, BlockHeight, SubgraphPageQueryResponseOpaqueEntry},
     send_subgraph_query,
 };
+use crate::types::BlockPointer;
 
 const DEFAULT_SUBGRAPH_PAGE_QUERY_SIZE: usize = 200;
 
@@ -21,24 +20,16 @@ async fn send_paginated_query<T: for<'de> Deserialize<'de>>(
     query: impl IntoDocument + Clone,
     ticket: Option<&str>,
     batch_size: usize,
-    latest_block: BlockNumber,
-) -> Result<(Vec<T>, BlockNumber), String> {
-    // The latest block number that the subgraph has progressed to.
-    let mut latest_block = latest_block;
+    mut block_height: BlockHeight,
+) -> Result<(Vec<T>, BlockPointer), String> {
     // The last id of the previous batch.
     let mut last_id: Option<String> = None;
-    // The block at which the query should be executed.
+    // Block at which the query is executed.
     let mut query_block: Option<BlockPointer> = None;
-
     // Vector to store the results of the paginated query.
     let mut results = Vec::new();
 
     loop {
-        let block_height = match query_block.as_ref() {
-            Some(block) => BlockHeight::new_with_block_hash(block.hash),
-            None => BlockHeight::new_with_block_number_gte(latest_block),
-        };
-
         let response = send_subgraph_page_query(
             client,
             subgraph_url.clone(),
@@ -80,6 +71,7 @@ async fn send_paginated_query<T: for<'de> Deserialize<'de>>(
             .map_err(|_| "failed to extract id for last entry".to_string())?
             .id,
         );
+        block_height = BlockHeight::Hash(data.meta.block.hash);
         query_block = Some(data.meta.block);
 
         for entry in data.results {
@@ -87,22 +79,18 @@ async fn send_paginated_query<T: for<'de> Deserialize<'de>>(
         }
     }
 
-    if let Some(block) = query_block {
-        latest_block = block.number;
-    }
-
-    Ok((results, latest_block))
+    Ok((results, query_block.unwrap()))
 }
 
 /// A client for interacting with a subgraph.
 pub struct Client {
-    http_client: reqwest::Client,
-    subgraph_url: Url,
+    pub http_client: reqwest::Client,
+    pub subgraph_url: Url,
 
     /// The request authentication bearer token.
     ///
     /// This is token is inserted in the `Authentication` header.
-    auth_token: Option<String>,
+    pub auth_token: Option<String>,
 
     /// The latest block number that the subgraph has progressed to.
     /// This is set to 0 initially and updated after each paginated query.
@@ -184,11 +172,11 @@ impl Client {
             query,
             self.auth_token.as_deref(),
             self.page_size,
-            self.latest_block,
+            BlockHeight::NumberGte(self.latest_block),
         )
         .await?;
 
-        self.latest_block = latest_block;
+        self.latest_block = latest_block.number;
 
         Ok(results)
     }

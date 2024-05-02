@@ -78,7 +78,7 @@ pub mod meta {
 
 pub mod page {
     use alloy_primitives::{BlockHash, BlockNumber};
-    use serde::{Deserialize, Serialize};
+    use serde::{ser::SerializeMap as _, Deserialize, Serialize, Serializer};
     use serde_json::value::RawValue;
     use thegraph_graphql_http::graphql::{Document, IntoDocument, IntoDocumentWithVariables};
     use thegraph_graphql_http::http_client::ResponseResult;
@@ -91,38 +91,25 @@ pub mod page {
     /// The block at which the query should be executed.
     ///
     /// This is part of the input arguments of the [`SubgraphPageQuery`].
-    #[derive(Clone, Debug, Default, Serialize)]
-    pub struct BlockHeight {
-        /// Value containing a block hash
-        #[serde(skip_serializing_if = "Option::is_none")]
-        hash: Option<BlockHash>,
-
-        /// Value containing a block number
-        #[serde(skip_serializing_if = "Option::is_none")]
-        number: Option<BlockNumber>,
-
-        /// Value containing the minimum block number.
-        ///
-        /// In the case of `number_gte`, the query will be executed on the latest block only if
-        /// the subgraph has progressed to or past the minimum block number.
-        /// Defaults to the latest block when omitted.
-        #[serde(skip_serializing_if = "Option::is_none")]
-        number_gte: Option<BlockNumber>,
+    #[derive(Clone, Debug, Default)]
+    pub enum BlockHeight {
+        #[default]
+        Latest,
+        Hash(BlockHash),
+        Number(BlockNumber),
+        NumberGte(BlockNumber),
     }
 
-    impl BlockHeight {
-        pub fn new_with_block_number_gte(number_gte: BlockNumber) -> Self {
-            Self {
-                number_gte: Some(number_gte),
-                ..Default::default()
+    impl Serialize for BlockHeight {
+        fn serialize<S: Serializer>(&self, s: S) -> Result<S::Ok, S::Error> {
+            let mut obj = s.serialize_map(Some(1))?;
+            match self {
+                Self::Latest => (),
+                Self::Hash(hash) => obj.serialize_entry("hash", hash)?,
+                Self::Number(number) => obj.serialize_entry("number", number)?,
+                Self::NumberGte(number) => obj.serialize_entry("number_gte", number)?,
             }
-        }
-
-        pub fn new_with_block_hash(hash: BlockHash) -> Self {
-            Self {
-                hash: Some(hash),
-                ..Default::default()
-            }
+            obj.end()
         }
     }
 
