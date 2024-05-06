@@ -43,9 +43,10 @@ async fn send_paginated_query<T: for<'de> Deserialize<'de>>(
 
         let data = match response {
             Ok(data) if !data.results.is_empty() => data,
+            Ok(_) if results.is_empty() => return Err("empty response".into()),
             Ok(_) => break,
             Err(err) => match err {
-                ResponseError::Empty => break,
+                ResponseError::Empty => return Err("empty response".into()),
                 ResponseError::Failure { errors } => {
                     let errors = errors
                         .into_iter()
