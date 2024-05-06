@@ -3,6 +3,7 @@
 
 use assert_matches::assert_matches;
 use serde::Deserialize;
+use std::time::Duration;
 use url::Url;
 
 use thegraph_core::client::queries::meta::{send_subgraph_meta_query, SubgraphMetaQueryResponse};
@@ -10,31 +11,43 @@ use thegraph_core::client::queries::page::{send_subgraph_page_query, BlockHeight
 use thegraph_core::client::Client as SubgraphClient;
 use thegraph_core::types::{BlockPointer, SubgraphId};
 
-/// Test helper to get the test url from the environment.
-fn test_url() -> Url {
-    std::env::var("IT_TEST_SUBGRAPH_QUERY_URL")
-        .expect("Missing IT_TEST_SUBGRAPH_QUERY_URL")
+/// Test helper to get the gateway base url from the environment.
+fn test_gateway_base_url() -> Url {
+    std::env::var("IT_TEST_MAINNET_GATEWAY_URL")
+        .expect("Missing IT_TEST_MAINNET_GATEWAY_URL")
         .parse()
-        .expect("Invalid IT_TEST_SUBGRAPH_QUERY_URL")
+        .expect("Invalid IT_TEST_MAINNET_GATEWAY_URL")
 }
 
-/// Test helper to get the test query key from the environment.
-fn test_query_key() -> String {
-    std::env::var("IT_TEST_SUBGRAPH_QUERY_AUTH").expect("Missing IT_TEST_SUBGRAPH_QUERY_AUTH")
+/// Test helper to get the test auth token from the environment.
+fn test_auth_token() -> String {
+    std::env::var("IT_TEST_MAINNET_GATEWAY_AUTH").expect("Missing IT_TEST_MAINNET_GATEWAY_AUTH")
 }
 
-#[test_with::env(IT_TEST_SUBGRAPH_QUERY_URL, IT_TEST_SUBGRAPH_QUERY_AUTH)]
+/// Test helper to build the subgraph url with the given subgraph ID.
+fn test_subgraph_url(subgraph: impl AsRef<str>) -> Url {
+    test_gateway_base_url()
+        .join(&format!("api/subgraphs/id/{}", subgraph.as_ref()))
+        .expect("Invalid URL")
+}
+
+/// The Graph Network Mainnet subgraph in the network.
+///
+/// https://thegraph.com/explorer/subgraphs/8yHBZUvXcKkZnZM7SDSgcRMtbtNwgUQfM37cA37h7cet?view=Overview&chain=mainnet
+const GRAPH_NETWORK_MAINNET_SUBGRAPH_ID: &str = "8yHBZUvXcKkZnZM7SDSgcRMtbtNwgUQfM37cA37h7cet";
+
+#[test_with::env(IT_TEST_MAINNET_GATEWAY_URL, IT_TEST_MAINNET_GATEWAY_AUTH)]
 #[tokio::test]
 async fn send_subgraph_meta_query_request() {
     //* Given
-    let subgraph_url = test_url();
-    let ticket = test_query_key();
+    let subgraph_url = test_subgraph_url(GRAPH_NETWORK_MAINNET_SUBGRAPH_ID);
+    let auth_token = test_auth_token();
 
     let http_client = reqwest::Client::new();
 
     //* When
-    let req_fut = send_subgraph_meta_query(&http_client, subgraph_url, Some(&ticket));
-    let res = tokio::time::timeout(std::time::Duration::from_secs(10), req_fut)
+    let req_fut = send_subgraph_meta_query(&http_client, subgraph_url, Some(&auth_token));
+    let res = tokio::time::timeout(Duration::from_secs(10), req_fut)
         .await
         .expect("Timeout on subgraph meta query");
 
@@ -46,14 +59,14 @@ async fn send_subgraph_meta_query_request() {
     });
 }
 
-#[test_with::env(IT_TEST_SUBGRAPH_QUERY_URL, IT_TEST_SUBGRAPH_QUERY_AUTH)]
+#[test_with::env(IT_TEST_MAINNET_GATEWAY_URL, IT_TEST_MAINNET_GATEWAY_AUTH)]
 #[tokio::test]
 async fn send_subgraph_page_query_request() {
     //* Given
     const PAGE_REQUEST_BATCH_SIZE: usize = 6;
 
-    let ticket = test_query_key();
-    let subgraph_url = test_url();
+    let subgraph_url = test_subgraph_url(GRAPH_NETWORK_MAINNET_SUBGRAPH_ID);
+    let auth_token = test_auth_token();
 
     let http_client = reqwest::Client::new();
 
@@ -76,13 +89,13 @@ async fn send_subgraph_page_query_request() {
     let req_fut = send_subgraph_page_query(
         &http_client,
         subgraph_url,
-        Some(&ticket),
+        Some(&auth_token),
         SUBGRAPHS_QUERY_DOCUMENT,
         BlockHeight::NumberGte(18627000),
         PAGE_REQUEST_BATCH_SIZE,
         None,
     );
-    let res = tokio::time::timeout(std::time::Duration::from_secs(10), req_fut)
+    let res = tokio::time::timeout(Duration::from_secs(10), req_fut)
         .await
         .expect("Timeout on subgraph meta query");
 
@@ -97,17 +110,16 @@ async fn send_subgraph_page_query_request() {
     });
 }
 
-#[test_with::env(IT_TEST_SUBGRAPH_QUERY_URL, IT_TEST_SUBGRAPH_QUERY_AUTH)]
+#[test_with::env(IT_TEST_MAINNET_GATEWAY_URL, IT_TEST_MAINNET_GATEWAY_AUTH)]
 #[tokio::test]
 async fn client_send_query() {
     //* Given
-    let ticket = test_query_key();
+    let subgraph_url = test_subgraph_url(GRAPH_NETWORK_MAINNET_SUBGRAPH_ID);
+    let auth_token = test_auth_token();
 
     let http_client = reqwest::Client::new();
-    let subgraph_url = test_url();
-
     let client = SubgraphClient::builder(http_client, subgraph_url)
-        .with_auth_token(Some(ticket))
+        .with_auth_token(Some(auth_token))
         .build();
 
     // Subgraph meta query
@@ -125,7 +137,7 @@ async fn client_send_query() {
 
     //* When
     let req_fut = client.query::<SubgraphMetaQueryResponse>(SUBGRAPH_META_QUERY_DOCUMENT);
-    let res = tokio::time::timeout(std::time::Duration::from_secs(10), req_fut)
+    let res = tokio::time::timeout(Duration::from_secs(10), req_fut)
         .await
         .expect("Timeout on subgraph meta query");
 
@@ -137,17 +149,17 @@ async fn client_send_query() {
     });
 }
 
-#[test_with::env(IT_TEST_SUBGRAPH_QUERY_URL, IT_TEST_SUBGRAPH_QUERY_AUTH)]
+#[test_with::env(IT_TEST_MAINNET_GATEWAY_URL, IT_TEST_MAINNET_GATEWAY_AUTH)]
 #[tokio::test]
 async fn send_subgraph_paginated() {
     //* Given
-    let ticket = test_query_key();
-    let subgraph_url = test_url();
+    let subgraph_url = test_subgraph_url(GRAPH_NETWORK_MAINNET_SUBGRAPH_ID);
+    let auth_token = test_auth_token();
 
     let http_client = reqwest::Client::new();
 
     let mut client = SubgraphClient::builder(http_client, subgraph_url)
-        .with_auth_token(Some(ticket))
+        .with_auth_token(Some(auth_token))
         .build();
 
     // Query all subgraph ids.
@@ -173,7 +185,7 @@ async fn send_subgraph_paginated() {
 
     //* When
     let req_fut = client.paginated_query::<Subgraph>(SUBGRAPHS_QUERY_DOCUMENT, 200);
-    let res = tokio::time::timeout(std::time::Duration::from_secs(10), req_fut)
+    let res = tokio::time::timeout(Duration::from_secs(10), req_fut)
         .await
         .expect("Timeout on subgraph paginated query");
 
