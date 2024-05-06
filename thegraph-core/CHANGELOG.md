@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0](https://github.com/edgeandnode/toolshed/compare/thegraph-core-v0.3.2...thegraph-core-v0.4.0) - 2024-05-06
+
+### Added
+- set page size per query batch
+- set block height for paginated queries
+
 ## [0.3.2](https://github.com/edgeandnode/toolshed/compare/thegraph-core-v0.3.1...thegraph-core-v0.3.2) - 2024-05-01
 
 ### Fixed
