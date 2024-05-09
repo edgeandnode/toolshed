@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.1](https://github.com/edgeandnode/toolshed/compare/thegraph-core-v0.4.0...thegraph-core-v0.4.1) - 2024-05-09
+
+### Fixed
+- *(subgraph_client)* avoid panic on missing query block ([#186](https://github.com/edgeandnode/toolshed/pull/186))
+
+### Other
+- *(ci)* update the encrypted test credentials env file ([#185](https://github.com/edgeandnode/toolshed/pull/185))
+
 ## [0.4.0](https://github.com/edgeandnode/toolshed/compare/thegraph-core-v0.3.2...thegraph-core-v0.4.0) - 2024-05-06
 
 ### Added
