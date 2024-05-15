@@ -28,7 +28,7 @@ jobs:
           toolchain: stable
           components: rustfmt, clippy
 
-      - uses: MarcoIeni/release-plz-action@a2904442184b59b09f10f6c7197cfa8e48bd2fc4 # v0.5
+      - uses: MarcoIeni/release-plz-action@7fe60ae5d741fc80fa624aef172aee9de2b98747 # v0.5
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
