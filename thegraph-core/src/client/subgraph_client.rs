@@ -1,3 +1,6 @@
+use std::sync::atomic::AtomicU64;
+use std::sync::Arc;
+
 use alloy_primitives::aliases::BlockNumber;
 use serde::de::Deserialize;
 use thegraph_graphql_http::graphql::IntoDocument;
@@ -5,12 +8,13 @@ use thegraph_graphql_http::http::request::IntoRequestParameters;
 use thegraph_graphql_http::http_client::ResponseError;
 use url::Url;
 
+use crate::types::BlockPointer;
+
 use super::queries::{
     meta::send_subgraph_meta_query,
     page::{send_subgraph_page_query, BlockHeight, SubgraphPageQueryResponseOpaqueEntry},
     send_subgraph_query,
 };
-use crate::types::BlockPointer;
 
 async fn send_paginated_query<T: for<'de> Deserialize<'de>>(
     client: &reqwest::Client,
@@ -45,24 +49,26 @@ async fn send_paginated_query<T: for<'de> Deserialize<'de>>(
             Ok(data) if !data.results.is_empty() => data,
             Ok(_) if results.is_empty() => return Err("empty response".into()),
             Ok(_) => break,
-            Err(err) => match err {
-                ResponseError::Empty => return Err("empty response".into()),
-                ResponseError::Failure { errors } => {
-                    let errors = errors
-                        .into_iter()
-                        .map(|err| err.message)
-                        .collect::<Vec<String>>();
+            Err(err) => {
+                return match err {
+                    ResponseError::Empty => Err("empty response".into()),
+                    ResponseError::Failure { errors } => {
+                        let errors = errors
+                            .into_iter()
+                            .map(|err| err.message)
+                            .collect::<Vec<String>>();
 
-                    if errors
-                        .iter()
-                        .any(|err| err.contains("no block with that hash found"))
-                    {
-                        return Err("reorg detected".into());
+                        if errors
+                            .iter()
+                            .any(|err| err.contains("no block with that hash found"))
+                        {
+                            return Err("reorg detected".into());
+                        }
+
+                        Err(errors.join(", "))
                     }
-
-                    return Err(errors.join(", "));
                 }
-            },
+            }
         };
 
         last_id = Some(
@@ -84,6 +90,7 @@ async fn send_paginated_query<T: for<'de> Deserialize<'de>>(
 }
 
 /// A client for interacting with a subgraph.
+#[derive(Clone)]
 pub struct Client {
     pub http_client: reqwest::Client,
     pub subgraph_url: Url,
@@ -94,8 +101,9 @@ pub struct Client {
     pub auth_token: Option<String>,
 
     /// The latest block number that the subgraph has progressed to.
-    /// This is set to 0 initially and updated after each paginated query.
-    latest_block: BlockNumber,
+    ///
+    /// By default, this value is 0, and is updated after each paginated query.
+    latest_block: Arc<AtomicU64>,
 }
 
 impl Client {
@@ -103,14 +111,13 @@ impl Client {
     ///
     /// The default settings are:
     /// - No authentication token
-    /// - Page size of 200 entities per query
     /// - Latest block number of 0
     pub fn new(http_client: reqwest::Client, subgraph_url: Url) -> Self {
         Self {
             http_client,
             subgraph_url,
             auth_token: None,
-            latest_block: 0,
+            latest_block: Arc::new(AtomicU64::new(0)),
         }
     }
 
@@ -122,7 +129,6 @@ impl Client {
     /// ```text
     /// let client = SubgraphClient::builder(http_client, subgraph_url)
     ///     .with_auth_token(Some(ticket))
-    ///     .with_page_size(100)
     ///     .with_subgraph_latest_block(18627000)
     ///     .build();
     /// ```
@@ -130,6 +136,24 @@ impl Client {
         ClientBuilder::new(http_client, subgraph_url)
     }
 
+    /// Get the latest block number.
+    fn latest_block(&self) -> BlockNumber {
+        self.latest_block.load(std::sync::atomic::Ordering::Relaxed)
+    }
+
+    /// Update the client's latest block number.
+    ///
+    /// The function ensures that the latest block number is always increasing
+    ///
+    /// Returns the latest block number.
+    fn update_latest_block(&self, new_value: BlockNumber) -> BlockNumber {
+        // Ensure that the latest block number is always increasing
+        self.latest_block
+            .fetch_max(new_value, std::sync::atomic::Ordering::Relaxed)
+            .max(new_value)
+    }
+
+    /// Send a query to the subgraph.
     pub async fn query<T: for<'de> Deserialize<'de>>(
         &self,
         query: impl IntoRequestParameters + Send,
@@ -143,16 +167,23 @@ impl Client {
         .await
     }
 
+    /// Send a paginated query to the subgraph.
+    ///
+    /// The query is sent with a page size of `page_size` and the latest block number that the
+    /// subgraph has progressed to.
+    ///
+    /// In the case of a reorg, the function will return an error.
     pub async fn paginated_query<T: for<'de> Deserialize<'de>>(
-        &mut self,
+        &self,
         query: impl IntoDocument + Clone,
         page_size: usize,
     ) -> Result<Vec<T>, String> {
+        let mut latest_block = self.latest_block();
+
         // Graph-node is rejecting values of `number_gte:0` on subgraphs with a larger `startBlock`.
         // This forces us to request the latest block number from the subgraph before sending the
         // paginated query.
-        // TODO: delete when resolved
-        if self.latest_block == 0 {
+        if latest_block == 0 {
             let init = send_subgraph_meta_query(
                 &self.http_client,
                 self.subgraph_url.clone(),
@@ -160,7 +191,8 @@ impl Client {
             )
             .await?;
 
-            self.latest_block = init.meta.block.number;
+            // Update the latest block number
+            latest_block = self.update_latest_block(init.meta.block.number);
         }
 
         // Send the paginated query.
@@ -170,16 +202,16 @@ impl Client {
             query,
             self.auth_token.as_deref(),
             page_size,
-            BlockHeight::NumberGte(self.latest_block),
+            BlockHeight::NumberGte(latest_block),
         )
         .await?;
 
-        self.latest_block = latest_block.number;
+        // Update the latest block number.
+        self.update_latest_block(latest_block.number);
 
         Ok(results)
     }
 }
-
 /// A builder for constructing a subgraph client.
 pub struct ClientBuilder {
     http_client: reqwest::Client,
@@ -219,7 +251,7 @@ impl ClientBuilder {
             http_client: self.http_client,
             subgraph_url: self.subgraph_url,
             auth_token: self.auth_token,
-            latest_block: self.latest_block,
+            latest_block: Arc::new(AtomicU64::new(self.latest_block)),
         }
     }
 }
