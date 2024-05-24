@@ -1,4 +1,4 @@
-use serde::de::DeserializeOwned;
+use serde::Deserialize;
 use thegraph_graphql_http::http::request::IntoRequestParameters;
 use thegraph_graphql_http::http_client::{ReqwestExt, ResponseResult};
 use url::Url;
@@ -11,7 +11,7 @@ pub async fn send_query<T>(
     query: impl IntoRequestParameters + Send,
 ) -> Result<ResponseResult<T>, String>
 where
-    T: DeserializeOwned,
+    T: for<'de> Deserialize<'de>,
 {
     let mut builder = client.post(url);
 
@@ -34,7 +34,7 @@ pub async fn send_subgraph_query<T>(
     query: impl IntoRequestParameters + Send,
 ) -> Result<T, String>
 where
-    T: DeserializeOwned,
+    T: for<'de> Deserialize<'de>,
 {
     send_query(client, subgraph_url, ticket, query)
         .await
@@ -42,13 +42,14 @@ where
         .map_err(|err| err.to_string())
 }
 
-/// Subgraphs sometimes fall behind, be it due to failing or the Graph Node may be having issues. The
-/// `_meta` field can now be added to any query so that it is possible to determine against which block
-/// the query was effectively executed.
+/// Subgraphs sometimes fall behind, be it due to failing or the Graph Node may be having issues.
+/// The `_meta` field can now be added to any query so that it is possible to determine against
+/// which block the query was effectively executed.
 pub mod meta {
-    use crate::types::BlockPointer;
     use serde::Deserialize;
     use url::Url;
+
+    use crate::types::BlockPointer;
 
     use super::send_query;
 
@@ -78,13 +79,12 @@ pub mod meta {
 
 pub mod page {
     use alloy_primitives::{BlockHash, BlockNumber};
+    use indoc::indoc;
     use serde::{ser::SerializeMap as _, Deserialize, Serialize, Serializer};
     use serde_json::value::RawValue;
     use thegraph_graphql_http::graphql::{Document, IntoDocument, IntoDocumentWithVariables};
     use thegraph_graphql_http::http_client::ResponseResult;
     use url::Url;
-
-    use indoc::indoc;
 
     use super::{meta::Meta, send_query};
 

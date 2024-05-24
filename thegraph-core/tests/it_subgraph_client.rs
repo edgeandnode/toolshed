@@ -158,7 +158,7 @@ async fn send_subgraph_paginated() {
 
     let http_client = reqwest::Client::new();
 
-    let mut client = SubgraphClient::builder(http_client, subgraph_url)
+    let client = SubgraphClient::builder(http_client, subgraph_url)
         .with_auth_token(Some(auth_token))
         .build();
 
