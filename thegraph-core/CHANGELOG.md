@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.2](https://github.com/edgeandnode/toolshed/compare/thegraph-core-v0.4.1...thegraph-core-v0.4.2) - 2024-05-24
+
+### Added
+- *(thegraph-core)* make subgraph client cloneable ([#201](https://github.com/edgeandnode/toolshed/pull/201))
+
 ## [0.4.1](https://github.com/edgeandnode/toolshed/compare/thegraph-core-v0.4.0...thegraph-core-v0.4.1) - 2024-05-09
 
 ### Fixed
