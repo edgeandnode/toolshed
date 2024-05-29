@@ -65,7 +65,7 @@ pub mod meta {
         pub block: BlockPointer,
     }
 
-    pub async fn send_subgraph_meta_query(
+    pub async fn send_bootstrap_meta_query(
         client: &reqwest::Client,
         subgraph_url: Url,
         ticket: Option<&str>,
@@ -113,11 +113,14 @@ pub mod page {
         }
     }
 
+    /// The arguments of the [`SubgraphPageQuery`] query.
     #[derive(Clone, Debug, Serialize)]
     pub struct SubgraphPageQueryVars {
         /// The block at which the query should be executed.
         block: BlockHeight,
+        /// The maximum number of entities to fetch.
         first: usize,
+        /// The ID of the last entity fetched.
         last: String,
     }
 
@@ -147,9 +150,9 @@ pub mod page {
             let query = format!(
                 indoc! {
                     r#"query ($block: Block_height!, $first: Int!, $last: String!) {{
-                    meta: _meta(block: $block) {{ block {{ number hash }} }}
-                    results: {query}
-                }}"#
+                        meta: _meta(block: $block) {{ block {{ number hash }} }}
+                        results: {query}
+                    }}"#
                 },
                 query = self.query
             );

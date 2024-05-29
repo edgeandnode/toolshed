@@ -4,12 +4,23 @@
 use assert_matches::assert_matches;
 use serde::Deserialize;
 use std::time::Duration;
+use tracing_subscriber::fmt::TestWriter;
+use tracing_subscriber::EnvFilter;
 use url::Url;
 
-use thegraph_core::client::queries::meta::{send_subgraph_meta_query, SubgraphMetaQueryResponse};
+use thegraph_core::client::queries::meta::{send_bootstrap_meta_query, SubgraphMetaQueryResponse};
 use thegraph_core::client::queries::page::{send_subgraph_page_query, BlockHeight};
 use thegraph_core::client::Client as SubgraphClient;
 use thegraph_core::types::{BlockPointer, SubgraphId};
+
+/// Initialize the tests tracing subscriber.
+fn init_test_tracing() {
+    let _ = tracing_subscriber::fmt()
+        .with_env_filter(EnvFilter::from_default_env())
+        .compact()
+        .with_writer(TestWriter::default())
+        .try_init();
+}
 
 /// Test helper to get the gateway base url from the environment.
 fn test_gateway_base_url() -> Url {
@@ -39,6 +50,8 @@ const GRAPH_NETWORK_MAINNET_SUBGRAPH_ID: &str = "8yHBZUvXcKkZnZM7SDSgcRMtbtNwgUQ
 #[test_with::env(IT_TEST_MAINNET_GATEWAY_URL, IT_TEST_MAINNET_GATEWAY_AUTH)]
 #[tokio::test]
 async fn send_subgraph_meta_query_request() {
+    init_test_tracing();
+
     //* Given
     let subgraph_url = test_subgraph_url(GRAPH_NETWORK_MAINNET_SUBGRAPH_ID);
     let auth_token = test_auth_token();
@@ -46,7 +59,7 @@ async fn send_subgraph_meta_query_request() {
     let http_client = reqwest::Client::new();
 
     //* When
-    let req_fut = send_subgraph_meta_query(&http_client, subgraph_url, Some(&auth_token));
+    let req_fut = send_bootstrap_meta_query(&http_client, subgraph_url, Some(&auth_token));
     let res = tokio::time::timeout(Duration::from_secs(10), req_fut)
         .await
         .expect("Timeout on subgraph meta query");
@@ -62,6 +75,8 @@ async fn send_subgraph_meta_query_request() {
 #[test_with::env(IT_TEST_MAINNET_GATEWAY_URL, IT_TEST_MAINNET_GATEWAY_AUTH)]
 #[tokio::test]
 async fn send_subgraph_page_query_request() {
+    init_test_tracing();
+
     //* Given
     const PAGE_REQUEST_BATCH_SIZE: usize = 6;
 
@@ -113,6 +128,8 @@ async fn send_subgraph_page_query_request() {
 #[test_with::env(IT_TEST_MAINNET_GATEWAY_URL, IT_TEST_MAINNET_GATEWAY_AUTH)]
 #[tokio::test]
 async fn client_send_query() {
+    init_test_tracing();
+
     //* Given
     let subgraph_url = test_subgraph_url(GRAPH_NETWORK_MAINNET_SUBGRAPH_ID);
     let auth_token = test_auth_token();
@@ -152,6 +169,8 @@ async fn client_send_query() {
 #[test_with::env(IT_TEST_MAINNET_GATEWAY_URL, IT_TEST_MAINNET_GATEWAY_AUTH)]
 #[tokio::test]
 async fn send_subgraph_paginated() {
+    init_test_tracing();
+
     //* Given
     let subgraph_url = test_subgraph_url(GRAPH_NETWORK_MAINNET_SUBGRAPH_ID);
     let auth_token = test_auth_token();
