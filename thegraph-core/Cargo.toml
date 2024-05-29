@@ -12,6 +12,7 @@ rust-version = "1.71.1"
 async-graphql-support = ["dep:async-graphql"]
 subgraph-client = [
     "dep:tracing",
+    "dep:thiserror",
     "dep:indoc",
     "dep:serde_json",
     "dep:reqwest",
@@ -32,7 +33,7 @@ serde = "1.0"
 serde_json = { version = "1.0.116", features = ["raw_value"], optional = true }
 serde_with = "3.8"
 thegraph-graphql-http = { version = "0.2", optional = true }
-thiserror = "1.0"
+thiserror = { version = "1.0", optional = true }
 tracing = { version = "0.1.40", optional = true }
 url = "2.5"
 
@@ -40,3 +41,4 @@ url = "2.5"
 assert_matches = "1.5.0"
 test-with = { version = "0.12.6", default-features = false }
 tokio = { version = "1.37.0", features = ["macros", "rt"] }
+tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
