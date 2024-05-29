@@ -10,4 +10,8 @@ pub mod types;
 pub mod client;
 
 #[cfg(feature = "subscriptions")]
+#[deprecated(
+    since = "0.4.3",
+    note = "The `subscriptions` module is deprecated and will be removed in a future release"
+)]
 pub mod subscriptions;
