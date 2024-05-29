@@ -18,27 +18,17 @@ subgraph-client = [
     "dep:thegraph-graphql-http",
     "thegraph-graphql-http/http-client-reqwest",
 ]
-subscriptions = [
-    "dep:base64",
-    "dep:serde_cbor_2",
-    "dep:alloy-chains",
-    "dep:ethers",
-]
 
 [dependencies]
-alloy-chains = { version = "0.1.17", optional = true }
 alloy-primitives = { version = "0.7", features = ["serde"] }
 alloy-sol-types = "0.7"
 async-graphql = { version = "7.0", optional = true }
-base64 = { version = "0.22", optional = true }
 bs58 = "0.5"
-ethers = { version = "2.0.14", optional = true, default-features = false }
 ethers-core = "2.0.14"
 indoc = { version = "2.0.5", optional = true }
 lazy_static = "1.4.0"
 reqwest = { version = "0.12", optional = true }
 serde = "1.0"
-serde_cbor_2 = { version = "0.12.0-dev", optional = true }
 serde_json = { version = "1.0.116", features = ["raw_value"], optional = true }
 serde_with = "3.8"
 thegraph-graphql-http = { version = "0.2", optional = true }
