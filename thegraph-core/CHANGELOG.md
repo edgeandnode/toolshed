@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.3](https://github.com/edgeandnode/toolshed/compare/thegraph-core-v0.4.2...thegraph-core-v0.4.3) - 2024-05-29
+
+### Other
+- *(thegraph-core)* mark subscriptions  module as deprecated ([#207](https://github.com/edgeandnode/toolshed/pull/207))
+
 ## [0.4.2](https://github.com/edgeandnode/toolshed/compare/thegraph-core-v0.4.1...thegraph-core-v0.4.2) - 2024-05-24
 
 ### Added
