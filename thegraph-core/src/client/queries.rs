@@ -1,6 +1,8 @@
 use serde::Deserialize;
-use thegraph_graphql_http::http::request::IntoRequestParameters;
-use thegraph_graphql_http::http_client::{ReqwestExt, ResponseResult};
+use thegraph_graphql_http::{
+    http::request::IntoRequestParameters,
+    http_client::{ReqwestExt, ResponseResult},
+};
 use url::Url;
 
 /// Send an authenticated GraphQL query to a subgraph.
@@ -49,9 +51,8 @@ pub mod meta {
     use serde::Deserialize;
     use url::Url;
 
-    use crate::types::BlockPointer;
-
     use super::send_query;
+    use crate::types::BlockPointer;
 
     const SUBGRAPH_META_QUERY_DOCUMENT: &str = r#"{ meta: _meta { block { number hash } } }"#;
 
@@ -82,8 +83,10 @@ pub mod page {
     use indoc::indoc;
     use serde::{ser::SerializeMap as _, Deserialize, Serialize, Serializer};
     use serde_json::value::RawValue;
-    use thegraph_graphql_http::graphql::{Document, IntoDocument, IntoDocumentWithVariables};
-    use thegraph_graphql_http::http_client::ResponseResult;
+    use thegraph_graphql_http::{
+        graphql::{Document, IntoDocument, IntoDocumentWithVariables},
+        http_client::ResponseResult,
+    };
     use url::Url;
 
     use super::{meta::Meta, send_query};

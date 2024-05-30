@@ -7,7 +7,6 @@ use std::time::Duration;
 use assert_matches::assert_matches;
 use graphql_client::GraphQLQuery;
 use reqwest::Url;
-
 use thegraph_graphql_http::http_client::ReqwestExt;
 
 /// The URL of the test server.

@@ -1,12 +1,16 @@
-use std::collections::{BTreeMap, HashMap};
-use std::convert::TryInto as _;
-use std::ops::Deref;
+use std::{
+    collections::{BTreeMap, HashMap},
+    convert::TryInto as _,
+    ops::Deref,
+};
 
 use firestorm::profile_fn;
 pub use graphql_parser;
 use graphql_parser::query as q;
-use serde::ser::{SerializeMap, SerializeSeq};
-use serde::{Deserialize, Deserializer, Serialize, Serializer};
+use serde::{
+    ser::{SerializeMap, SerializeSeq},
+    Deserialize, Deserializer, Serialize, Serializer,
+};
 
 // TODO: (Performance) may want to do zero-copy here later.
 pub type StaticValue = q::Value<'static, String>;

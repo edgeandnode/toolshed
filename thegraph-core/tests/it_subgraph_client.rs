@@ -1,17 +1,22 @@
 //! Integration tests for the subgraph client.
 #![cfg(feature = "subgraph-client")]
 
+use std::time::Duration;
+
 use assert_matches::assert_matches;
 use serde::Deserialize;
-use std::time::Duration;
-use tracing_subscriber::fmt::TestWriter;
-use tracing_subscriber::EnvFilter;
+use thegraph_core::{
+    client::{
+        queries::{
+            meta::{send_bootstrap_meta_query, SubgraphMetaQueryResponse},
+            page::{send_subgraph_page_query, BlockHeight},
+        },
+        Client as SubgraphClient,
+    },
+    types::{BlockPointer, SubgraphId},
+};
+use tracing_subscriber::{fmt::TestWriter, EnvFilter};
 use url::Url;
-
-use thegraph_core::client::queries::meta::{send_bootstrap_meta_query, SubgraphMetaQueryResponse};
-use thegraph_core::client::queries::page::{send_subgraph_page_query, BlockHeight};
-use thegraph_core::client::Client as SubgraphClient;
-use thegraph_core::types::{BlockPointer, SubgraphId};
 
 /// Initialize the tests tracing subscriber.
 fn init_test_tracing() {
