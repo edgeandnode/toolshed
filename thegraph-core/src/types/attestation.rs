@@ -1,12 +1,12 @@
 //! Attestation types and functions for verifying attestations.
 
 // Re-export the types in the public API
-use alloy_primitives::{keccak256, FixedBytes};
-use alloy_primitives::{Address, B256, U256};
-use alloy_sol_types::Eip712Domain;
-use alloy_sol_types::SolStruct;
-use ethers_core::k256::ecdsa::SigningKey;
-use ethers_core::types::{RecoveryMessage, Signature};
+use alloy_primitives::{keccak256, Address, FixedBytes, B256, U256};
+use alloy_sol_types::{Eip712Domain, SolStruct};
+use ethers_core::{
+    k256::ecdsa::SigningKey,
+    types::{RecoveryMessage, Signature},
+};
 use lazy_static::lazy_static;
 use serde::{Deserialize, Serialize};
 

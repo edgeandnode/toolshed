@@ -83,10 +83,11 @@ mod reqwest_ext {
     use async_trait::async_trait;
     use reqwest::header::{ACCEPT, CONTENT_TYPE};
 
-    use crate::http::request::{IntoRequestParameters, GRAPHQL_REQUEST_MEDIA_TYPE};
-    use crate::http::response::{GRAPHQL_LEGACY_RESPONSE_MEDIA_TYPE, GRAPHQL_RESPONSE_MEDIA_TYPE};
-
     use super::{process_response_body, RequestError, ResponseResult};
+    use crate::http::{
+        request::{IntoRequestParameters, GRAPHQL_REQUEST_MEDIA_TYPE},
+        response::{GRAPHQL_LEGACY_RESPONSE_MEDIA_TYPE, GRAPHQL_RESPONSE_MEDIA_TYPE},
+    };
 
     /// An extension trait for reqwest::RequestBuilder.
     #[cfg_attr(docsrs, doc(cfg(feature = "http-client-reqwest")))]

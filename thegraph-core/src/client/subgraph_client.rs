@@ -1,21 +1,19 @@
-use std::sync::atomic::AtomicU64;
-use std::sync::Arc;
+use std::sync::{atomic::AtomicU64, Arc};
 
 use alloy_primitives::aliases::BlockNumber;
 use serde::de::Deserialize;
-use thegraph_graphql_http::graphql::IntoDocument;
-use thegraph_graphql_http::http::request::IntoRequestParameters;
-use thegraph_graphql_http::http_client::ResponseError;
+use thegraph_graphql_http::{
+    graphql::IntoDocument, http::request::IntoRequestParameters, http_client::ResponseError,
+};
 use tracing::Instrument;
 use url::Url;
-
-use crate::types::BlockPointer;
 
 use super::queries::{
     meta::send_bootstrap_meta_query,
     page::{send_subgraph_page_query, BlockHeight, SubgraphPageQueryResponseOpaqueEntry},
     send_subgraph_query,
 };
+use crate::types::BlockPointer;
 
 /// Error message returned by the indexer typically when a reorg happens.
 const SUBGRAPH_REORG_ERROR: &str = "no block with that hash found";

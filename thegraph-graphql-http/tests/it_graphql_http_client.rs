@@ -5,10 +5,11 @@ use std::time::Duration;
 
 use assert_matches::assert_matches;
 use reqwest::Url;
-
-use thegraph_graphql_http::graphql::IntoDocument;
-use thegraph_graphql_http::http::request::{IntoRequestParameters, RequestParameters};
-use thegraph_graphql_http::http_client::{ReqwestExt, ResponseError};
+use thegraph_graphql_http::{
+    graphql::IntoDocument,
+    http::request::{IntoRequestParameters, RequestParameters},
+    http_client::{ReqwestExt, ResponseError},
+};
 
 /// The URL of the test server.
 ///

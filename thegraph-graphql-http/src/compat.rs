@@ -20,8 +20,10 @@ pub mod compat_graphql_parser {
 pub mod compat_graphql_client {
     use graphql_client::QueryBody;
 
-    use crate::graphql::IntoDocument;
-    use crate::http::request::{IntoRequestParameters, RequestParameters};
+    use crate::{
+        graphql::IntoDocument,
+        http::request::{IntoRequestParameters, RequestParameters},
+    };
 
     // Implement `IntoRequestParameters` for `graphql_client::QueryBody` so that we can seamlessly
     // support `graphql_client` generated queries.
@@ -60,8 +62,10 @@ pub mod compat_graphql_client {
 pub mod compat_async_graphql {
     use async_graphql::Request;
 
-    use crate::graphql::IntoDocument;
-    use crate::http::request::{IntoRequestParameters, RequestParameters};
+    use crate::{
+        graphql::IntoDocument,
+        http::request::{IntoRequestParameters, RequestParameters},
+    };
 
     // Implement `IntoRequestParameters` for `async_graphql::Request` so that we can seamlessly
     // support `async_graphql` requests.
