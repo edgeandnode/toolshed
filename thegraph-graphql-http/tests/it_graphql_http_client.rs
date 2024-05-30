@@ -332,7 +332,6 @@ async fn send_invalid_request_operation_cannot_be_determined_failure_invalid_ope
         .expect("Request failed");
 
     //* Then
-    println!("{:?}", response);
     assert_matches!(response, Err(ResponseError::Failure { errors }) => {
         assert_eq!(errors.len(), 1);
 
