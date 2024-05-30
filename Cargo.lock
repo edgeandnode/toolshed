@@ -2668,7 +2668,7 @@ dependencies = [
 
 [[package]]
 name = "thegraph-core"
-version = "0.4.3"
+version = "0.5.0"
 dependencies = [
  "alloy-primitives",
  "alloy-sol-types",
@@ -2683,29 +2683,12 @@ dependencies = [
  "serde_json",
  "serde_with",
  "test-with",
- "thegraph-graphql-http 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "thegraph-graphql-http 0.2.1",
  "thiserror",
  "tokio",
  "tracing",
  "tracing-subscriber",
  "url",
-]
-
-[[package]]
-name = "thegraph-graphql-http"
-version = "0.2.1"
-dependencies = [
- "assert_matches",
- "async-graphql",
- "async-trait",
- "graphql-parser",
- "graphql_client",
- "indoc",
- "reqwest",
- "serde",
- "serde_json",
- "thiserror",
- "tokio",
 ]
 
 [[package]]
@@ -2719,6 +2702,23 @@ dependencies = [
  "serde",
  "serde_json",
  "thiserror",
+]
+
+[[package]]
+name = "thegraph-graphql-http"
+version = "0.2.2"
+dependencies = [
+ "assert_matches",
+ "async-graphql",
+ "async-trait",
+ "graphql-parser",
+ "graphql_client",
+ "indoc",
+ "reqwest",
+ "serde",
+ "serde_json",
+ "thiserror",
+ "tokio",
 ]
 
 [[package]]

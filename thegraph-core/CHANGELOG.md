@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.0](https://github.com/edgeandnode/toolshed/compare/thegraph-core-v0.4.3...thegraph-core-v0.5.0) - 2024-05-30
+
+### Added
+- *(thegraph-core)* report subgraph client errors ([#213](https://github.com/edgeandnode/toolshed/pull/213))
+
+### Other
+- *(thegraph-core)* remove deprecated subscriptions module ([#211](https://github.com/edgeandnode/toolshed/pull/211))
+
 ## [0.4.3](https://github.com/edgeandnode/toolshed/compare/thegraph-core-v0.4.2...thegraph-core-v0.4.3) - 2024-05-29
 
 ### Other
