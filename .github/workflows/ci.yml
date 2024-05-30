@@ -22,13 +22,10 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: stable
-          components: rustfmt, clippy
+          components: clippy
 
       - name: Cache rust build files
         uses: Leafwing-Studios/cargo-cache@c7e8aa40ae2c975774d3bd766beb92927cfd7771 # v1
-
-      - name: rustfmt
-        run: cargo fmt --all -- --check
 
       - name: check (release)
         run: cargo check --workspace --all-targets --all-features --release
@@ -60,3 +57,17 @@ jobs:
         with:
           env_file: .env
           run: cargo test --workspace --all-features --test '*'
+
+  format:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4
+
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@nightly
+        with:
+          toolchain: nightly
+          components: rustfmt
+
+      - run: cargo +nightly fmt --all -- --check
