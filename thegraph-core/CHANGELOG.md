@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.1](https://github.com/edgeandnode/toolshed/compare/thegraph-core-v0.5.0...thegraph-core-v0.5.1) - 2024-06-03
+
+### Fixed
+- *(thegraph-core)* add missing dependency for default-features ([#221](https://github.com/edgeandnode/toolshed/pull/221))
+
+### Other
+- fix code format issues ([#216](https://github.com/edgeandnode/toolshed/pull/216))
+
 ## [0.5.0](https://github.com/edgeandnode/toolshed/compare/thegraph-core-v0.4.3...thegraph-core-v0.5.0) - 2024-05-30
 
 ### Added
