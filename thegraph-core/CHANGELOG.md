@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.2](https://github.com/edgeandnode/toolshed/compare/thegraph-core-v0.5.1...thegraph-core-v0.5.2) - 2024-06-17
+
+### Fixed
+- *(thegraph-core)* return empty vec on empty results response ([#233](https://github.com/edgeandnode/toolshed/pull/233))
+- *(thegraph-core)* subgraph_client future does not implement Send trait ([#231](https://github.com/edgeandnode/toolshed/pull/231))
+
 ## [0.5.1](https://github.com/edgeandnode/toolshed/compare/thegraph-core-v0.5.0...thegraph-core-v0.5.1) - 2024-06-03
 
 ### Fixed
