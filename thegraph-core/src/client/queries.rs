@@ -170,6 +170,9 @@ pub mod page {
         pub results: Vec<Box<RawValue>>,
     }
 
+    /// An opaque entry in the response of a subgraph page query.
+    ///
+    /// This is used to determine the ID of the last entity fetched.
     #[derive(Debug, Deserialize)]
     pub struct SubgraphPageQueryResponseOpaqueEntry {
         pub id: String,

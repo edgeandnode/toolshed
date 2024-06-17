@@ -226,3 +226,54 @@ async fn send_subgraph_paginated() {
     let response = res.expect("Failed to fetch subgraphs");
     assert!(!response.is_empty());
 }
+
+#[test_with::env(IT_TEST_MAINNET_GATEWAY_URL, IT_TEST_MAINNET_GATEWAY_AUTH)]
+#[tokio::test]
+async fn send_subgraph_paginated_empty_response() {
+    init_test_tracing();
+
+    //* Given
+    let subgraph_url = test_subgraph_url(GRAPH_NETWORK_MAINNET_SUBGRAPH_ID);
+    let auth_token = test_auth_token();
+
+    let http_client = reqwest::Client::new();
+
+    let client = SubgraphClient::builder(http_client, subgraph_url)
+        .with_auth_token(Some(auth_token))
+        .build();
+
+    // Query all subgraph ids. As 'entityVersion' is set to 9999, we expect no results.
+    const SUBGRAPHS_QUERY_DOCUMENT: &str = r#"
+        subgraphs(
+            block: $block
+            orderBy: id, orderDirection: asc
+            first: $first
+            where: {
+                id_gt: $last
+                entityVersion: 9999
+            }
+        ) {
+            id
+        }
+        "#;
+
+    #[derive(Debug, Deserialize)]
+    #[serde(rename_all = "camelCase")]
+    pub struct Subgraph {
+        #[allow(dead_code)]
+        pub id: SubgraphId,
+    }
+
+    //* When
+    let res = tokio::time::timeout(
+        Duration::from_secs(10),
+        client.paginated_query::<Subgraph>(SUBGRAPHS_QUERY_DOCUMENT, 200),
+    )
+    .await
+    .expect("Timeout on subgraph paginated query");
+
+    //* Then
+    // Assert the query succeeded, and we got a non-empty list of active subscriptions.
+    let response = res.expect("Failed to fetch subgraphs");
+    assert!(response.is_empty());
+}

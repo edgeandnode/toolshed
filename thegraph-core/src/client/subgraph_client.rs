@@ -18,15 +18,16 @@ use crate::types::BlockPointer;
 /// Error message returned by the indexer typically when a reorg happens.
 const SUBGRAPH_REORG_ERROR: &str = "no block with that hash found";
 
+/// Errors that can occur while sending a paginated query.
 #[derive(Debug, Clone, thiserror::Error)]
 pub enum PaginatedQueryError {
     /// The bootstrap meta query failed.
     #[error("bootstrap meta query failed: {0}")]
     BootstrapMetaQueryFailed(String),
 
-    /// The response was empty.
+    /// The page response was empty.
     ///
-    /// A page query response should always contain at least the meta query response. If the
+    /// A page query response should always contain at least the 'meta' field response. If the
     /// response is empty, it means that the subgraph is not returning any data.
     #[error("empty response")]
     EmptyResponse,
@@ -93,9 +94,7 @@ async fn send_paginated_query<T: for<'de> Deserialize<'de>>(
         .map_err(PaginatedQueryError::RequestError)?;
 
         let resp = match response {
-            Ok(data) if !data.results.is_empty() => data,
-            Ok(_) if results.is_empty() => return Err(PaginatedQueryError::EmptyResponse),
-            Ok(_) => break,
+            Ok(data) => data,
             Err(err) => {
                 return match err {
                     ResponseError::Empty => Err(PaginatedQueryError::EmptyResponse),
@@ -119,14 +118,21 @@ async fn send_paginated_query<T: for<'de> Deserialize<'de>>(
             }
         };
 
+        // Return if the page response was empty (no results).
+        if resp.results.is_empty() {
+            return Ok((results, block_pointer));
+        }
+
+        // Extract the page's last entry ID from the response.
         last_id = {
             let raw_data = resp.results.last().unwrap().get();
-            match serde_json::from_str::<SubgraphPageQueryResponseOpaqueEntry>(raw_data).ok() {
-                Some(item) => Some(item.id),
-                None => {
+            match serde_json::from_str::<SubgraphPageQueryResponseOpaqueEntry>(raw_data) {
+                Ok(item) => Some(item.id),
+                Err(err) => {
+                    tracing::debug!(error = %err, "failed to extract 'id' for last page entry");
                     return Err(PaginatedQueryError::DeserializationError(
-                        "failed to extract id for last entry".to_string(),
-                    ))
+                        "failed to extract 'id' for last page entry".to_string(),
+                    ));
                 }
             }
         };
@@ -135,7 +141,7 @@ async fn send_paginated_query<T: for<'de> Deserialize<'de>>(
             block_number = %resp.meta.block.number,
             block_hash = %resp.meta.block.hash,
             page_items_count = %resp.results.len(),
-            last_item_id = %last_id.as_deref().unwrap_or_default(),
+            page_items_last_id = %last_id.as_deref().unwrap_or_default(),
             "received page query response"
         );
 
@@ -152,8 +158,6 @@ async fn send_paginated_query<T: for<'de> Deserialize<'de>>(
             }
         }
     }
-
-    Ok((results, block_pointer))
 }
 
 /// A client for interacting with a subgraph.
