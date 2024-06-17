@@ -3,12 +3,11 @@
 
 use std::time::Duration;
 
-use assert_matches::assert_matches;
 use serde::Deserialize;
 use thegraph_core::{
     client::{
         queries::{
-            meta::{send_bootstrap_meta_query, SubgraphMetaQueryResponse},
+            meta::send_bootstrap_meta_query,
             page::{send_subgraph_page_query, BlockHeight},
         },
         Client as SubgraphClient,
@@ -64,17 +63,19 @@ async fn send_subgraph_meta_query_request() {
     let http_client = reqwest::Client::new();
 
     //* When
-    let req_fut = send_bootstrap_meta_query(&http_client, subgraph_url, Some(&auth_token));
-    let res = tokio::time::timeout(Duration::from_secs(10), req_fut)
-        .await
-        .expect("Timeout on subgraph meta query");
+    let res = tokio::time::timeout(
+        Duration::from_secs(10),
+        send_bootstrap_meta_query(&http_client, subgraph_url, Some(&auth_token)),
+    )
+    .await
+    .expect("Timeout on subgraph meta query");
 
     //* Then
     // Assert the query succeeded, and we get a non-empty block number and hash.
-    assert_matches!(res, Ok(SubgraphMetaQueryResponse { meta }) => {
-        assert!(meta.block.number > 0);
-        assert!(!meta.block.hash.is_empty());
-    });
+    let response = res.expect("Failed to fetch subgraph meta");
+
+    assert!(response.meta.block.number > 0);
+    assert!(!response.meta.block.hash.is_empty());
 }
 
 #[test_with::env(IT_TEST_MAINNET_GATEWAY_URL, IT_TEST_MAINNET_GATEWAY_AUTH)]
@@ -106,28 +107,31 @@ async fn send_subgraph_page_query_request() {
         "#;
 
     //* When
-    let req_fut = send_subgraph_page_query(
-        &http_client,
-        subgraph_url,
-        Some(&auth_token),
-        SUBGRAPHS_QUERY_DOCUMENT,
-        BlockHeight::NumberGte(18627000),
-        PAGE_REQUEST_BATCH_SIZE,
-        None,
-    );
-    let res = tokio::time::timeout(Duration::from_secs(10), req_fut)
-        .await
-        .expect("Timeout on subgraph meta query");
+    let res = tokio::time::timeout(
+        Duration::from_secs(10),
+        send_subgraph_page_query(
+            &http_client,
+            subgraph_url,
+            Some(&auth_token),
+            SUBGRAPHS_QUERY_DOCUMENT,
+            BlockHeight::NumberGte(18627000),
+            PAGE_REQUEST_BATCH_SIZE,
+            None,
+        ),
+    )
+    .await
+    .expect("Timeout on subgraph meta query");
 
     //* Then
-    assert_matches!(res, Ok(Ok(resp)) => {
-        // Assert meta data is present and valid.
-        assert!(resp.meta.block.number > 0);
-        assert!(!resp.meta.block.hash.is_empty());
+    let page_res = res.expect("Failed to fetch subgraph page");
+    let page_response = page_res.expect("Failed to fetch subgraph page");
 
-        // Assert the results are present and the correct size.
-        assert_eq!(resp.results.len(), PAGE_REQUEST_BATCH_SIZE);
-    });
+    // Assert meta data is present and valid.
+    assert!(page_response.meta.block.number > 0);
+    assert!(!page_response.meta.block.hash.is_empty());
+
+    // Assert the results are present and the correct size.
+    assert_eq!(page_response.results.len(), PAGE_REQUEST_BATCH_SIZE);
 }
 
 #[test_with::env(IT_TEST_MAINNET_GATEWAY_URL, IT_TEST_MAINNET_GATEWAY_AUTH)]
@@ -158,17 +162,18 @@ async fn client_send_query() {
     }
 
     //* When
-    let req_fut = client.query::<SubgraphMetaQueryResponse>(SUBGRAPH_META_QUERY_DOCUMENT);
-    let res = tokio::time::timeout(Duration::from_secs(10), req_fut)
-        .await
-        .expect("Timeout on subgraph meta query");
+    let res = tokio::time::timeout(
+        Duration::from_secs(10),
+        client.query::<SubgraphMetaQueryResponse>(SUBGRAPH_META_QUERY_DOCUMENT),
+    )
+    .await
+    .expect("Timeout on subgraph meta query");
 
     //* Then
     // Assert the query succeeded, and we get a non-empty block number and hash.
-    assert_matches!(res, Ok(SubgraphMetaQueryResponse { meta }) => {
-        assert!(meta.block.number > 0);
-        assert!(!meta.block.hash.is_empty());
-    });
+    let response = res.expect("Failed to fetch subgraph meta");
+    assert!(response.meta.block.number > 0);
+    assert!(!response.meta.block.hash.is_empty());
 }
 
 #[test_with::env(IT_TEST_MAINNET_GATEWAY_URL, IT_TEST_MAINNET_GATEWAY_AUTH)]
@@ -204,18 +209,20 @@ async fn send_subgraph_paginated() {
     #[derive(Debug, Deserialize)]
     #[serde(rename_all = "camelCase")]
     pub struct Subgraph {
+        #[allow(dead_code)]
         pub id: SubgraphId,
     }
 
     //* When
-    let req_fut = client.paginated_query::<Subgraph>(SUBGRAPHS_QUERY_DOCUMENT, 200);
-    let res = tokio::time::timeout(Duration::from_secs(10), req_fut)
-        .await
-        .expect("Timeout on subgraph paginated query");
+    let res = tokio::time::timeout(
+        Duration::from_secs(10),
+        client.paginated_query::<Subgraph>(SUBGRAPHS_QUERY_DOCUMENT, 200),
+    )
+    .await
+    .expect("Timeout on subgraph paginated query");
 
     //* Then
     // Assert the query succeeded, and we got a non-empty list of active subscriptions.
-    assert_matches!(res, Ok(vec) => {
-        assert!(!vec.is_empty());
-    });
+    let response = res.expect("Failed to fetch subgraphs");
+    assert!(!response.is_empty());
 }

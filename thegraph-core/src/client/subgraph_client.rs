@@ -5,7 +5,7 @@ use serde::de::Deserialize;
 use thegraph_graphql_http::{
     graphql::IntoDocument, http::request::IntoRequestParameters, http_client::ResponseError,
 };
-use tracing::Instrument;
+use tracing::{instrument, Instrument};
 use url::Url;
 
 use super::queries::{
@@ -240,18 +240,12 @@ impl Client {
     /// subgraph has progressed to.
     ///
     /// In the case of a reorg, the function will return an error.
+    #[instrument(level = "debug", skip_all, fields(url = %self.subgraph_url, page_size = %page_size))]
     pub async fn paginated_query<T: for<'de> Deserialize<'de>>(
         &self,
         query: impl IntoDocument + Clone,
         page_size: usize,
     ) -> Result<Vec<T>, PaginatedQueryError> {
-        let _span = tracing::debug_span!(
-            "paginated_query",
-            url = %self.subgraph_url,
-            page_size,
-        )
-        .entered();
-
         // Send a bootstrap meta query if the latest block number is 0.
         //
         // Graph-node is rejecting values of `number_gte:0` on subgraphs with a larger `startBlock`.
