@@ -9,6 +9,14 @@ use serde_with::{DeserializeFromStr, SerializeDisplay};
 )]
 pub struct SubgraphId(B256);
 
+impl SubgraphId {
+    /// The "zero" [`SubgraphId`].
+    ///
+    /// This is a constant value that represents the zero ID. It is equivalent to parsing a zeroed
+    /// 32-byte array.
+    pub const ZERO: Self = Self(B256::ZERO);
+}
+
 impl From<B256> for SubgraphId {
     fn from(bytes: B256) -> Self {
         Self(bytes)
@@ -41,14 +49,23 @@ impl AsRef<B256> for SubgraphId {
 
 impl std::str::FromStr for SubgraphId {
     type Err = &'static str;
+
     /// Attempt to parse a Subgraph ID in v2 format: `base58(sha256(<subgraph_id>))`
     fn from_str(value: &str) -> Result<Self, Self::Err> {
-        let mut hash = [0_u8; 32];
+        let mut buffer = [0_u8; 32];
+
+        // Decode the base58 string into a byte array, and get the number of bytes written
         let len = bs58::decode(value)
-            .onto(&mut hash)
+            .onto(&mut buffer)
             .map_err(|_| "invalid subgraph ID")?;
-        hash.rotate_right(32 - len);
-        Ok(Self(hash.into()))
+
+        // If the decoded hash is not 32 bytes long, rotate it to the right so the zero bytes
+        // are at the beginning of the array.
+        if len < 32 {
+            buffer.rotate_right(32 - len);
+        }
+
+        Ok(Self::from(buffer))
     }
 }
 
@@ -60,19 +77,39 @@ impl std::fmt::Display for SubgraphId {
 
 impl std::fmt::Debug for SubgraphId {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", self)
+        write!(f, "Subgraph({})", self)
     }
 }
 
-/// Converts a sequence of string literals containing hex-encoded data into a new [`SubgraphId`]
-/// at compile time.
+/// Converts a sequence of string literals containing 32-bytes Base58-encoded data into a new
+/// [`SubgraphId`] at compile time.
+///
+/// To create an `SubgraphId` from a string literal (Base58) at compile time:
+///
+/// ```rust
+/// use thegraph_core::subgraph_id;
+/// use thegraph_core::types::SubgraphId;
+///
+/// let subgraph_id: SubgraphId = subgraph_id!("DZz4kDTdmzWLWsV373w2bSmoar3umKKH9y82SUKr5qmp");
+/// ```
+///
+/// If no argument is provided, the macro will create an `SubgraphId` with the zero ID:
+///
+/// ```rust
+/// use thegraph_core::subgraph_id;
+/// use thegraph_core::types::SubgraphId;
+///
+/// let subgraph_id: SubgraphId = subgraph_id!();
+///
+/// assert_eq!(subgraph_id, SubgraphId::ZERO);
+/// ```
 #[macro_export]
 macro_rules! subgraph_id {
     () => {
-        SubgraphId(B256::ZERO)
+        $crate::types::SubgraphId::from(::alloy_primitives::B256::ZERO)
     };
     ($id:tt) => {
-        SubgraphId(alloy_primitives::b256!($id))
+        $crate::types::SubgraphId::from(::bs58::decode($id.as_bytes()).into_array_const_unwrap())
     };
 }
 
@@ -121,6 +158,7 @@ mod tests {
     #[test]
     fn decode_failure_on_invalid_string() {
         //* Given
+        // The following string is not a valid base58 string as it contains the `l` character
         let invalid_id = "invalid";
 
         //* When

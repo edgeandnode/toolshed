@@ -1,16 +1,15 @@
 //! The graph network services' foundation types.
 
-// Re-export types in the public API
 pub use allocation_id::*;
-pub use alloy_primitives::{self, Address};
-pub use alloy_sol_types;
+pub use alloy_primitives::{address, Address};
 pub use attestation::*;
 pub use block_pointer::*;
 pub use deployment_id::*;
-pub use ethers_core;
 pub use indexer_id::*;
 pub use poi::*;
 pub use subgraph_id::*;
+#[doc(hidden)]
+pub use {::alloy_primitives, ::alloy_sol_types, ::ethers_core};
 
 mod allocation_id;
 pub mod attestation;
