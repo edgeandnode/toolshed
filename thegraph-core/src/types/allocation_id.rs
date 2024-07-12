@@ -40,6 +40,12 @@ impl std::str::FromStr for AllocationId {
     }
 }
 
+impl PartialEq<Address> for AllocationId {
+    fn eq(&self, other: &Address) -> bool {
+        self.0.eq(other)
+    }
+}
+
 impl AsRef<Address> for AllocationId {
     fn as_ref(&self) -> &Address {
         &self.0
@@ -71,4 +77,16 @@ impl serde::Serialize for AllocationId {
     {
         self.0.serialize(serializer)
     }
+}
+
+/// Converts a sequence of string literals containing hex-encoded data into a new [`AllocationId`]
+/// at compile time.
+#[macro_export]
+macro_rules! allocation_id {
+    () => {
+        AllocationId(Address::ZERO)
+    };
+    ($addr:tt) => {
+        AllocationId(alloy_primitives::address!($addr))
+    };
 }
