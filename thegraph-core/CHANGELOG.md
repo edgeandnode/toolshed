@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.4](https://github.com/edgeandnode/toolshed/compare/thegraph-core-v0.5.3...thegraph-core-v0.5.4) - 2024-07-12
+
+### Added
+- *(thegraph-core)* add allocation, indexer and subgraph ID creation macros ([#251](https://github.com/edgeandnode/toolshed/pull/251))
+
+### Other
+- *(deps)* update rust crate test-with to 0.13.0 ([#249](https://github.com/edgeandnode/toolshed/pull/249))
+
 ## [0.5.3](https://github.com/edgeandnode/toolshed/compare/thegraph-core-v0.5.2...thegraph-core-v0.5.3) - 2024-06-24
 
 ### Added
