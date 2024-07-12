@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.5](https://github.com/edgeandnode/toolshed/compare/thegraph-core-v0.5.4...thegraph-core-v0.5.5) - 2024-07-12
+
+### Fixed
+- *(thegraph-core)* add subgraph ID base58 parsing macro ([#252](https://github.com/edgeandnode/toolshed/pull/252))
+
 ## [0.5.4](https://github.com/edgeandnode/toolshed/compare/thegraph-core-v0.5.3...thegraph-core-v0.5.4) - 2024-07-12
 
 ### Added
