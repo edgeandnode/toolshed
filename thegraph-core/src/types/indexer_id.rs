@@ -40,6 +40,12 @@ impl std::str::FromStr for IndexerId {
     }
 }
 
+impl PartialEq<Address> for IndexerId {
+    fn eq(&self, other: &Address) -> bool {
+        self.0.eq(other)
+    }
+}
+
 impl AsRef<Address> for IndexerId {
     fn as_ref(&self) -> &Address {
         &self.0
@@ -71,4 +77,16 @@ impl serde::Serialize for IndexerId {
     {
         self.0.serialize(serializer)
     }
+}
+
+/// Converts a sequence of string literals containing hex-encoded data into a new [`IndexerId`]
+/// at compile time.
+#[macro_export]
+macro_rules! indexer_id {
+    () => {
+        IndexerId(Address::ZERO)
+    };
+    ($addr:tt) => {
+        IndexerId(alloy_primitives::address!($addr))
+    };
 }

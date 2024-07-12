@@ -64,6 +64,18 @@ impl std::fmt::Debug for SubgraphId {
     }
 }
 
+/// Converts a sequence of string literals containing hex-encoded data into a new [`SubgraphId`]
+/// at compile time.
+#[macro_export]
+macro_rules! subgraph_id {
+    () => {
+        SubgraphId(B256::ZERO)
+    };
+    ($id:tt) => {
+        SubgraphId(alloy_primitives::b256!($id))
+    };
+}
+
 #[cfg(test)]
 mod tests {
     use alloy_primitives::B256;
