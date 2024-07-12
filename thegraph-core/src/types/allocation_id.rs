@@ -2,7 +2,7 @@ use alloy_primitives::Address;
 
 /// A unique identifier for an allocation: the allocation's Ethereum address.
 ///
-/// This is a "new-type" wrapper around `Address` to provide type safety.
+/// This is a "new-type" wrapper around [`Address`] to provide type safety.
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct AllocationId(Address);
 
@@ -81,12 +81,32 @@ impl serde::Serialize for AllocationId {
 
 /// Converts a sequence of string literals containing hex-encoded data into a new [`AllocationId`]
 /// at compile time.
+///
+/// To create an `AllocationId` from a string literal (no `0x` prefix) at compile time:
+///
+/// ```rust
+/// use thegraph_core::allocation_id;
+/// use thegraph_core::types::{AllocationId };
+///
+/// let allocation_id: AllocationId = allocation_id!("0002c67268fb8c8917f36f865a0cbdf5292fa68d");
+/// ```
+///
+/// If no argument is provided, the macro will create an `AllocationId` with the zero address:
+///
+/// ```rust
+/// use thegraph_core::allocation_id;
+/// use thegraph_core::types::{Address, AllocationId };
+///
+/// let allocation_id: AllocationId = allocation_id!();
+///
+/// assert_eq!(allocation_id, Address::ZERO);
+/// ```
 #[macro_export]
 macro_rules! allocation_id {
     () => {
-        AllocationId(Address::ZERO)
+        $crate::types::AllocationId::from(Address::ZERO)
     };
     ($addr:tt) => {
-        AllocationId(alloy_primitives::address!($addr))
+        $crate::types::AllocationId::from(alloy_primitives::address!($addr))
     };
 }

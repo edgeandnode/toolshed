@@ -4,6 +4,10 @@
 //! in _The Graph_ network and serve as foundational building blocks for the rest of
 //! the codebase.
 
+pub use alloy_primitives::address;
+#[doc(hidden)]
+pub use {::alloy_primitives, ::alloy_sol_types, ::ethers_core};
+
 pub mod types;
 
 #[cfg(feature = "subgraph-client")]
