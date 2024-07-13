@@ -1,23 +1,18 @@
 //! Attestation types and functions for verifying attestations.
 
 // Re-export the types in the public API
-use alloy_primitives::{keccak256, Address, FixedBytes, B256, U256};
+use alloy_primitives::{b256, keccak256, Address, FixedBytes, B256, U256};
 use alloy_sol_types::{Eip712Domain, SolStruct};
 use ethers_core::{
     k256::ecdsa::SigningKey,
     types::{RecoveryMessage, Signature},
 };
-use lazy_static::lazy_static;
 use serde::{Deserialize, Serialize};
 
 use super::deployment_id::DeploymentId;
 
-lazy_static! {
-    static ref ATTESTATION_EIP712_DOMAIN_SALT: B256 =
-        "a070ffb1cd7409649bf77822cce74495468e06dbfaef09556838bf188679b9c2"
-            .parse()
-            .expect("invalid eip712 domain salt");
-}
+const ATTESTATION_EIP712_DOMAIN_SALT: B256 =
+    b256!("a070ffb1cd7409649bf77822cce74495468e06dbfaef09556838bf188679b9c2");
 
 // TODO: Add documentation
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -48,7 +43,7 @@ pub fn eip712_domain(chain_id: U256, dispute_manager: Address) -> Eip712Domain {
         version: Some("0".into()),
         chain_id: Some(chain_id),
         verifying_contract: Some(dispute_manager),
-        salt: Some(*ATTESTATION_EIP712_DOMAIN_SALT),
+        salt: Some(ATTESTATION_EIP712_DOMAIN_SALT),
     }
 }
 

@@ -27,7 +27,6 @@ async-graphql = { version = "7.0", optional = true }
 bs58 = "0.5"
 ethers-core = "2.0.14"
 indoc = { version = "2.0.5", optional = true }
-lazy_static = "1.4.0"
 reqwest = { version = "0.12", optional = true }
 serde = "1.0"
 serde_json = { version = "1.0.116", features = ["raw_value"], optional = true }
