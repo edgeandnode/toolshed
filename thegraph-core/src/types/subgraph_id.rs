@@ -112,7 +112,7 @@ impl std::fmt::Debug for SubgraphId {
 #[macro_export]
 macro_rules! subgraph_id {
     () => {
-        $crate::types::SubgraphId::new($crate::alloy_primitives::B256::ZERO)
+        $crate::types::SubgraphId::ZERO
     };
     ($id:tt) => {
         $crate::types::SubgraphId::new($crate::types::parse_subgraph_id_const($id))
