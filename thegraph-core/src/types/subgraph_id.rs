@@ -15,6 +15,11 @@ impl SubgraphId {
     /// This is a constant value that represents the zero ID. It is equivalent to parsing a zeroed
     /// 32-byte array.
     pub const ZERO: Self = Self(B256::ZERO);
+
+    /// Create a new [`SubgraphId`].
+    pub const fn new(value: B256) -> Self {
+        Self(value)
+    }
 }
 
 impl From<B256> for SubgraphId {
@@ -109,83 +114,82 @@ macro_rules! subgraph_id {
         $crate::types::SubgraphId::from(::alloy_primitives::B256::ZERO)
     };
     ($id:tt) => {
-        $crate::types::SubgraphId::from(::bs58::decode($id.as_bytes()).into_array_const_unwrap())
+        $crate::types::SubgraphId::new($crate::types::parse_subgraph_id_const($id))
     };
+}
+
+/// Parse a base58-encoded string into a 32-bytes array at compile time.
+#[doc(hidden)]
+pub const fn parse_subgraph_id_const(value: &str) -> B256 {
+    let data = value.as_bytes();
+    let bytes = bs58::decode(data).into_array_const_unwrap::<32>();
+    B256::new(bytes)
 }
 
 #[cfg(test)]
 mod tests {
-    use alloy_primitives::B256;
-    use assert_matches::assert_matches;
+    use alloy_primitives::{b256, B256};
 
     use super::SubgraphId;
 
-    const ID_V2: &str = "7xB3yxxD8okmq4dZPky3eP1nYRgLfZrwMyUQBGo32t4U";
+    const VALID_SUBGRAPH_ID: &str = "7xB3yxxD8okmq4dZPky3eP1nYRgLfZrwMyUQBGo32t4U";
 
-    const EXPECTED_ID_BYTES: &str =
-        "0x67486e65165b1474898247760a4b852d70d95782c6325960e5b6b4fd82fed1bd";
+    const EXPECTED_ID_BYTES: B256 =
+        b256!("67486e65165b1474898247760a4b852d70d95782c6325960e5b6b4fd82fed1bd");
+
+    const EXPECTED_ID: SubgraphId = subgraph_id!(VALID_SUBGRAPH_ID);
 
     #[test]
-    fn parse_valid_v2_id() {
+    fn parse_valid_string() {
         //* Given
-        let valid_id = ID_V2;
-        let expected_id = EXPECTED_ID_BYTES.parse::<B256>().unwrap();
+        let valid_id = VALID_SUBGRAPH_ID;
 
         //* When
-        let parsed_id = valid_id.parse::<SubgraphId>();
+        let result = valid_id.parse::<SubgraphId>();
 
         //* Then
-        assert_matches!(parsed_id, Ok(id) => {
-            assert_eq!(id.0, expected_id);
-        });
+        let id = result.expect("invalid subgraph ID");
+        assert_eq!(id, EXPECTED_ID);
+        assert_eq!(id.0, EXPECTED_ID_BYTES);
     }
 
     #[test]
-    fn decode_subgraph_id_from_v2_string() {
-        //* Given
-        let valid_id = ID_V2;
-        let expected_id = EXPECTED_ID_BYTES.parse::<B256>().unwrap();
-
-        //* When
-        let parsed_id = valid_id.parse::<SubgraphId>();
-
-        //* Then
-        assert_matches!(parsed_id, Ok(id) => {
-            assert_eq!(id.0, expected_id);
-        });
-    }
-
-    #[test]
-    fn decode_failure_on_invalid_string() {
+    fn parse_failure_on_invalid_string() {
         //* Given
         // The following string is not a valid base58 string as it contains the `l` character
         let invalid_id = "invalid";
 
         //* When
-        let parsed_id = invalid_id.parse::<SubgraphId>();
+        let result = invalid_id.parse::<SubgraphId>();
 
         //* Then
-        assert_matches!(parsed_id, Err(err) => {
-            assert_eq!(err, "invalid subgraph ID");
-        });
+        let err = result.expect_err("invalid subgraph ID");
+        assert_eq!(err, "invalid subgraph ID");
     }
 
     #[test]
-    fn subgraph_equality() {
+    fn format_subgraph_id_display() {
         //* Given
-        let expected_id = SubgraphId(EXPECTED_ID_BYTES.parse().unwrap());
-        let expected_repr = ID_V2;
+        let valid_id = EXPECTED_ID;
 
         //* When
-        let parsed_id = ID_V2.parse::<SubgraphId>();
+        let result = format!("{}", valid_id);
 
         //* Then
-        assert_matches!(parsed_id, Ok(id) => {
-            // Assert the IDs internal representation is correct
-            assert_eq!(id, expected_id);
+        assert_eq!(result, VALID_SUBGRAPH_ID);
+    }
 
-            // Assert the ID is displayed in v2 format
-            assert_eq!(id.to_string(), expected_repr);
-        });
+    #[test]
+    fn format_subgraph_id_debug() {
+        //* Given
+        let expected_debug_repr = format!("Subgraph({})", VALID_SUBGRAPH_ID);
+
+        let valid_id = EXPECTED_ID;
+
+        //* When
+        let result = format!("{:?}", valid_id);
+
+        //* Then
+        assert_eq!(result, expected_debug_repr);
     }
 }
