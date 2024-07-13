@@ -201,7 +201,7 @@ fn parse_hex_str(value: &str) -> Result<DeploymentId, DeploymentIdError> {
 #[macro_export]
 macro_rules! deployment_id {
     () => {
-        $crate::types::DeploymentId::new($crate::alloy_primitives::B256::ZERO)
+        $crate::types::DeploymentId::ZERO
     };
     ($id:tt) => {
         $crate::types::DeploymentId::new($crate::types::parse_cid_v0_const($id))
