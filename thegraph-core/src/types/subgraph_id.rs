@@ -95,7 +95,7 @@ impl std::fmt::Debug for SubgraphId {
 /// use thegraph_core::subgraph_id;
 /// use thegraph_core::types::SubgraphId;
 ///
-/// let subgraph_id: SubgraphId = subgraph_id!("DZz4kDTdmzWLWsV373w2bSmoar3umKKH9y82SUKr5qmp");
+/// const SUBGRAPH_ID: SubgraphId = subgraph_id!("DZz4kDTdmzWLWsV373w2bSmoar3umKKH9y82SUKr5qmp");
 /// ```
 ///
 /// If no argument is provided, the macro will create an `SubgraphId` with the zero ID:
@@ -104,14 +104,14 @@ impl std::fmt::Debug for SubgraphId {
 /// use thegraph_core::subgraph_id;
 /// use thegraph_core::types::SubgraphId;
 ///
-/// let subgraph_id: SubgraphId = subgraph_id!();
+/// const SUBGRAPH_ID: SubgraphId = subgraph_id!();
 ///
-/// assert_eq!(subgraph_id, SubgraphId::ZERO);
+/// assert_eq!(SUBGRAPH_ID, SubgraphId::ZERO);
 /// ```
 #[macro_export]
 macro_rules! subgraph_id {
     () => {
-        $crate::types::SubgraphId::from(::alloy_primitives::B256::ZERO)
+        $crate::types::SubgraphId::new($crate::alloy_primitives::B256::ZERO)
     };
     ($id:tt) => {
         $crate::types::SubgraphId::new($crate::types::parse_subgraph_id_const($id))

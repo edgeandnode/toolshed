@@ -184,7 +184,7 @@ fn parse_hex_str(value: &str) -> Result<DeploymentId, DeploymentIdError> {
 /// use thegraph_core::{deployment_id};
 /// use thegraph_core::types::DeploymentId;
 ///
-/// let deployment_id: DeploymentId = deployment_id!("QmSWxvd8SaQK6qZKJ7xtfxCCGoRzGnoi2WNzmJYYJW9BXY");
+/// const DEPLOYMENT_ID: DeploymentId = deployment_id!("QmSWxvd8SaQK6qZKJ7xtfxCCGoRzGnoi2WNzmJYYJW9BXY");
 /// ```
 ///
 /// If no argument is provided, the macro will create an `DeploymentId` with the zero ID:
@@ -193,14 +193,14 @@ fn parse_hex_str(value: &str) -> Result<DeploymentId, DeploymentIdError> {
 /// use thegraph_core::deployment_id;
 /// use thegraph_core::types::DeploymentId;
 ///
-/// let deployment_id: DeploymentId = deployment_id!();
+/// const DEPLOYMENT_ID: DeploymentId = deployment_id!();
 ///
-/// assert_eq!(deployment_id, DeploymentId::ZERO);
+/// assert_eq!(DEPLOYMENT_ID, DeploymentId::ZERO);
 /// ```
 #[macro_export]
 macro_rules! deployment_id {
     () => {
-        $crate::types::DeploymentId::from(::alloy_primitives::B256::ZERO)
+        $crate::types::DeploymentId::new($crate::alloy_primitives::B256::ZERO)
     };
     ($id:tt) => {
         $crate::types::DeploymentId::new($crate::types::parse_cid_v0_const($id))

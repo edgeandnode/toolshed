@@ -7,7 +7,7 @@ use alloy_primitives::Address;
 pub struct AllocationId(Address);
 
 impl AllocationId {
-    /// Create a new `AllocationId` from an [`Address`].
+    /// Create a new [`AllocationId`].
     pub const fn new(address: Address) -> Self {
         AllocationId(address)
     }
@@ -93,7 +93,7 @@ impl serde::Serialize for AllocationId {
 /// use thegraph_core::allocation_id;
 /// use thegraph_core::types::{AllocationId };
 ///
-/// let allocation_id: AllocationId = allocation_id!("0002c67268fb8c8917f36f865a0cbdf5292fa68d");
+/// const ALLOCATION_ID: AllocationId = allocation_id!("0002c67268fb8c8917f36f865a0cbdf5292fa68d");
 /// ```
 ///
 /// If no argument is provided, the macro will create an `AllocationId` with the zero address:
@@ -102,16 +102,16 @@ impl serde::Serialize for AllocationId {
 /// use thegraph_core::allocation_id;
 /// use thegraph_core::types::{Address, AllocationId };
 ///
-/// let allocation_id: AllocationId = allocation_id!();
+/// const ALLOCATION_ID: AllocationId = allocation_id!();
 ///
-/// assert_eq!(allocation_id, Address::ZERO);
+/// assert_eq!(ALLOCATION_ID, Address::ZERO);
 /// ```
 #[macro_export]
 macro_rules! allocation_id {
     () => {
-        $crate::types::AllocationId::from(::alloy_primitives::Address::ZERO)
+        $crate::types::AllocationId::new($crate::alloy_primitives::Address::ZERO)
     };
     ($value:tt) => {
-        $crate::types::AllocationId::new(::alloy_primitives::address!($value))
+        $crate::types::AllocationId::new($crate::alloy_primitives::address!($value))
     };
 }

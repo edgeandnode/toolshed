@@ -7,7 +7,7 @@ use alloy_primitives::Address;
 pub struct IndexerId(Address);
 
 impl IndexerId {
-    /// Create a new `IndexerId` from an [`Address`].
+    /// Create a new [`IndexerId`].
     pub const fn new(address: Address) -> Self {
         IndexerId(address)
     }
@@ -93,7 +93,7 @@ impl serde::Serialize for IndexerId {
 /// use thegraph_core::indexer_id;
 /// use thegraph_core::types::{IndexerId};
 ///
-/// let indexer_id: IndexerId = indexer_id!("0002c67268fb8c8917f36f865a0cbdf5292fa68d");
+/// const INDEXER_ID: IndexerId = indexer_id!("0002c67268fb8c8917f36f865a0cbdf5292fa68d");
 /// ```
 ///
 /// If no argument is provided, the macro will create an `IndexerId` with the zero address:
@@ -102,16 +102,16 @@ impl serde::Serialize for IndexerId {
 /// use thegraph_core::indexer_id;
 /// use thegraph_core::types::{Address, IndexerId};
 ///
-/// let indexer_id: IndexerId = indexer_id!();
+/// const INDEXER_ID: IndexerId = indexer_id!();
 ///
-/// assert_eq!(indexer_id, Address::ZERO);
+/// assert_eq!(INDEXER_ID, Address::ZERO);
 /// ```
 #[macro_export]
 macro_rules! indexer_id {
     () => {
-        $crate::types::IndexerId::from(::alloy_primitives::Address::ZERO)
+        $crate::types::IndexerId::new($crate::alloy_primitives::Address::ZERO)
     };
     ($value:tt) => {
-        $crate::types::IndexerId::new(::alloy_primitives::address!($value))
+        $crate::types::IndexerId::new($crate::alloy_primitives::address!($value))
     };
 }
