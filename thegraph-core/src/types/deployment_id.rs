@@ -1,7 +1,6 @@
 //! Subgraph deployment ID type and parsing.
 
 use alloy_primitives::B256;
-use serde_with::{DeserializeFromStr, SerializeDisplay};
 
 /// Subgraph deployment ID parsing error.
 #[derive(Debug, Clone, PartialEq, Eq, thiserror::Error)]
@@ -34,8 +33,10 @@ fn format_cid_v0(bytes: &[u8]) -> String {
 
 /// A Subgraph's Deployment ID represents unique identifier for a deployed subgraph on The Graph.
 /// This is the content ID of the subgraph's manifest.
-#[derive(
-    Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, SerializeDisplay, DeserializeFromStr,
+#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[cfg_attr(
+    feature = "serde",
+    derive(serde_with::SerializeDisplay, serde_with::DeserializeFromStr)
 )]
 pub struct DeploymentId(B256);
 
@@ -175,7 +176,7 @@ fn parse_hex_str(value: &str) -> Result<DeploymentId, DeploymentIdError> {
     Ok(DeploymentId::new(bytes))
 }
 
-/// Converts a sequence of string literals containing CIDv0 data into a new [`DeploymentID`] at
+/// Converts a sequence of string literals containing CIDv0 data into a new [`DeploymentId`] at
 /// compile time.
 ///
 /// To create an `DeploymentId` from a string literal (Base58) at compile time:

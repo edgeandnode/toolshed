@@ -7,7 +7,6 @@ use ethers_core::{
     k256::ecdsa::SigningKey,
     types::{RecoveryMessage, Signature},
 };
-use serde::{Deserialize, Serialize};
 
 use super::deployment_id::DeploymentId;
 
@@ -15,13 +14,14 @@ const ATTESTATION_EIP712_DOMAIN_SALT: B256 =
     b256!("a070ffb1cd7409649bf77822cce74495468e06dbfaef09556838bf188679b9c2");
 
 // TODO: Add documentation
-#[derive(Clone, Debug, Deserialize, Serialize)]
+#[derive(Clone, Debug)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Attestation {
-    #[serde(rename = "requestCID")]
+    #[cfg_attr(feature = "serde", serde(rename = "requestCID"))]
     pub request_cid: B256,
-    #[serde(rename = "responseCID")]
+    #[cfg_attr(feature = "serde", serde(rename = "responseCID"))]
     pub response_cid: B256,
-    #[serde(rename = "subgraphDeploymentID")]
+    #[cfg_attr(feature = "serde", serde(rename = "subgraphDeploymentID"))]
     pub deployment: B256,
     pub r: B256,
     pub s: B256,
