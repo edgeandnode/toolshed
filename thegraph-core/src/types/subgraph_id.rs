@@ -1,11 +1,12 @@
 //! Subgraph ID type and related utilities.
 
 use alloy_primitives::B256;
-use serde_with::{DeserializeFromStr, SerializeDisplay};
 
 /// A Subgraph ID is a 32-byte identifier for a subgraph.
-#[derive(
-    Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, SerializeDisplay, DeserializeFromStr,
+#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[cfg_attr(
+    feature = "serde",
+    derive(serde_with::SerializeDisplay, serde_with::DeserializeFromStr)
 )]
 pub struct SubgraphId(B256);
 

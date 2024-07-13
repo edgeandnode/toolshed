@@ -65,6 +65,7 @@ impl std::ops::Deref for AllocationId {
     }
 }
 
+#[cfg(feature = "serde")]
 impl<'de> serde::Deserialize<'de> for AllocationId {
     fn deserialize<D>(deserializer: D) -> Result<AllocationId, D::Error>
     where
@@ -75,6 +76,7 @@ impl<'de> serde::Deserialize<'de> for AllocationId {
     }
 }
 
+#[cfg(feature = "serde")]
 impl serde::Serialize for AllocationId {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
