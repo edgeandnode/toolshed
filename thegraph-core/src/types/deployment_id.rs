@@ -3,45 +3,6 @@
 use alloy_primitives::B256;
 use serde_with::{DeserializeFromStr, SerializeDisplay};
 
-fn parse_cidv0(value: &str) -> Result<B256, DeploymentIdError> {
-    if value.len() != 46 {
-        return Err(DeploymentIdError::InvalidIpfsHashLength {
-            value: value.to_string(),
-            length: value.len(),
-        });
-    }
-
-    let mut decoded = [0_u8; 34];
-    bs58::decode(value)
-        .onto(&mut decoded)
-        .map_err(|e| DeploymentIdError::InvalidIpfsHash {
-            value: value.to_string(),
-            error: e,
-        })?;
-    let mut bytes = [0_u8; 32];
-    bytes.copy_from_slice(&decoded[2..]);
-
-    Ok(bytes.into())
-}
-
-/// Attempt to parse a 32-byte hex string.
-fn parse_hexstr(value: &str) -> Result<B256, DeploymentIdError> {
-    value
-        .parse::<B256>()
-        .map_err(|e| DeploymentIdError::InvalidHexString {
-            value: value.to_string(),
-            error: format!("{}", e),
-        })
-}
-
-/// Format bytes as a CIDv0.
-fn format_cidv0(bytes: B256) -> String {
-    let mut buf = [0_u8; 34];
-    buf[0..2].copy_from_slice(&[0x12, 0x20]);
-    buf[2..].copy_from_slice(bytes.as_slice());
-    bs58::encode(buf).into_string()
-}
-
 /// Subgraph deployment ID parsing error.
 #[derive(Debug, Clone, PartialEq, Eq, thiserror::Error)]
 pub enum DeploymentIdError {
@@ -61,12 +22,41 @@ pub enum DeploymentIdError {
     InvalidHexString { value: String, error: String },
 }
 
+/// Format bytes as a CIDv0 string.
+///
+/// The CIDv0 format is a base58-encoded sha256-hash with a prefix of `Qm`
+fn format_cid_v0(bytes: &[u8]) -> String {
+    let mut buf = [0_u8; 34];
+    buf[0..2].copy_from_slice(&[0x12, 0x20]);
+    buf[2..].copy_from_slice(bytes);
+    bs58::encode(buf).into_string()
+}
+
 /// A Subgraph's Deployment ID represents unique identifier for a deployed subgraph on The Graph.
 /// This is the content ID of the subgraph's manifest.
 #[derive(
     Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, SerializeDisplay, DeserializeFromStr,
 )]
 pub struct DeploymentId(B256);
+
+impl DeploymentId {
+    /// The "zero" [`DeploymentId`].
+    ///
+    /// This is a constant value that represents the zero ID. It is equivalent to parsing a zeroed
+    /// 32-byte array.
+    pub const ZERO: Self = Self(B256::ZERO);
+
+    /// Create a new [`DeploymentId`].
+    pub const fn new(bytes: B256) -> Self {
+        Self(bytes)
+    }
+}
+
+impl AsRef<B256> for DeploymentId {
+    fn as_ref(&self) -> &B256 {
+        &self.0
+    }
+}
 
 impl From<B256> for DeploymentId {
     fn from(bytes: B256) -> Self {
@@ -92,37 +82,31 @@ impl From<&DeploymentId> for B256 {
     }
 }
 
-impl AsRef<B256> for DeploymentId {
-    fn as_ref(&self) -> &B256 {
-        &self.0
-    }
-}
-
 impl std::str::FromStr for DeploymentId {
     type Err = DeploymentIdError;
 
     /// Parse a deployment ID from a 32-byte hex string or a base58-encoded IPFS hash (CIDv0).
-    fn from_str(hash: &str) -> Result<Self, Self::Err> {
-        if hash.starts_with("Qm") {
-            // Attempt to decode IPFS hash (CIDv0)
-            Ok(Self(parse_cidv0(hash)?))
+    fn from_str(value: &str) -> Result<Self, Self::Err> {
+        Ok(if value.starts_with("Qm") {
+            // Attempt to decode base58-encoded CIDv0
+            parse_cid_v0_str(value)?
         } else {
             // Attempt to decode 32-byte hex string
-            Ok(Self(parse_hexstr(hash)?))
-        }
+            parse_hex_str(value)?
+        })
     }
 }
 
 impl std::fmt::Display for DeploymentId {
     /// Encode the deployment ID as CIDv0 (base58-encoded sha256-hash).
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.write_str(&format_cidv0(self.0))
+        f.write_str(&format_cid_v0(self.0.as_slice()))
     }
 }
 
 impl std::fmt::Debug for DeploymentId {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", self)
+        write!(f, "DeploymentId({})", self)
     }
 }
 
@@ -155,138 +139,286 @@ mod async_graphql_support {
     }
 }
 
+fn parse_cid_v0_str(value: &str) -> Result<DeploymentId, DeploymentIdError> {
+    // Check if the string has a valid length for a CIDv0 (46 characters)
+    if value.len() != 46 {
+        return Err(DeploymentIdError::InvalidIpfsHashLength {
+            value: value.to_string(),
+            length: value.len(),
+        });
+    }
+
+    // Decode the base58-encoded CIDv0
+    let mut buffer = [0_u8; 34];
+    bs58::decode(value)
+        .onto(&mut buffer)
+        .map_err(|e| DeploymentIdError::InvalidIpfsHash {
+            value: value.to_string(),
+            error: e,
+        })?;
+
+    // Extract the 32-byte hash from the buffer
+    let mut bytes = [0_u8; 32];
+    bytes.copy_from_slice(&buffer[2..]);
+
+    Ok(DeploymentId::new(B256::new(bytes)))
+}
+
+/// Parse a 32-byte hex string into a 32-byte hash.
+fn parse_hex_str(value: &str) -> Result<DeploymentId, DeploymentIdError> {
+    let bytes = value
+        .parse()
+        .map_err(|err| DeploymentIdError::InvalidHexString {
+            value: value.to_string(),
+            error: format!("{}", err),
+        })?;
+    Ok(DeploymentId::new(bytes))
+}
+
+/// Converts a sequence of string literals containing CIDv0 data into a new [`DeploymentID`] at
+/// compile time.
+///
+/// To create an `DeploymentId` from a string literal (Base58) at compile time:
+///
+/// ```rust
+/// use thegraph_core::{deployment_id};
+/// use thegraph_core::types::DeploymentId;
+///
+/// let deployment_id: DeploymentId = deployment_id!("QmSWxvd8SaQK6qZKJ7xtfxCCGoRzGnoi2WNzmJYYJW9BXY");
+/// ```
+///
+/// If no argument is provided, the macro will create an `DeploymentId` with the zero ID:
+///
+/// ```rust
+/// use thegraph_core::deployment_id;
+/// use thegraph_core::types::DeploymentId;
+///
+/// let deployment_id: DeploymentId = deployment_id!();
+///
+/// assert_eq!(deployment_id, DeploymentId::ZERO);
+/// ```
+#[macro_export]
+macro_rules! deployment_id {
+    () => {
+        $crate::types::DeploymentId::from(::alloy_primitives::B256::ZERO)
+    };
+    ($id:tt) => {
+        $crate::types::DeploymentId::new($crate::types::parse_cid_v0_const($id))
+    };
+}
+
+/// Parse a CIDv0 string into a 32-byte hash.
+#[doc(hidden)]
+pub const fn parse_cid_v0_const(value: &str) -> B256 {
+    // Check if the string has a valid length for a CIDv0 (46 characters)
+    if value.len() != 46 {
+        panic!("invalid string length (length must be 46)");
+    }
+
+    // Check if the string starts with "Qm"
+    let data = value.as_bytes();
+    if data[0] != b'Q' || data[1] != b'm' {
+        panic!("provided string does not start with 'Qm'");
+    }
+
+    // Decode the base58-encoded CIDv0 (34 bytes)
+    let decoded = bs58::decode(data).into_array_const_unwrap::<34>();
+
+    // Extract the 32-byte hash from the buffer
+    // Perform bytes.copy_from_slice(&decoded[2..]) in a const fn context
+    let mut bytes = [0_u8; 32];
+    let mut i = 0;
+    while i < 32 {
+        bytes[i] = decoded[i + 2];
+        i += 1;
+    }
+    B256::new(bytes)
+}
+
 #[cfg(test)]
 mod tests {
     use std::str::FromStr;
 
-    use alloy_primitives::B256;
-    use assert_matches::assert_matches;
+    use alloy_primitives::{b256, B256};
 
-    use super::{format_cidv0, parse_cidv0, parse_hexstr, DeploymentId, DeploymentIdError};
+    use super::{format_cid_v0, parse_cid_v0_str, parse_hex_str, DeploymentId, DeploymentIdError};
 
     const VALID_CID: &str = "QmWmyoMoctfbAaiEs2G46gpeUmhqFRDW6KWo64y5r581Vz";
     const VALID_HEX: &str = "0x7d5a99f603f231d53a4f39d1521f98d2e8bb279cf29bebfd0687dc98458e7f89";
+    const EXPECTED_DEPLOYMENT_ID: DeploymentId = deployment_id!(VALID_CID);
+    const EXPECTED_DEPLOYMENT_BYTES: B256 =
+        b256!("7d5a99f603f231d53a4f39d1521f98d2e8bb279cf29bebfd0687dc98458e7f89");
 
     #[test]
-    fn parse_valid_cidv0() {
+    fn parse_valid_cid_v0() {
         //* Given
         let valid_cid = VALID_CID;
-        let expected_bytes = VALID_HEX.parse::<B256>().unwrap();
 
         //* When
-        let parsed_id = parse_cidv0(valid_cid);
+        let result = parse_cid_v0_str(valid_cid);
 
         //* Then
-        assert_matches!(parsed_id, Ok(id) => {
-            assert_eq!(id, expected_bytes);
-        });
+        let id = result.expect("expected a valid ID");
+        assert_eq!(id, EXPECTED_DEPLOYMENT_ID);
+        assert_eq!(id.0, EXPECTED_DEPLOYMENT_BYTES);
     }
 
     #[test]
-    fn parse_invalid_lenght_cidv0() {
+    fn parse_invalid_length_cid_v0() {
         //* Given
         let invalid_cid = "QmA";
 
         //* When
-        let parsed_id = parse_cidv0(invalid_cid);
+        let result = parse_cid_v0_str(invalid_cid);
 
         //* Then
-        assert_matches!(parsed_id, Err(err) => {
-            assert_eq!(err, DeploymentIdError::InvalidIpfsHashLength {
+        let err = result.expect_err("expected an error");
+        assert_eq!(
+            err,
+            DeploymentIdError::InvalidIpfsHashLength {
                 value: invalid_cid.to_string(),
                 length: invalid_cid.len(),
-            });
-        });
+            }
+        );
     }
 
     #[test]
-    fn parse_invalid_encoding_cidv0() {
+    fn parse_invalid_base58_character_cid_v0() {
         //* Given
         let invalid_cid = "QmfVqZ9gPyMdU6TznRUh+Y0ui7J5zym+v9BofcmEWOf4k=";
 
         //* When
-        let parsed_id = parse_cidv0(invalid_cid);
+        let result = parse_cid_v0_str(invalid_cid);
 
         //* Then
-        assert_matches!(parsed_id, Err(err) => {
-            assert_eq!(err, DeploymentIdError::InvalidIpfsHash {
+        let err = result.expect_err("expected an error");
+        assert_eq!(
+            err,
+            DeploymentIdError::InvalidIpfsHash {
                 value: invalid_cid.to_string(),
                 error: bs58::decode::Error::InvalidCharacter {
                     character: '+',
                     index: 20,
                 },
-            });
-        });
+            }
+        );
     }
 
     #[test]
-    fn parse_valid_hexstr() {
+    fn parse_valid_hex_str() {
         //* Given
         let valid_hex = VALID_HEX;
-        let expected_bytes = VALID_HEX.parse::<B256>().unwrap();
 
         //* When
-        let parsed_id = parse_hexstr(valid_hex);
+        let result = parse_hex_str(valid_hex);
 
         //* Then
-        assert_matches!(parsed_id, Ok(id) => {
-            assert_eq!(id, expected_bytes);
-        });
+        let id = result.expect("expected a valid ID");
+        assert_eq!(id, EXPECTED_DEPLOYMENT_ID);
     }
 
     #[test]
-    fn parse_invalid_hexstr() {
+    fn parse_invalid_hex_str() {
         //* Given
         let invalid_hex = "0x0123456789ABCDEF";
 
         //* When
-        let parsed_id = parse_hexstr(invalid_hex);
+        let result = parse_hex_str(invalid_hex);
 
         //* Then
-        assert_matches!(parsed_id, Err(err) => {
-            assert_eq!(err, DeploymentIdError::InvalidHexString {
+        let err = result.expect_err("expected an error");
+        assert_eq!(
+            err,
+            DeploymentIdError::InvalidHexString {
                 value: invalid_hex.to_string(),
                 error: "Invalid string length".to_string(),
-            });
-        });
+            }
+        );
     }
 
     #[test]
-    fn format_into_cidv0() {
+    fn format_into_cid_v0() {
         //* Given
-        let bytes = VALID_HEX.parse::<B256>().unwrap();
-        let expected_cid = VALID_CID;
+        let expected_str = VALID_CID;
+
+        let bytes = EXPECTED_DEPLOYMENT_BYTES.as_slice();
 
         //* When
-        let cid = format_cidv0(bytes);
+        let cid = format_cid_v0(bytes);
 
         //* Then
-        assert_eq!(cid, expected_cid);
+        assert_eq!(cid, expected_str);
+    }
+
+    #[test]
+    fn format_deployment_id_display() {
+        //* Given
+        let expected_str = VALID_CID;
+
+        let valid_id = EXPECTED_DEPLOYMENT_ID;
+
+        //* When
+        let result_str = format!("{}", valid_id);
+
+        //* Then
+        assert_eq!(result_str, expected_str);
+    }
+
+    #[test]
+    fn format_deployment_id_lower_hex() {
+        //* Given
+        let expected_str = VALID_HEX;
+
+        let valid_id = EXPECTED_DEPLOYMENT_ID;
+
+        //* When
+        // The alternate flag, #, adds a 0x in front of the output
+        let result_str = format!("{:#x}", valid_id);
+
+        //* Then
+        assert_eq!(result_str, expected_str);
+    }
+
+    #[test]
+    fn format_deployment_id_debug() {
+        //* Given
+        let expected_str = format!("DeploymentId({})", VALID_CID);
+
+        let valid_id = EXPECTED_DEPLOYMENT_ID;
+
+        //* When
+        let result_str = format!("{:?}", valid_id);
+
+        //* Then
+        assert_eq!(result_str, expected_str);
     }
 
     #[test]
     fn deployment_id_equality() {
         //* Given
+        let expected_id = deployment_id!(VALID_CID);
+        let expected_repr = VALID_CID;
+
         let valid_cid = VALID_CID;
         let valid_hex = VALID_HEX;
 
-        let expected_id = DeploymentId(VALID_HEX.parse().unwrap());
-        let expected_repr = VALID_CID;
-
         //* When
-        let parsed_id1 = DeploymentId::from_str(valid_cid);
-        let parsed_id2 = DeploymentId::from_str(valid_hex);
+        let result_cid = DeploymentId::from_str(valid_cid);
+        let result_hex = DeploymentId::from_str(valid_hex);
 
         //* Then
-        assert_matches!((parsed_id1, parsed_id2), (Ok(id1), Ok(id2)) => {
-            // Assert the two IDs internal representation is correct
-            assert_eq!(id1, expected_id);
-            assert_eq!(id2, expected_id);
+        let id_cid = result_cid.expect("expected a valid ID");
+        let id_hex = result_hex.expect("expected a valid ID");
 
-            // Assert the two IDs are equal and displayed in CIDv0 format
-            assert_eq!(id1, id2);
-            assert_eq!(id1.to_string(), expected_repr);
-            assert_eq!(id2.to_string(), expected_repr);
-        });
+        // Assert the two IDs internal representation is correct
+        assert_eq!(id_cid, expected_id);
+        assert_eq!(id_hex, expected_id);
+
+        // Assert the two IDs CIDv0 representation is correct
+        assert_eq!(id_cid.to_string(), expected_repr);
+        assert_eq!(id_hex.to_string(), expected_repr);
+
+        // Assert both IDs are equal
+        assert_eq!(id_cid, id_hex);
     }
 }

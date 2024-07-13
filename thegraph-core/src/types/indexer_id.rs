@@ -7,6 +7,11 @@ use alloy_primitives::Address;
 pub struct IndexerId(Address);
 
 impl IndexerId {
+    /// Create a new `IndexerId` from an [`Address`].
+    pub const fn new(address: Address) -> Self {
+        IndexerId(address)
+    }
+
     /// Return the internal representation.
     pub fn into_inner(self) -> Address {
         self.0
@@ -104,9 +109,9 @@ impl serde::Serialize for IndexerId {
 #[macro_export]
 macro_rules! indexer_id {
     () => {
-        $crate::types::IndexerId::from(Address::ZERO)
+        $crate::types::IndexerId::from(::alloy_primitives::Address::ZERO)
     };
-    ($addr:tt) => {
-        $crate::types::IndexerId::from(alloy_primitives::address!($addr))
+    ($value:tt) => {
+        $crate::types::IndexerId::new(::alloy_primitives::address!($value))
     };
 }

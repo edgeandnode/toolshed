@@ -7,6 +7,11 @@ use alloy_primitives::Address;
 pub struct AllocationId(Address);
 
 impl AllocationId {
+    /// Create a new `AllocationId` from an [`Address`].
+    pub const fn new(address: Address) -> Self {
+        AllocationId(address)
+    }
+
     /// Return the internal representation.
     pub fn into_inner(self) -> Address {
         self.0
@@ -104,9 +109,9 @@ impl serde::Serialize for AllocationId {
 #[macro_export]
 macro_rules! allocation_id {
     () => {
-        $crate::types::AllocationId::from(Address::ZERO)
+        $crate::types::AllocationId::from(::alloy_primitives::Address::ZERO)
     };
-    ($addr:tt) => {
-        $crate::types::AllocationId::from(alloy_primitives::address!($addr))
+    ($value:tt) => {
+        $crate::types::AllocationId::new(::alloy_primitives::address!($value))
     };
 }
