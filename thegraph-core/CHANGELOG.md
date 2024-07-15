@@ -6,6 +6,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.6](https://github.com/edgeandnode/toolshed/compare/thegraph-core-v0.5.5...thegraph-core-v0.5.6) - 2024-07-15
+
+### Added
+- *(thegraph-core)* make serde dependencies optional ([#258](https://github.com/edgeandnode/toolshed/pull/258))
+- *(thegraph-core)* remove lazy_static dependency ([#257](https://github.com/edgeandnode/toolshed/pull/257))
+- *(thegraph-core)* add const support for ID macros ([#256](https://github.com/edgeandnode/toolshed/pull/256))
+- *(thegraph-core)* add deployment ID creation macro ([#254](https://github.com/edgeandnode/toolshed/pull/254))
+
+### Other
+- *(thegraph-core)* use zero const in subgraph and deployment id macros ([#260](https://github.com/edgeandnode/toolshed/pull/260))
+- *(thegraph-core)* add attestation module docs ([#259](https://github.com/edgeandnode/toolshed/pull/259))
+
 ## [0.5.5](https://github.com/edgeandnode/toolshed/compare/thegraph-core-v0.5.4...thegraph-core-v0.5.5) - 2024-07-12
 
 ### Fixed
