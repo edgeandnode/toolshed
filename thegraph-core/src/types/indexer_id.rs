@@ -26,7 +26,7 @@ impl std::fmt::Display for IndexerId {
 
 impl std::fmt::Debug for IndexerId {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        std::fmt::Display::fmt(&self, f)
+        std::fmt::Debug::fmt(&self.0, f)
     }
 }
 
