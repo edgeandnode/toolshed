@@ -6,7 +6,7 @@
 
 pub use alloy_primitives::address;
 #[doc(hidden)]
-pub use {::alloy_primitives, ::alloy_sol_types, ::ethers_core};
+pub use {::alloy_primitives, ::alloy_signer, ::alloy_sol_types};
 
 pub mod types;
 

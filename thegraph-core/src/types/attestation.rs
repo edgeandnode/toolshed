@@ -1,13 +1,10 @@
 //! Attestation types and functions for verifying attestations.
 
-use alloy_primitives::{b256, keccak256, Address, FixedBytes, B256, U256};
-use alloy_sol_types::{Eip712Domain, SolStruct};
-use ethers_core::{
-    k256::ecdsa::SigningKey,
-    types::{RecoveryMessage, Signature},
-};
+use alloy_primitives::{b256, keccak256, Address, Signature, B256};
+use alloy_signer::SignerSync;
+use alloy_sol_types::{eip712_domain, Eip712Domain, SolStruct};
 
-use super::deployment_id::DeploymentId;
+use super::{allocation_id::AllocationId, deployment_id::DeploymentId};
 
 /// Attestation EIP-712 domain salt
 const ATTESTATION_EIP712_DOMAIN_SALT: B256 =
@@ -50,47 +47,7 @@ alloy_sol_types::sol! {
     }
 }
 
-/// Create an EIP-712 domain given a chain ID and dispute manager address.
-pub fn eip712_domain(chain_id: U256, dispute_manager: Address) -> Eip712Domain {
-    Eip712Domain {
-        name: Some("Graph Protocol".into()),
-        version: Some("0".into()),
-        chain_id: Some(chain_id),
-        verifying_contract: Some(dispute_manager),
-        salt: Some(ATTESTATION_EIP712_DOMAIN_SALT),
-    }
-}
-
-/// Create an attestation.
-///
-/// Signs the attestation with the signer's private key.
-pub fn create(
-    domain: &Eip712Domain,
-    signer: &SigningKey,
-    deployment: &DeploymentId,
-    request: &str,
-    response: &str,
-) -> Attestation {
-    let msg = Receipt {
-        requestCID: keccak256(request),
-        responseCID: keccak256(response),
-        subgraphDeploymentID: deployment.into(),
-    };
-    let signing_hash = msg.eip712_signing_hash(domain);
-
-    let (signature, recovery) = signer.sign_prehash_recoverable(&signing_hash.0).unwrap();
-
-    Attestation {
-        request_cid: msg.requestCID,
-        response_cid: msg.responseCID,
-        deployment: deployment.into(),
-        r: FixedBytes(signature.r().to_bytes().into()),
-        s: FixedBytes(signature.s().to_bytes().into()),
-        v: recovery.to_byte(),
-    }
-}
-
-/// Errors that can occur when verifying an attestation
+/// Errors that can occur when verifying an attestation.
 #[derive(Debug, Clone, Copy, Hash, PartialEq, Eq, thiserror::Error)]
 pub enum VerificationError {
     /// The request hash in the attestation does not match the expected request hash
@@ -110,30 +67,15 @@ pub enum VerificationError {
     RecoveredSignerNotExpected,
 }
 
-/// Recover the signer's allocation address from the attestation
-pub fn recover_allocation(
-    domain: &Eip712Domain,
-    attestation: &Attestation,
-) -> Result<Address, VerificationError> {
-    let signature = Signature {
-        r: attestation.r.0.into(),
-        s: attestation.s.0.into(),
-        v: attestation.v.into(),
-    };
-
-    // Calculate the signing hash
-    let msg = Receipt {
-        requestCID: attestation.request_cid,
-        responseCID: attestation.response_cid,
-        subgraphDeploymentID: attestation.deployment,
-    };
-    let signing_hash = msg.eip712_signing_hash(domain);
-
-    // Recover the address from the signature
-    signature
-        .recover(RecoveryMessage::Hash(signing_hash.0.into()))
-        .map_err(|_| VerificationError::FailedSignerRecovery)
-        .map(|bytes| Address::from(bytes.0))
+/// Create an EIP-712 domain given a chain ID and dispute manager address.
+pub fn eip712_domain(chain_id: u64, dispute_manager: Address) -> Eip712Domain {
+    eip712_domain! {
+        name: "Graph Protocol",
+        version: "0",
+        chain_id: chain_id,
+        verifying_contract: dispute_manager,
+        salt: ATTESTATION_EIP712_DOMAIN_SALT,
+    }
 }
 
 /// Verify an attestation.
@@ -167,11 +109,69 @@ pub fn verify(
     Ok(())
 }
 
+/// Create an attestation.
+///
+/// Signs the attestation with the signer's private key.
+pub fn create<S: SignerSync>(
+    domain: &Eip712Domain,
+    signer: &S,
+    deployment: &DeploymentId,
+    request: &str,
+    response: &str,
+) -> Attestation {
+    let msg = Receipt {
+        requestCID: keccak256(request),
+        responseCID: keccak256(response),
+        subgraphDeploymentID: deployment.into(),
+    };
+
+    let signature = signer
+        .sign_typed_data_sync(&msg, domain)
+        .expect("failed to sign attestation");
+
+    Attestation {
+        request_cid: msg.requestCID,
+        response_cid: msg.responseCID,
+        deployment: deployment.into(),
+        r: signature.r().into(),
+        s: signature.s().into(),
+        v: signature.recid().into(),
+    }
+}
+
+/// Recover the signer's allocation address from the attestation.
+pub fn recover_allocation(
+    domain: &Eip712Domain,
+    attestation: &Attestation,
+) -> Result<AllocationId, VerificationError> {
+    let signature = Signature::from_rs_and_parity(
+        attestation.r.into(),
+        attestation.s.into(),
+        attestation.v as u64,
+    )
+    .map_err(|_| VerificationError::FailedSignerRecovery)?;
+
+    // Calculate the signing hash
+    let msg = Receipt {
+        requestCID: attestation.request_cid,
+        responseCID: attestation.response_cid,
+        subgraphDeploymentID: attestation.deployment,
+    };
+    let signing_hash = msg.eip712_signing_hash(domain);
+
+    // Recover the allocation ID from the signature
+    signature
+        .recover_address_from_prehash(&signing_hash)
+        .map(Into::into)
+        .map_err(|_| VerificationError::FailedSignerRecovery)
+}
+
 #[cfg(test)]
 mod tests {
-    use alloy_primitives::{b256, B256, U256};
+    use alloy_primitives::{b256, B256};
+    use alloy_signer::SignerSync;
+    use alloy_signer_local::PrivateKeySigner;
     use alloy_sol_types::Eip712Domain;
-    use ethers_core::k256::ecdsa::SigningKey;
 
     use super::{create, eip712_domain, verify, Attestation};
     use crate::{
@@ -179,6 +179,7 @@ mod tests {
         types::{Address, DeploymentId},
     };
 
+    const CHAIN_ID: u64 = 1337;
     const DISPUTE_MANAGER_ADDRESS: Address = address!("16def7e0108a5467a106DBd7537F8591F470342e");
     const ALLOCATION_ADDRESS: Address = address!("90f8bf6a479f320ead074411a4b0e7944ea8c9c1");
     const ALLOCATION_PRIVATE_KEY: B256 =
@@ -190,22 +191,17 @@ mod tests {
     /// - `chain_id`: `1337`
     /// - `dispute_manager`: `0x16DEF7E0108A5467A106dbD7537f8591f470342E`
     fn domain() -> Eip712Domain {
-        eip712_domain(
-            U256::from_str_radix("1337", 10).unwrap(),
-            DISPUTE_MANAGER_ADDRESS,
-        )
+        eip712_domain(CHAIN_ID, DISPUTE_MANAGER_ADDRESS)
     }
 
     /// Create a signer for testing
-    ///
     /// - `private_key`: `0x4f3edf983ac636a65a842ce7c78d9aa706d3b113bce9c46f30d7d21715b23b1d`
     /// - `address`: `0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1`
-    ///
     /// Returns the allocation address and signer.
-    fn signer() -> (Address, SigningKey) {
+    fn signer() -> (Address, impl SignerSync) {
         (
             ALLOCATION_ADDRESS,
-            SigningKey::from_slice(ALLOCATION_PRIVATE_KEY.as_slice()).unwrap(),
+            PrivateKeySigner::from_bytes(&ALLOCATION_PRIVATE_KEY).expect("failed to create signer"),
         )
     }
 
