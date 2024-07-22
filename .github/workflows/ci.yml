@@ -25,7 +25,7 @@ jobs:
           components: clippy
 
       - name: Cache rust build files
-        uses: Leafwing-Studios/cargo-cache@4deea66cb7f21307071dfb99e1e29bf1a74caeb4 # v2
+        uses: Leafwing-Studios/cargo-cache@6c2a159aab4b3ba20f083d241bb1f26b35262b99 # v2
 
       - name: check (release)
         run: cargo check --workspace --all-targets --all-features --release
