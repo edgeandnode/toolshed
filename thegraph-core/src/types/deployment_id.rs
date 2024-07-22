@@ -332,7 +332,7 @@ mod tests {
             err,
             DeploymentIdError::InvalidHexString {
                 value: invalid_hex.to_string(),
-                error: "Invalid string length".to_string(),
+                error: "invalid string length".to_string(),
             }
         );
     }
