@@ -99,19 +99,63 @@ impl std::str::FromStr for DeploymentId {
 }
 
 impl std::fmt::Display for DeploymentId {
-    /// Encode the deployment ID as CIDv0 (base58-encoded sha256-hash).
+    /// Format the `DeploymentId` as CIDv0 (base58-encoded sha256-hash) string.
+    ///
+    /// ```rust
+    /// use thegraph_core::deployment_id;
+    /// use thegraph_core::types::DeploymentId;
+    ///
+    /// const ID: DeploymentId = deployment_id!("QmSWxvd8SaQK6qZKJ7xtfxCCGoRzGnoi2WNzmJYYJW9BXY");
+    ///
+    /// assert_eq!(format!("{}", ID), "QmSWxvd8SaQK6qZKJ7xtfxCCGoRzGnoi2WNzmJYYJW9BXY");
+    /// ```
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.write_str(&format_cid_v0(self.0.as_slice()))
     }
 }
 
 impl std::fmt::Debug for DeploymentId {
+    /// Format the `DeploymentId` as a debug string.
+    ///
+    /// ```rust
+    /// use thegraph_core::deployment_id;
+    /// use thegraph_core::types::DeploymentId;
+    ///
+    /// const ID: DeploymentId = deployment_id!("QmSWxvd8SaQK6qZKJ7xtfxCCGoRzGnoi2WNzmJYYJW9BXY");
+    ///
+    /// assert_eq!(
+    ///     format!("{:?}", ID),
+    ///     "DeploymentId(QmSWxvd8SaQK6qZKJ7xtfxCCGoRzGnoi2WNzmJYYJW9BXY)",
+    /// );
+    /// ```
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "DeploymentId({})", self)
     }
 }
 
 impl std::fmt::LowerHex for DeploymentId {
+    /// Format the `DeploymentId` as a 32-byte hex string.
+    ///
+    /// Note that the alternate flag, `#`, adds a `0x` in front of the output.
+    ///
+    /// ```rust
+    /// use thegraph_core::deployment_id;
+    /// use thegraph_core::types::DeploymentId;
+    ///
+    /// const ID: DeploymentId = deployment_id!("QmWmyoMoctfbAaiEs2G46gpeUmhqFRDW6KWo64y5r581Vz");
+    ///
+    /// // Lower hex
+    /// assert_eq!(
+    ///     format!("{:x}", ID),
+    ///     "7d5a99f603f231d53a4f39d1521f98d2e8bb279cf29bebfd0687dc98458e7f89"
+    /// );
+    ///
+    /// // Lower hex with alternate flag
+    /// assert_eq!(
+    ///     format!("{:#x}", ID),
+    ///     "0x7d5a99f603f231d53a4f39d1521f98d2e8bb279cf29bebfd0687dc98458e7f89"
+    /// );
+    /// ```
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::LowerHex::fmt(&self.0, f)
     }

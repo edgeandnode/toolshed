@@ -56,7 +56,7 @@ impl AsRef<B256> for SubgraphId {
 impl std::str::FromStr for SubgraphId {
     type Err = &'static str;
 
-    /// Attempt to parse a Subgraph ID in v2 format: `base58(sha256(<subgraph_id>))`
+    /// Parse a `SubgraphID` from a base-58 encoded string.
     fn from_str(value: &str) -> Result<Self, Self::Err> {
         let mut buffer = [0_u8; 32];
 
@@ -76,14 +76,34 @@ impl std::str::FromStr for SubgraphId {
 }
 
 impl std::fmt::Display for SubgraphId {
+    /// Format the `SubgraphId` as a base58-encoded string.
+    ///
+    /// ```rust
+    /// use thegraph_core::subgraph_id;
+    /// use thegraph_core::types::SubgraphId;
+    ///
+    /// const ID: SubgraphId = subgraph_id!("DZz4kDTdmzWLWsV373w2bSmoar3umKKH9y82SUKr5qmp");
+    ///
+    /// assert_eq!(format!("{}", ID), "DZz4kDTdmzWLWsV373w2bSmoar3umKKH9y82SUKr5qmp");
+    /// ```
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.write_str(&bs58::encode(self.0.as_slice()).into_string())
     }
 }
 
 impl std::fmt::Debug for SubgraphId {
+    /// Format the `SubgraphId` as a debug string.
+    ///
+    /// ```rust
+    /// use thegraph_core::subgraph_id;
+    /// use thegraph_core::types::SubgraphId;
+    ///
+    /// const ID: SubgraphId = subgraph_id!("DZz4kDTdmzWLWsV373w2bSmoar3umKKH9y82SUKr5qmp");
+    ///
+    /// assert_eq!(format!("{:?}", ID), "SubgraphId(DZz4kDTdmzWLWsV373w2bSmoar3umKKH9y82SUKr5qmp)");
+    /// ```
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "Subgraph({})", self)
+        write!(f, "SubgraphId({})", self)
     }
 }
 
@@ -183,7 +203,7 @@ mod tests {
     #[test]
     fn format_subgraph_id_debug() {
         //* Given
-        let expected_debug_repr = format!("Subgraph({})", VALID_SUBGRAPH_ID);
+        let expected_debug_repr = format!("SubgraphId({})", VALID_SUBGRAPH_ID);
 
         let valid_id = EXPECTED_ID;
 
