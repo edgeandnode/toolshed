@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.7](https://github.com/edgeandnode/toolshed/compare/thegraph-core-v0.5.6...thegraph-core-v0.5.7) - 2024-07-23
+
+### Fixed
+- *(thegraph-core)* fix allocation and indexer ID fmt implementations ([#272](https://github.com/edgeandnode/toolshed/pull/272))
+
 ## [0.5.6](https://github.com/edgeandnode/toolshed/compare/thegraph-core-v0.5.5...thegraph-core-v0.5.6) - 2024-07-15
 
 ### Added
