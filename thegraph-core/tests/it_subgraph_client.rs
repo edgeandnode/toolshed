@@ -12,7 +12,7 @@ use thegraph_core::{
         },
         Client as SubgraphClient,
     },
-    types::{BlockPointer, SubgraphId},
+    BlockPointer, SubgraphId,
 };
 use tracing_subscriber::{fmt::TestWriter, EnvFilter};
 use url::Url;

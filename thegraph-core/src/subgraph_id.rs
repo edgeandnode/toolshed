@@ -1,6 +1,16 @@
-//! Subgraph ID type and related utilities.
-
 use alloy_primitives::B256;
+
+/// Subgraph ID parsing error.
+#[derive(Debug, Clone, PartialEq, Eq, thiserror::Error)]
+pub enum ParseSubgraphIdError {
+    /// Invalid string length. The input string is longer than 44 characters.
+    #[error("invalid length {length}: {value} (length must be <=44)")]
+    InvalidLength { value: String, length: usize },
+
+    /// Invalid base-58 string. The input string contains invalid characters.
+    #[error("invalid character \"{value}\": {error}")]
+    InvalidCharacter { value: String, error: String },
+}
 
 /// A Subgraph ID is a 32-byte identifier for a subgraph.
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -54,7 +64,7 @@ impl AsRef<B256> for SubgraphId {
 }
 
 impl std::str::FromStr for SubgraphId {
-    type Err = &'static str;
+    type Err = ParseSubgraphIdError;
 
     /// Parse a `SubgraphID` from a base-58 encoded string.
     fn from_str(value: &str) -> Result<Self, Self::Err> {
@@ -63,7 +73,25 @@ impl std::str::FromStr for SubgraphId {
         // Decode the base58 string into a byte array, and get the number of bytes written
         let len = bs58::decode(value)
             .onto(&mut buffer)
-            .map_err(|_| "invalid subgraph ID")?;
+            .map_err(|err| match err {
+                bs58::decode::Error::BufferTooSmall => ParseSubgraphIdError::InvalidLength {
+                    value: value.to_string(),
+                    length: value.len(),
+                },
+                bs58::decode::Error::InvalidCharacter { .. } => {
+                    ParseSubgraphIdError::InvalidCharacter {
+                        value: value.to_string(),
+                        error: err.to_string(),
+                    }
+                }
+                bs58::decode::Error::NonAsciiCharacter { .. } => {
+                    ParseSubgraphIdError::InvalidCharacter {
+                        value: value.to_string(),
+                        error: err.to_string(),
+                    }
+                }
+                _ => unreachable!(),
+            })?;
 
         // If the decoded hash is not 32 bytes long, rotate it to the right so the zero bytes
         // are at the beginning of the array.
@@ -79,8 +107,7 @@ impl std::fmt::Display for SubgraphId {
     /// Format the `SubgraphId` as a base58-encoded string.
     ///
     /// ```rust
-    /// use thegraph_core::subgraph_id;
-    /// use thegraph_core::types::SubgraphId;
+    /// use thegraph_core::{subgraph_id, SubgraphId};
     ///
     /// const ID: SubgraphId = subgraph_id!("DZz4kDTdmzWLWsV373w2bSmoar3umKKH9y82SUKr5qmp");
     ///
@@ -95,8 +122,7 @@ impl std::fmt::Debug for SubgraphId {
     /// Format the `SubgraphId` as a debug string.
     ///
     /// ```rust
-    /// use thegraph_core::subgraph_id;
-    /// use thegraph_core::types::SubgraphId;
+    /// use thegraph_core::{subgraph_id, SubgraphId};
     ///
     /// const ID: SubgraphId = subgraph_id!("DZz4kDTdmzWLWsV373w2bSmoar3umKKH9y82SUKr5qmp");
     ///
@@ -113,8 +139,7 @@ impl std::fmt::Debug for SubgraphId {
 /// To create an `SubgraphId` from a string literal (Base58) at compile time:
 ///
 /// ```rust
-/// use thegraph_core::subgraph_id;
-/// use thegraph_core::types::SubgraphId;
+/// use thegraph_core::{subgraph_id, SubgraphId};
 ///
 /// const SUBGRAPH_ID: SubgraphId = subgraph_id!("DZz4kDTdmzWLWsV373w2bSmoar3umKKH9y82SUKr5qmp");
 /// ```
@@ -122,8 +147,7 @@ impl std::fmt::Debug for SubgraphId {
 /// If no argument is provided, the macro will create an `SubgraphId` with the zero ID:
 ///
 /// ```rust
-/// use thegraph_core::subgraph_id;
-/// use thegraph_core::types::SubgraphId;
+/// use thegraph_core::{subgraph_id, SubgraphId};
 ///
 /// const SUBGRAPH_ID: SubgraphId = subgraph_id!();
 ///
@@ -132,16 +156,16 @@ impl std::fmt::Debug for SubgraphId {
 #[macro_export]
 macro_rules! subgraph_id {
     () => {
-        $crate::types::SubgraphId::ZERO
+        $crate::SubgraphId::ZERO
     };
     ($id:tt) => {
-        $crate::types::SubgraphId::new($crate::types::parse_subgraph_id_const($id))
+        $crate::SubgraphId::new($crate::__parse_subgraph_id_const($id))
     };
 }
 
 /// Parse a base58-encoded string into a 32-bytes array at compile time.
 #[doc(hidden)]
-pub const fn parse_subgraph_id_const(value: &str) -> B256 {
+pub const fn __parse_subgraph_id_const(value: &str) -> B256 {
     let data = value.as_bytes();
     let bytes = bs58::decode(data).into_array_const_unwrap::<32>();
     B256::new(bytes)
@@ -152,6 +176,7 @@ mod tests {
     use alloy_primitives::{b256, B256};
 
     use super::SubgraphId;
+    use crate::ParseSubgraphIdError;
 
     const VALID_SUBGRAPH_ID: &str = "7xB3yxxD8okmq4dZPky3eP1nYRgLfZrwMyUQBGo32t4U";
 
@@ -184,8 +209,14 @@ mod tests {
         let result = invalid_id.parse::<SubgraphId>();
 
         //* Then
-        let err = result.expect_err("invalid subgraph ID");
-        assert_eq!(err, "invalid subgraph ID");
+        let err = result.expect_err("expected an error");
+        assert_eq!(
+            err,
+            ParseSubgraphIdError::InvalidCharacter {
+                value: invalid_id.to_string(),
+                error: "provided string contained invalid character 'l' at byte 4".to_string(),
+            }
+        );
     }
 
     #[test]

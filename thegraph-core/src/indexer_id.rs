@@ -41,8 +41,7 @@ impl std::fmt::Display for IndexerId {
     /// [`UpperHex`]: struct.IndexerId.html#impl-UpperHex-for-IndexerId
     ///
     /// ```rust
-    /// use thegraph_core::indexer_id;
-    /// use thegraph_core::types::IndexerId;
+    /// use thegraph_core::{indexer_id, IndexerId};
     ///
     /// const ID: IndexerId = indexer_id!("0002c67268fb8c8917f36f865a0cbdf5292fa68d");
     ///
@@ -67,8 +66,7 @@ impl std::fmt::Debug for IndexerId {
     /// [`UpperHex`]: struct.IndexerId.html#impl-UpperHex-for-IndexerId
     ///
     /// ```rust
-    /// use thegraph_core::indexer_id;
-    /// use thegraph_core::types::IndexerId;
+    /// use thegraph_core::{indexer_id, IndexerId};
     ///
     /// const ID: IndexerId = indexer_id!("0002c67268fb8c8917f36f865a0cbdf5292fa68d");
     ///
@@ -85,8 +83,7 @@ impl std::fmt::LowerHex for IndexerId {
     /// Note that the alternate flag, `#`, adds a `0x` in front of the output.
     ///
     /// ```rust
-    /// use thegraph_core::indexer_id;
-    /// use thegraph_core::types::IndexerId;
+    /// use thegraph_core::{indexer_id, IndexerId};
     ///
     /// const ID: IndexerId = indexer_id!("0002c67268fb8c8917f36f865a0cbdf5292fa68d");
     ///
@@ -107,8 +104,7 @@ impl std::fmt::UpperHex for IndexerId {
     /// Note that the alternate flag, `#`, adds a `0x` in front of the output.
     ///
     /// ```rust
-    /// use thegraph_core::indexer_id;
-    /// use thegraph_core::types::IndexerId;
+    /// use thegraph_core::{indexer_id, IndexerId};
     ///
     /// const ID: IndexerId = indexer_id!("0002c67268fb8c8917f36f865a0cbdf5292fa68d");
     ///
@@ -185,8 +181,7 @@ impl serde::Serialize for IndexerId {
 /// To create an `IndexerId` from a string literal (no `0x` prefix) at compile time:
 ///
 /// ```rust
-/// use thegraph_core::indexer_id;
-/// use thegraph_core::types::{IndexerId};
+/// use thegraph_core::{indexer_id, IndexerId};
 ///
 /// const INDEXER_ID: IndexerId = indexer_id!("0002c67268fb8c8917f36f865a0cbdf5292fa68d");
 /// ```
@@ -194,8 +189,7 @@ impl serde::Serialize for IndexerId {
 /// If no argument is provided, the macro will create an `IndexerId` with the zero address:
 ///
 /// ```rust
-/// use thegraph_core::indexer_id;
-/// use thegraph_core::types::{Address, IndexerId};
+/// use thegraph_core::{Address, indexer_id, IndexerId};
 ///
 /// const INDEXER_ID: IndexerId = indexer_id!();
 ///
@@ -204,9 +198,9 @@ impl serde::Serialize for IndexerId {
 #[macro_export]
 macro_rules! indexer_id {
     () => {
-        $crate::types::IndexerId::new($crate::alloy_primitives::Address::ZERO)
+        $crate::IndexerId::new($crate::alloy_primitives::Address::ZERO)
     };
     ($value:tt) => {
-        $crate::types::IndexerId::new($crate::alloy_primitives::address!($value))
+        $crate::IndexerId::new($crate::alloy_primitives::address!($value))
     };
 }

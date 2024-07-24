@@ -1,10 +1,10 @@
 //! Attestation types and functions for verifying attestations.
 
-use alloy_primitives::{b256, keccak256, Address, Signature, B256};
+use alloy_primitives::{b256, keccak256, Address, ChainId, Signature, B256};
 use alloy_signer::SignerSync;
 use alloy_sol_types::{eip712_domain, Eip712Domain, SolStruct};
 
-use super::{allocation_id::AllocationId, deployment_id::DeploymentId};
+use crate::{allocation_id::AllocationId, deployment_id::DeploymentId};
 
 /// Attestation EIP-712 domain salt
 const ATTESTATION_EIP712_DOMAIN_SALT: B256 =
@@ -68,7 +68,7 @@ pub enum VerificationError {
 }
 
 /// Create an EIP-712 domain given a chain ID and dispute manager address.
-pub fn eip712_domain(chain_id: u64, dispute_manager: Address) -> Eip712Domain {
+pub fn eip712_domain(chain_id: ChainId, dispute_manager: Address) -> Eip712Domain {
     eip712_domain! {
         name: "Graph Protocol",
         version: "0",
@@ -168,18 +168,15 @@ pub fn recover_allocation(
 
 #[cfg(test)]
 mod tests {
-    use alloy_primitives::{b256, B256};
+    use alloy_primitives::{b256, ChainId, B256};
     use alloy_signer::SignerSync;
     use alloy_signer_local::PrivateKeySigner;
     use alloy_sol_types::Eip712Domain;
 
     use super::{create, eip712_domain, verify, Attestation};
-    use crate::{
-        address, deployment_id,
-        types::{Address, DeploymentId},
-    };
+    use crate::{address, deployment_id, Address, DeploymentId};
 
-    const CHAIN_ID: u64 = 1337;
+    const CHAIN_ID: ChainId = 1337;
     const DISPUTE_MANAGER_ADDRESS: Address = address!("16def7e0108a5467a106DBd7537F8591F470342e");
     const ALLOCATION_ADDRESS: Address = address!("90f8bf6a479f320ead074411a4b0e7944ea8c9c1");
     const ALLOCATION_PRIVATE_KEY: B256 =

@@ -86,18 +86,16 @@ impl PartialEq<B256> for ProofOfIndexing {
 /// To create an `ProofOfIndexing` from a string literal (no `0x` prefix) at compile time:
 ///
 /// ```rust
-/// use thegraph_core::poi;
-/// use thegraph_core::types::ProofOfIndexing;
+/// use thegraph_core::{poi, ProofOfIndexing};
 ///
 /// const PROOF_OF_INDEXING: ProofOfIndexing =
 ///     poi!("bb31abb3bb85428d894fb4b3cee8a0889bbe8585939b70910bbdda31b30d2240");
 /// ```
 ///
-/// If no argument is provided, the macro will create an `ProofOfIndexing` with the zero address:
+/// If no argument is provided, the macro will create an `ProofOfIndexing` with the zero POI:
 ///
 /// ```rust
-/// use thegraph_core::poi;
-/// use thegraph_core::types::ProofOfIndexing;
+/// use thegraph_core::{poi, ProofOfIndexing};
 ///
 /// const PROOF_OF_INDEXING: ProofOfIndexing = poi!();
 ///
@@ -106,9 +104,9 @@ impl PartialEq<B256> for ProofOfIndexing {
 #[macro_export]
 macro_rules! poi {
     () => {
-        $crate::types::ProofOfIndexing::ZERO
+        $crate::ProofOfIndexing::ZERO
     };
     ($id:tt) => {
-        $crate::types::ProofOfIndexing::new($crate::alloy_primitives::b256!($id))
+        $crate::ProofOfIndexing::new($crate::alloy_primitives::b256!($id))
     };
 }

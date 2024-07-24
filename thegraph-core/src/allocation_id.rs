@@ -41,8 +41,7 @@ impl std::fmt::Display for AllocationId {
     /// [`UpperHex`]: struct.AllocationId.html#impl-UpperHex-for-AllocationId
     ///
     /// ```rust
-    /// use thegraph_core::allocation_id;
-    /// use thegraph_core::types::AllocationId;
+    /// use thegraph_core::{allocation_id, AllocationId};
     ///
     /// const ID: AllocationId = allocation_id!("0002c67268fb8c8917f36f865a0cbdf5292fa68d");
     ///
@@ -67,8 +66,7 @@ impl std::fmt::Debug for AllocationId {
     /// [`UpperHex`]: struct.AllocationId.html#impl-UpperHex-for-AllocationId
     ///
     /// ```rust
-    /// use thegraph_core::allocation_id;
-    /// use thegraph_core::types::AllocationId;
+    /// use thegraph_core::{allocation_id, AllocationId};
     ///
     /// const ID: AllocationId = allocation_id!("0002c67268fb8c8917f36f865a0cbdf5292fa68d");
     ///
@@ -85,8 +83,7 @@ impl std::fmt::LowerHex for AllocationId {
     /// Note that the alternate flag, `#`, adds a `0x` in front of the output.
     ///
     /// ```rust
-    /// use thegraph_core::allocation_id;
-    /// use thegraph_core::types::AllocationId;
+    /// use thegraph_core::{allocation_id, AllocationId};
     ///
     /// const ID: AllocationId = allocation_id!("0002c67268fb8c8917f36f865a0cbdf5292fa68d");
     ///
@@ -107,8 +104,7 @@ impl std::fmt::UpperHex for AllocationId {
     /// Note that the alternate flag, `#`, adds a `0x` in front of the output.
     ///
     /// ```rust
-    /// use thegraph_core::allocation_id;
-    /// use thegraph_core::types::AllocationId;
+    /// use thegraph_core::{allocation_id, AllocationId};
     ///
     /// const ID: AllocationId = allocation_id!("0002c67268fb8c8917f36f865a0cbdf5292fa68d");
     ///
@@ -185,8 +181,7 @@ impl serde::Serialize for AllocationId {
 /// To create an `AllocationId` from a string literal (no `0x` prefix) at compile time:
 ///
 /// ```rust
-/// use thegraph_core::allocation_id;
-/// use thegraph_core::types::AllocationId;
+/// use thegraph_core::{allocation_id, AllocationId};
 ///
 /// const ALLOCATION_ID: AllocationId = allocation_id!("0002c67268fb8c8917f36f865a0cbdf5292fa68d");
 /// ```
@@ -194,8 +189,7 @@ impl serde::Serialize for AllocationId {
 /// If no argument is provided, the macro will create an `AllocationId` with the zero address:
 ///
 /// ```rust
-/// use thegraph_core::allocation_id;
-/// use thegraph_core::types::{Address, AllocationId };
+/// use thegraph_core::{Address, allocation_id, AllocationId };
 ///
 /// const ALLOCATION_ID: AllocationId = allocation_id!();
 ///
@@ -204,9 +198,9 @@ impl serde::Serialize for AllocationId {
 #[macro_export]
 macro_rules! allocation_id {
     () => {
-        $crate::types::AllocationId::new($crate::alloy_primitives::Address::ZERO)
+        $crate::AllocationId::new($crate::alloy_primitives::Address::ZERO)
     };
     ($value:tt) => {
-        $crate::types::AllocationId::new($crate::alloy_primitives::address!($value))
+        $crate::AllocationId::new($crate::alloy_primitives::address!($value))
     };
 }
