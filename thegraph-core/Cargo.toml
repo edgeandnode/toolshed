@@ -40,7 +40,7 @@ tracing = { version = "0.1.40", optional = true, default-features = false }
 url = "2.5"
 
 [dev-dependencies]
-alloy-signer-local = "0.1.4"
+alloy-signer-local = "0.2.0"
 assert_matches = "1.5.0"
 test-with = { version = "0.13.0", default-features = false }
 tokio = { version = "1.37.0", features = ["macros", "rt"] }
