@@ -32,7 +32,7 @@ pub struct Error {
     /// > If an error can be associated to a particular point in the requested GraphQL document, it
     /// > SHOULD contain an entry with the key `locations` with a list of locations, where each
     /// > location is a map with the keys `line` and `column`, both positive numbers starting from
-    /// `1` which describe the beginning of an associated syntax element.
+    /// > `1` which describe the beginning of an associated syntax element.
     #[serde(default)]
     #[serde(skip_serializing_if = "Vec::is_empty")]
     pub locations: Vec<ErrorLocation>,
