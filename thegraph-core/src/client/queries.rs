@@ -52,7 +52,7 @@ pub mod meta {
     use url::Url;
 
     use super::send_query;
-    use crate::types::BlockPointer;
+    use crate::BlockPointer;
 
     const SUBGRAPH_META_QUERY_DOCUMENT: &str = r#"{ meta: _meta { block { number hash } } }"#;
 

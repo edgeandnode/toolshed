@@ -1,37 +1,23 @@
-//! Subgraph deployment ID type and parsing.
-
 use alloy_primitives::B256;
 
 /// Subgraph deployment ID parsing error.
 #[derive(Debug, Clone, PartialEq, Eq, thiserror::Error)]
-pub enum DeploymentIdError {
+pub enum ParseDeploymentIdError {
     /// Invalid IPFS hash length. The input string must 46 characters long.
     #[error("invalid IPFS / CIDv0 hash length {length}: {value} (length must be 46)")]
     InvalidIpfsHashLength { value: String, length: usize },
 
     /// Invalid IPFS hash format. The input hash string could not be decoded as a CIDv0.
-    #[error("invalid IPFS / CIDv0 hash \"{value}\": {error}")]
-    InvalidIpfsHash {
-        value: String,
-        error: bs58::decode::Error,
-    },
+    #[error("invalid IPFS hash \"{value}\": {error}")]
+    InvalidIpfsHash { value: String, error: String },
 
     /// Invalid hex string format. The input hex string could not be decoded.
     #[error("invalid hex string \"{value}\": {error}")]
     InvalidHexString { value: String, error: String },
 }
 
-/// Format bytes as a CIDv0 string.
-///
-/// The CIDv0 format is a base58-encoded sha256-hash with a prefix of `Qm`
-fn format_cid_v0(bytes: &[u8]) -> String {
-    let mut buf = [0_u8; 34];
-    buf[0..2].copy_from_slice(&[0x12, 0x20]);
-    buf[2..].copy_from_slice(bytes);
-    bs58::encode(buf).into_string()
-}
-
 /// A Subgraph's Deployment ID represents unique identifier for a deployed subgraph on The Graph.
+///
 /// This is the content ID of the subgraph's manifest.
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(
@@ -84,7 +70,7 @@ impl From<&DeploymentId> for B256 {
 }
 
 impl std::str::FromStr for DeploymentId {
-    type Err = DeploymentIdError;
+    type Err = ParseDeploymentIdError;
 
     /// Parse a deployment ID from a 32-byte hex string or a base58-encoded IPFS hash (CIDv0).
     fn from_str(value: &str) -> Result<Self, Self::Err> {
@@ -102,8 +88,7 @@ impl std::fmt::Display for DeploymentId {
     /// Format the `DeploymentId` as CIDv0 (base58-encoded sha256-hash) string.
     ///
     /// ```rust
-    /// use thegraph_core::deployment_id;
-    /// use thegraph_core::types::DeploymentId;
+    /// use thegraph_core::{deployment_id, DeploymentId};
     ///
     /// const ID: DeploymentId = deployment_id!("QmSWxvd8SaQK6qZKJ7xtfxCCGoRzGnoi2WNzmJYYJW9BXY");
     ///
@@ -118,8 +103,7 @@ impl std::fmt::Debug for DeploymentId {
     /// Format the `DeploymentId` as a debug string.
     ///
     /// ```rust
-    /// use thegraph_core::deployment_id;
-    /// use thegraph_core::types::DeploymentId;
+    /// use thegraph_core::{deployment_id, DeploymentId};
     ///
     /// const ID: DeploymentId = deployment_id!("QmSWxvd8SaQK6qZKJ7xtfxCCGoRzGnoi2WNzmJYYJW9BXY");
     ///
@@ -139,8 +123,7 @@ impl std::fmt::LowerHex for DeploymentId {
     /// Note that the alternate flag, `#`, adds a `0x` in front of the output.
     ///
     /// ```rust
-    /// use thegraph_core::deployment_id;
-    /// use thegraph_core::types::DeploymentId;
+    /// use thegraph_core::{deployment_id, DeploymentId};
     ///
     /// const ID: DeploymentId = deployment_id!("QmWmyoMoctfbAaiEs2G46gpeUmhqFRDW6KWo64y5r581Vz");
     ///
@@ -184,10 +167,20 @@ mod async_graphql_support {
     }
 }
 
-fn parse_cid_v0_str(value: &str) -> Result<DeploymentId, DeploymentIdError> {
+/// Format bytes as a CIDv0 string.
+///
+/// The CIDv0 format is a base58-encoded sha256-hash with a prefix of `Qm`
+fn format_cid_v0(bytes: &[u8]) -> String {
+    let mut buf = [0_u8; 34];
+    buf[0..2].copy_from_slice(&[0x12, 0x20]);
+    buf[2..].copy_from_slice(bytes);
+    bs58::encode(buf).into_string()
+}
+
+fn parse_cid_v0_str(value: &str) -> Result<DeploymentId, ParseDeploymentIdError> {
     // Check if the string has a valid length for a CIDv0 (46 characters)
     if value.len() != 46 {
-        return Err(DeploymentIdError::InvalidIpfsHashLength {
+        return Err(ParseDeploymentIdError::InvalidIpfsHashLength {
             value: value.to_string(),
             length: value.len(),
         });
@@ -197,9 +190,9 @@ fn parse_cid_v0_str(value: &str) -> Result<DeploymentId, DeploymentIdError> {
     let mut buffer = [0_u8; 34];
     bs58::decode(value)
         .onto(&mut buffer)
-        .map_err(|e| DeploymentIdError::InvalidIpfsHash {
+        .map_err(|e| ParseDeploymentIdError::InvalidIpfsHash {
             value: value.to_string(),
-            error: e,
+            error: e.to_string(),
         })?;
 
     // Extract the 32-byte hash from the buffer
@@ -210,10 +203,10 @@ fn parse_cid_v0_str(value: &str) -> Result<DeploymentId, DeploymentIdError> {
 }
 
 /// Parse a 32-byte hex string into a 32-byte hash.
-fn parse_hex_str(value: &str) -> Result<DeploymentId, DeploymentIdError> {
+fn parse_hex_str(value: &str) -> Result<DeploymentId, ParseDeploymentIdError> {
     let bytes = value
         .parse()
-        .map_err(|err| DeploymentIdError::InvalidHexString {
+        .map_err(|err| ParseDeploymentIdError::InvalidHexString {
             value: value.to_string(),
             error: format!("{}", err),
         })?;
@@ -226,8 +219,7 @@ fn parse_hex_str(value: &str) -> Result<DeploymentId, DeploymentIdError> {
 /// To create an `DeploymentId` from a string literal (Base58) at compile time:
 ///
 /// ```rust
-/// use thegraph_core::{deployment_id};
-/// use thegraph_core::types::DeploymentId;
+/// use thegraph_core::{deployment_id, DeploymentId};
 ///
 /// const DEPLOYMENT_ID: DeploymentId = deployment_id!("QmSWxvd8SaQK6qZKJ7xtfxCCGoRzGnoi2WNzmJYYJW9BXY");
 /// ```
@@ -235,8 +227,7 @@ fn parse_hex_str(value: &str) -> Result<DeploymentId, DeploymentIdError> {
 /// If no argument is provided, the macro will create an `DeploymentId` with the zero ID:
 ///
 /// ```rust
-/// use thegraph_core::deployment_id;
-/// use thegraph_core::types::DeploymentId;
+/// use thegraph_core::{deployment_id, DeploymentId};
 ///
 /// const DEPLOYMENT_ID: DeploymentId = deployment_id!();
 ///
@@ -245,16 +236,16 @@ fn parse_hex_str(value: &str) -> Result<DeploymentId, DeploymentIdError> {
 #[macro_export]
 macro_rules! deployment_id {
     () => {
-        $crate::types::DeploymentId::ZERO
+        $crate::DeploymentId::ZERO
     };
     ($id:tt) => {
-        $crate::types::DeploymentId::new($crate::types::parse_cid_v0_const($id))
+        $crate::DeploymentId::new($crate::__parse_cid_v0_const($id))
     };
 }
 
 /// Parse a CIDv0 string into a 32-byte hash.
 #[doc(hidden)]
-pub const fn parse_cid_v0_const(value: &str) -> B256 {
+pub const fn __parse_cid_v0_const(value: &str) -> B256 {
     // Check if the string has a valid length for a CIDv0 (46 characters)
     if value.len() != 46 {
         panic!("invalid string length (length must be 46)");
@@ -286,7 +277,9 @@ mod tests {
 
     use alloy_primitives::{b256, B256};
 
-    use super::{format_cid_v0, parse_cid_v0_str, parse_hex_str, DeploymentId, DeploymentIdError};
+    use super::{
+        format_cid_v0, parse_cid_v0_str, parse_hex_str, DeploymentId, ParseDeploymentIdError,
+    };
 
     const VALID_CID: &str = "QmWmyoMoctfbAaiEs2G46gpeUmhqFRDW6KWo64y5r581Vz";
     const VALID_HEX: &str = "0x7d5a99f603f231d53a4f39d1521f98d2e8bb279cf29bebfd0687dc98458e7f89";
@@ -320,7 +313,7 @@ mod tests {
         let err = result.expect_err("expected an error");
         assert_eq!(
             err,
-            DeploymentIdError::InvalidIpfsHashLength {
+            ParseDeploymentIdError::InvalidIpfsHashLength {
                 value: invalid_cid.to_string(),
                 length: invalid_cid.len(),
             }
@@ -339,12 +332,13 @@ mod tests {
         let err = result.expect_err("expected an error");
         assert_eq!(
             err,
-            DeploymentIdError::InvalidIpfsHash {
+            ParseDeploymentIdError::InvalidIpfsHash {
                 value: invalid_cid.to_string(),
                 error: bs58::decode::Error::InvalidCharacter {
                     character: '+',
                     index: 20,
-                },
+                }
+                .to_string(),
             }
         );
     }
@@ -374,7 +368,7 @@ mod tests {
         let err = result.expect_err("expected an error");
         assert_eq!(
             err,
-            DeploymentIdError::InvalidHexString {
+            ParseDeploymentIdError::InvalidHexString {
                 value: invalid_hex.to_string(),
                 error: "invalid string length".to_string(),
             }

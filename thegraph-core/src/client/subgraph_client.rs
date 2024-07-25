@@ -13,7 +13,7 @@ use super::queries::{
     page::{send_subgraph_page_query, BlockHeight, SubgraphPageQueryResponseOpaqueEntry},
     send_subgraph_query,
 };
-use crate::types::BlockPointer;
+use crate::BlockPointer;
 
 /// Error message returned by the indexer typically when a reorg happens.
 const SUBGRAPH_REORG_ERROR: &str = "no block with that hash found";
