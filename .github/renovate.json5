@@ -69,13 +69,15 @@
       ],
     },
     {
-      groupName: 'alloy-rs core types monorepo',
-      groupSlug: 'alloy-core',
+      groupName: 'alloy-rs crates',
+      groupSlug: 'alloy',
       matchManagers: [
         'cargo',
       ],
       matchSourceUrlPrefixes: [
         'https://github.com/alloy-rs/core',
+        'https://github.com/alloy-rs/alloy',
+        'https://github.com/alloy-rs/chains',
       ],
     },
     {
