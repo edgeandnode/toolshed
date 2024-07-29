@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.4](https://github.com/edgeandnode/toolshed/compare/thegraph-graphql-http-v0.2.3...thegraph-graphql-http-v0.2.4) - 2024-07-29
+
+### Other
+- *(docs)* fix clippy::doc_lazy_continuation error ([#283](https://github.com/edgeandnode/toolshed/pull/283))
+
 ## [0.2.3](https://github.com/edgeandnode/toolshed/compare/thegraph-graphql-http-v0.2.2...thegraph-graphql-http-v0.2.3) - 2024-06-03
 
 ### Other
