@@ -114,7 +114,8 @@ impl std::fmt::Display for SubgraphId {
     /// assert_eq!(format!("{}", ID), "DZz4kDTdmzWLWsV373w2bSmoar3umKKH9y82SUKr5qmp");
     /// ```
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.write_str(&bs58::encode(self.0.as_slice()).into_string())
+        let leading_zeroes = self.0.iter().take_while(|b| **b == 0).count();
+        f.write_str(&bs58::encode(&self.0[leading_zeroes..]).into_string())
     }
 }
 
@@ -243,5 +244,12 @@ mod tests {
 
         //* Then
         assert_eq!(result, expected_debug_repr);
+    }
+
+    #[test]
+    fn serialize_leading_zeroes() {
+        let input = "4JruhWH1ZdwvUuMg2xCmtnZQYYHvmEq6cmTcZkpM6pW";
+        let output: SubgraphId = input.parse().unwrap();
+        assert_eq!(output.to_string(), input.to_string());
     }
 }
