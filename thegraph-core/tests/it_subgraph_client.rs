@@ -28,15 +28,15 @@ fn init_test_tracing() {
 
 /// Test helper to get the gateway base url from the environment.
 fn test_gateway_base_url() -> Url {
-    std::env::var("IT_TEST_MAINNET_GATEWAY_URL")
-        .expect("Missing IT_TEST_MAINNET_GATEWAY_URL")
+    std::env::var("IT_TEST_ARBITRUM_GATEWAY_URL")
+        .expect("Missing IT_TEST_ARBITRUM_GATEWAY_URL")
         .parse()
-        .expect("Invalid IT_TEST_MAINNET_GATEWAY_URL")
+        .expect("Invalid IT_TEST_ARBITRUM_GATEWAY_URL")
 }
 
 /// Test helper to get the test auth token from the environment.
 fn test_auth_token() -> String {
-    std::env::var("IT_TEST_MAINNET_GATEWAY_AUTH").expect("Missing IT_TEST_MAINNET_GATEWAY_AUTH")
+    std::env::var("IT_TEST_ARBITRUM_GATEWAY_AUTH").expect("Missing IT_TEST_ARBITRUM_GATEWAY_AUTH")
 }
 
 /// Test helper to build the subgraph url with the given subgraph ID.
@@ -46,18 +46,18 @@ fn test_subgraph_url(subgraph: impl AsRef<str>) -> Url {
         .expect("Invalid URL")
 }
 
-/// The Graph Network Mainnet subgraph in the network.
+/// The Graph Network Arbitrum subgraph in the network.
 ///
-/// https://thegraph.com/explorer/subgraphs/8yHBZUvXcKkZnZM7SDSgcRMtbtNwgUQfM37cA37h7cet?view=Overview&chain=mainnet
-const GRAPH_NETWORK_MAINNET_SUBGRAPH_ID: &str = "8yHBZUvXcKkZnZM7SDSgcRMtbtNwgUQfM37cA37h7cet";
+/// https://thegraph.com/explorer/subgraphs/DZz4kDTdmzWLWsV373w2bSmoar3umKKH9y82SUKr5qmp?view=About&chain=arbitrum-one
+const GRAPH_NETWORK_ARBITRUM_SUBGRAPH_ID: &str = "DZz4kDTdmzWLWsV373w2bSmoar3umKKH9y82SUKr5qmp";
 
-#[test_with::env(IT_TEST_MAINNET_GATEWAY_URL, IT_TEST_MAINNET_GATEWAY_AUTH)]
+#[test_with::env(IT_TEST_ARBITRUM_GATEWAY_URL, IT_TEST_ARBITRUM_GATEWAY_AUTH)]
 #[tokio::test]
 async fn send_subgraph_meta_query_request() {
     init_test_tracing();
 
     //* Given
-    let subgraph_url = test_subgraph_url(GRAPH_NETWORK_MAINNET_SUBGRAPH_ID);
+    let subgraph_url = test_subgraph_url(GRAPH_NETWORK_ARBITRUM_SUBGRAPH_ID);
     let auth_token = test_auth_token();
 
     let http_client = reqwest::Client::new();
@@ -78,7 +78,7 @@ async fn send_subgraph_meta_query_request() {
     assert!(!response.meta.block.hash.is_empty());
 }
 
-#[test_with::env(IT_TEST_MAINNET_GATEWAY_URL, IT_TEST_MAINNET_GATEWAY_AUTH)]
+#[test_with::env(IT_TEST_ARBITRUM_GATEWAY_URL, IT_TEST_ARBITRUM_GATEWAY_AUTH)]
 #[tokio::test]
 async fn send_subgraph_page_query_request() {
     init_test_tracing();
@@ -86,7 +86,7 @@ async fn send_subgraph_page_query_request() {
     //* Given
     const PAGE_REQUEST_BATCH_SIZE: usize = 6;
 
-    let subgraph_url = test_subgraph_url(GRAPH_NETWORK_MAINNET_SUBGRAPH_ID);
+    let subgraph_url = test_subgraph_url(GRAPH_NETWORK_ARBITRUM_SUBGRAPH_ID);
     let auth_token = test_auth_token();
 
     let http_client = reqwest::Client::new();
@@ -134,13 +134,13 @@ async fn send_subgraph_page_query_request() {
     assert_eq!(page_response.results.len(), PAGE_REQUEST_BATCH_SIZE);
 }
 
-#[test_with::env(IT_TEST_MAINNET_GATEWAY_URL, IT_TEST_MAINNET_GATEWAY_AUTH)]
+#[test_with::env(IT_TEST_ARBITRUM_GATEWAY_URL, IT_TEST_ARBITRUM_GATEWAY_AUTH)]
 #[tokio::test]
 async fn client_send_query() {
     init_test_tracing();
 
     //* Given
-    let subgraph_url = test_subgraph_url(GRAPH_NETWORK_MAINNET_SUBGRAPH_ID);
+    let subgraph_url = test_subgraph_url(GRAPH_NETWORK_ARBITRUM_SUBGRAPH_ID);
     let auth_token = test_auth_token();
 
     let http_client = reqwest::Client::new();
@@ -176,13 +176,13 @@ async fn client_send_query() {
     assert!(!response.meta.block.hash.is_empty());
 }
 
-#[test_with::env(IT_TEST_MAINNET_GATEWAY_URL, IT_TEST_MAINNET_GATEWAY_AUTH)]
+#[test_with::env(IT_TEST_ARBITRUM_GATEWAY_URL, IT_TEST_ARBITRUM_GATEWAY_AUTH)]
 #[tokio::test]
 async fn send_subgraph_paginated() {
     init_test_tracing();
 
     //* Given
-    let subgraph_url = test_subgraph_url(GRAPH_NETWORK_MAINNET_SUBGRAPH_ID);
+    let subgraph_url = test_subgraph_url(GRAPH_NETWORK_ARBITRUM_SUBGRAPH_ID);
     let auth_token = test_auth_token();
 
     let http_client = reqwest::Client::new();
@@ -227,13 +227,13 @@ async fn send_subgraph_paginated() {
     assert!(!response.is_empty());
 }
 
-#[test_with::env(IT_TEST_MAINNET_GATEWAY_URL, IT_TEST_MAINNET_GATEWAY_AUTH)]
+#[test_with::env(IT_TEST_ARBITRUM_GATEWAY_URL, IT_TEST_ARBITRUM_GATEWAY_AUTH)]
 #[tokio::test]
 async fn send_subgraph_paginated_empty_response() {
     init_test_tracing();
 
     //* Given
-    let subgraph_url = test_subgraph_url(GRAPH_NETWORK_MAINNET_SUBGRAPH_ID);
+    let subgraph_url = test_subgraph_url(GRAPH_NETWORK_ARBITRUM_SUBGRAPH_ID);
     let auth_token = test_auth_token();
 
     let http_client = reqwest::Client::new();
