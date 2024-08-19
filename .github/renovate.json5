@@ -99,7 +99,7 @@
       ],
       depNameTemplate: 'rust',
       packageNameTemplate: 'rust-lang/rust',
-      datasourceTemplate: 'github-releases',
+      datasourceTemplate: 'github-tags',
     },
   ],
 }
