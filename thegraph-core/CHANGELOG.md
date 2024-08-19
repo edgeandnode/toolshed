@@ -6,6 +6,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.0](https://github.com/edgeandnode/toolshed/compare/thegraph-core-v0.5.7...thegraph-core-v0.6.0) - 2024-08-19
+
+### Added
+- *(thegraph-core)* implement serde traits for poi type ([#303](https://github.com/edgeandnode/toolshed/pull/303))
+- *(thegraph-core)* flatten types module ([#282](https://github.com/edgeandnode/toolshed/pull/282))
+- *(thegraph-core)* migrate to alloy-rs ([#268](https://github.com/edgeandnode/toolshed/pull/268))
+- *(thegraph-core)* add proof of indexing new-type ([#269](https://github.com/edgeandnode/toolshed/pull/269))
+
+### Fixed
+- serialize SubgraphId with leading zero bytes
+
+### Other
+- *(ci)* remove L1 test environment configuration ([#298](https://github.com/edgeandnode/toolshed/pull/298))
+- *(docs)* fix clippy::doc_lazy_continuation error ([#283](https://github.com/edgeandnode/toolshed/pull/283))
+- *(deps)* update alloy-rs crates to 0.2 ([#280](https://github.com/edgeandnode/toolshed/pull/280))
+
 ## [0.5.7](https://github.com/edgeandnode/toolshed/compare/thegraph-core-v0.5.6...thegraph-core-v0.5.7) - 2024-07-23
 
 ### Fixed
