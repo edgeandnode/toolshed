@@ -80,6 +80,27 @@ impl PartialEq<B256> for ProofOfIndexing {
     }
 }
 
+#[cfg(feature = "serde")]
+impl<'de> serde::Deserialize<'de> for ProofOfIndexing {
+    fn deserialize<D>(deserializer: D) -> Result<ProofOfIndexing, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        let bytes = B256::deserialize(deserializer)?;
+        Ok(ProofOfIndexing(bytes))
+    }
+}
+
+#[cfg(feature = "serde")]
+impl serde::Serialize for ProofOfIndexing {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        self.0.serialize(serializer)
+    }
+}
+
 /// Converts a sequence of string literals containing hex-encoded data into a new
 /// [`ProofOfIndexing`] at compile time.
 ///
