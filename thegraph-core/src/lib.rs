@@ -57,6 +57,9 @@ mod deployment_id;
 pub mod headers;
 mod indexer_id;
 mod proof_of_indexing;
+#[cfg(feature = "signed-message")]
+#[cfg_attr(docsrs, doc(cfg(feature = "signed-message")))]
+pub mod signed_message;
 mod subgraph_id;
 
 // Export macros

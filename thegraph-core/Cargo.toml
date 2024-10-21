@@ -26,6 +26,7 @@ headers = [
     "alloy/serde", "dep:serde", "dep:serde_json",
 ]
 serde = ["dep:serde", "dep:serde_with", "alloy/serde"]
+signed-message = ["alloy-eip712", "alloy-signers", "alloy-sol-types"]
 
 [dependencies]
 alloy = "0.7"
