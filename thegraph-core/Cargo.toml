@@ -21,6 +21,7 @@ alloy-sol-types = ["alloy/sol-types"]
 async-graphql = ["dep:async-graphql"]
 fake = ["dep:fake"]
 serde = ["dep:serde", "dep:serde_with", "alloy/serde"]
+signed-message = ["alloy-eip712", "alloy-signers", "alloy-sol-types"]
 
 [dependencies]
 alloy = "0.7"
