@@ -26,4 +26,5 @@ pub mod client;
 mod deployment_id;
 mod indexer_id;
 mod proof_of_indexing;
+pub mod signed_message;
 mod subgraph_id;
