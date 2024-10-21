@@ -3,14 +3,22 @@
 //! This module contains the `SignedMessage` struct which is used to sign and verify messages
 //! using the [EIP-712] standard.
 //!
-//! [EIP-712]: https://eips.ethereum.org/EIPS/eip-712 "EIP-712"
+//! # API
 //!
-//! # Example
+//! The module provides the following functions:
+//!
+//! - `sign`: Signs a message using the [EIP-712] standard
+//! - `recover_signer_address`: Recovers the signer's address of a signed message
+//! - `verify`: Verifies the signer's address of a signed message
+//!
+//! The module also provides the `Eip712Signer` struct which wraps a ECDSA signer and an [EIP-712]
+//! domain separator for convenient message signing and verification.
+//!
+//! ## Example
 //! ```rust
-//! # use alloy_primitives::b256;
 //! # use thegraph_core::address;
-//! # use thegraph_core::signed_message::{eip712_domain, Eip712Domain};
-//! use thegraph_core::signed_message::{sign_message, verify_signature};
+//! # use thegraph_core::signed_message::{b256, eip712_domain, Eip712Domain};
+//! use thegraph_core::signed_message::{sign, verify};
 //!
 //! // Create a signer instance
 //! let signer = alloy_signer_local::PrivateKeySigner::random();
@@ -33,18 +41,66 @@
 //!
 //! // Create a message instance with some data
 //! let message = Message {
-//!    data: address!("03F6d2a3D8c3413De72c193386f1894E1Ddc2b6b"),
+//!    data: address!("03f6d2a3d8c3413de72c193386f1894e1ddc2b6b"),
 //! };
 //!
 //! // Sign the message
-//! let signed_message = sign_message(&signer, message, &EIP712_DOMAIN).expect("sign_message failed");
+//! let signed_message = sign(&signer, &EIP712_DOMAIN, message).expect("sign_message failed");
 //!
 //! // Verify the signed message
-//! assert!(verify_signature(&signed_message, &EIP712_DOMAIN, &signer.address()).is_ok());
+//! assert!(verify( &EIP712_DOMAIN,&signed_message, &signer.address()).is_ok());
 //! ```
+//!
+//! # The `Eip712Signer` struct
+//!
+//! The `Eip712Signer` struct wraps a ECDSA signer and an [EIP-712] domain separator for convenient
+//! message signing and verification.
+//!
+//! ## Example
+//!
+//! ```rust
+//! # use thegraph_core::address;
+//! # use thegraph_core::signed_message::{b256, eip712_domain, Eip712Domain};
+//! use thegraph_core::signed_message::Eip712Signer;
+//!
+//! // Create a signer instance and define the EIP-712 domain separator
+//! let signer = alloy_signer_local::PrivateKeySigner::random();
+//! let signer_address = signer.address();
+//!
+//! const EIP712_DOMAIN: Eip712Domain = eip712_domain! {
+//!     name: "Test domain",
+//!     version: "1",
+//!     chain_id: 1,
+//!     verifying_contract: address!("a83682bbe91c0d2d48a13fd751b2da8e989fe421"),
+//!     salt: b256!("79ae210ebdaa728c415644dddfdd8050d94cc832af6892c51f7e218e85e32260"),
+//! };
+//!
+//! // Create an Eip712Signer instance
+//! let eip712_signer = Eip712Signer::new(signer, signer_address, EIP712_DOMAIN);
+//!
+//! // Define the message struct
+//! thegraph_core::signed_message::sol! {
+//!     struct Message {
+//!         address data;
+//!     }
+//! }
+//!
+//! // Create a message instance with some data
+//! let message = Message {
+//!     data: address!("c7267b097d5ee3fd61eed65f3d48498714776af3"),
+//! };
+//!
+//! // Sign the message
+//! let signed_message = eip712_signer.sign(message).expect("message signing failed");
+//!
+//! // Verify the signed message
+//! assert!(eip712_signer.verify(&signed_message, &eip712_signer.address()).is_ok());
+//! ```
+//!
+//! [EIP-712]: https://eips.ethereum.org/EIPS/eip-712 "EIP-712"
 
 use alloy_primitives::Address;
-pub use alloy_primitives::{Signature, SignatureError};
+pub use alloy_primitives::{b256, Signature, SignatureError};
 pub use alloy_signer::{k256::ecdsa::Error as EcdsaError, SignerSync, UnsupportedSignerOperation};
 pub use alloy_sol_types::{eip712_domain, sol, Eip712Domain, SolStruct};
 
@@ -100,10 +156,10 @@ pub struct SignedMessage<M> {
 /// Returns a [`SignedMessage`] containing the message and the ECDSA signature of the message
 ///
 /// [EIP-712]: https://eips.ethereum.org/EIPS/eip-712 "EIP-712"
-pub fn sign_message<S, M>(
+pub fn sign<S, M>(
     signer: &S,
-    message: M,
     domain: &Eip712Domain,
+    message: M,
 ) -> Result<SignedMessage<M>, SigningError>
 where
     S: SignerSync,
@@ -135,12 +191,10 @@ where
 
 /// Recover the signer's address  an [EIP-712] signed message
 ///
-/// Returns the signer's address
-///
 /// [EIP-712]: https://eips.ethereum.org/EIPS/eip-712 "EIP-712"
-pub fn recover_signer<M>(
-    signed_message: &SignedMessage<M>,
+pub fn recover_signer_address<M>(
     domain: &Eip712Domain,
+    signed_message: &SignedMessage<M>,
 ) -> Result<Address, RecoverSignerError>
 where
     M: SolStruct,
@@ -157,16 +211,16 @@ where
 /// Returns `Ok(())` if the signer's address matches the expected address
 ///
 /// [EIP-712]: https://eips.ethereum.org/EIPS/eip-712 "EIP-712"
-pub fn verify_signature<M>(
-    signed_message: &SignedMessage<M>,
+pub fn verify<M>(
     domain: &Eip712Domain,
+    signed_message: &SignedMessage<M>,
     expected_address: &Address,
 ) -> Result<(), VerificationError>
 where
     M: SolStruct,
 {
     let recovered_address =
-        recover_signer(signed_message, domain).map_err(|RecoverSignerError(err)| err)?;
+        recover_signer_address(domain, signed_message).map_err(|RecoverSignerError(err)| err)?;
 
     if recovered_address != *expected_address {
         Err(VerificationError::InvalidSigner {
@@ -178,13 +232,91 @@ where
     }
 }
 
+/// An [`Eip712Signer`] wraps a ECDSA signer and an [EIP-712] domain separator.
+///
+/// It provides a convenient way to sign and verify messages using the [EIP-712] standard.
+///
+/// [EIP-712]: https://eips.ethereum.org/EIPS/eip-712 "EIP-712"
+pub struct Eip712Signer<S> {
+    /// The ECDSA signer
+    signer: S,
+    /// The signer's address
+    address: Address,
+    /// The EIP-712 domain separator
+    domain: Eip712Domain,
+}
+
+impl<S> Eip712Signer<S>
+where
+    S: SignerSync,
+{
+    /// Create a new [`Eip712Signer`] instance
+    pub fn new(signer: S, address: Address, domain: Eip712Domain) -> Self {
+        Self {
+            signer,
+            address,
+            domain,
+        }
+    }
+
+    /// Get the signer's address
+    pub fn address(&self) -> &Address {
+        &self.address
+    }
+
+    /// Sign a message using the [EIP-712] standard
+    ///
+    /// Returns a [`SignedMessage`] containing the message and the ECDSA signature of the message
+    ///
+    /// [EIP-712]: https://eips.ethereum.org/EIPS/eip-712 "EIP-712"
+    pub fn sign<M>(&self, message: M) -> Result<SignedMessage<M>, SigningError>
+    where
+        M: SolStruct,
+    {
+        sign(&self.signer, &self.domain, message)
+    }
+
+    /// Recover the signer's address  an [EIP-712] signed message
+    ///
+    /// Returns the signer's address
+    ///
+    /// [EIP-712]: https://eips.ethereum.org/EIPS/eip-712 "EIP-712"
+    pub fn recover_signer<M>(
+        &self,
+        signed_message: &SignedMessage<M>,
+    ) -> Result<Address, RecoverSignerError>
+    where
+        M: SolStruct,
+    {
+        recover_signer_address(&self.domain, signed_message)
+    }
+
+    /// Verify the signer's address of an [EIP-712] signed message
+    ///
+    /// Returns `Ok(())` if the signer's address matches the expected address
+    ///
+    /// [EIP-712]: https://eips.ethereum.org/EIPS/eip-712 "EIP-712"
+    pub fn verify<M>(
+        &self,
+        signed_message: &SignedMessage<M>,
+        expected_address: &Address,
+    ) -> Result<(), VerificationError>
+    where
+        M: SolStruct,
+    {
+        verify(&self.domain, signed_message, expected_address)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use alloy_primitives::{address, b256, keccak256, Signature};
     use alloy_signer_local::PrivateKeySigner;
     use alloy_sol_types::{eip712_domain, Eip712Domain};
 
-    use super::{recover_signer, sign_message, verify_signature, SignedMessage, VerificationError};
+    use super::{
+        recover_signer_address, sign, verify, Eip712Signer, SignedMessage, VerificationError,
+    };
 
     /// Test EIP712 domain separator
     const EIP712_DOMAIN: Eip712Domain = eip712_domain! {
@@ -220,7 +352,7 @@ mod tests {
 
         //* When
         // Sign the message
-        let result = sign_message(&signer, message, &domain);
+        let result = sign(&signer, &domain, message);
 
         //* Then
         // The message should be signed
@@ -240,11 +372,11 @@ mod tests {
         };
 
         // Sign the message
-        let signed_message = sign_message(&signer, message, &domain).unwrap();
+        let signed_message = sign(&signer, &domain, message).unwrap();
 
         //* When
         // Recover the signer's address
-        let result = recover_signer(&signed_message, &domain);
+        let result = recover_signer_address(&domain, &signed_message);
 
         //* Then
         // The address should be recovered
@@ -277,7 +409,7 @@ mod tests {
 
         //* When
         // Recover the signer's address
-        let result = recover_signer(&invalid_signature_signed_message, &domain);
+        let result = recover_signer_address(&domain, &invalid_signature_signed_message);
 
         //* Then
         // The address should not be recovered
@@ -297,11 +429,11 @@ mod tests {
         };
 
         // Sign the message
-        let signed_message = sign_message(&signer, message, &domain).unwrap();
+        let signed_message = sign(&signer, &domain, message).unwrap();
 
         //* When
         // Verify the signed message
-        let result = verify_signature(&signed_message, &domain, &signer_address);
+        let result = verify(&domain, &signed_message, &signer_address);
 
         //* Then
         // The signature should be valid
@@ -320,7 +452,7 @@ mod tests {
         };
 
         // Sign the message
-        let signed_message = sign_message(&signer, message, &domain).unwrap();
+        let signed_message = sign(&signer, &domain, message).unwrap();
 
         // Create a different signer
         let different_signer = wallet();
@@ -328,7 +460,7 @@ mod tests {
 
         //* When
         // Verify the signed message
-        let result = verify_signature(&signed_message, &domain, &different_signer_address);
+        let result = verify(&domain, &signed_message, &different_signer_address);
 
         //* Then
         // The signature should be invalid
@@ -339,5 +471,32 @@ mod tests {
         } else {
             panic!("unexpected error: {:?}", error);
         }
+    }
+
+    #[test]
+    fn signer_sing_and_verify() {
+        //* Given
+        let signer = wallet();
+        let signer_address = signer.address();
+        let domain = EIP712_DOMAIN;
+
+        // Create a message with some data
+        let message = Message {
+            data: keccak256(b"Hello, world!"),
+        };
+
+        // Create an Eip712Signer instance
+        let eip712_signer = Eip712Signer::new(signer, signer_address, domain);
+
+        //* When
+        // Sign the message
+        let signed_message = eip712_signer.sign(message).expect("message signing failed");
+
+        // Verify the signed message
+        let result = eip712_signer.verify(&signed_message, eip712_signer.address());
+
+        //* Then
+        // The signature should be valid
+        assert!(result.is_ok());
     }
 }
