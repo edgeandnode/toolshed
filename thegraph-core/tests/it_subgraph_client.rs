@@ -64,7 +64,7 @@ async fn send_subgraph_meta_query_request() {
 
     //* When
     let res = tokio::time::timeout(
-        Duration::from_secs(10),
+        Duration::from_secs(30),
         send_bootstrap_meta_query(&http_client, subgraph_url, Some(&auth_token)),
     )
     .await
@@ -108,7 +108,7 @@ async fn send_subgraph_page_query_request() {
 
     //* When
     let res = tokio::time::timeout(
-        Duration::from_secs(10),
+        Duration::from_secs(30),
         send_subgraph_page_query(
             &http_client,
             subgraph_url,
@@ -163,7 +163,7 @@ async fn client_send_query() {
 
     //* When
     let res = tokio::time::timeout(
-        Duration::from_secs(10),
+        Duration::from_secs(30),
         client.query::<SubgraphMetaQueryResponse>(SUBGRAPH_META_QUERY_DOCUMENT),
     )
     .await
@@ -215,7 +215,7 @@ async fn send_subgraph_paginated() {
 
     //* When
     let res = tokio::time::timeout(
-        Duration::from_secs(10),
+        Duration::from_secs(30),
         client.paginated_query::<Subgraph>(SUBGRAPHS_QUERY_DOCUMENT, 200),
     )
     .await
@@ -266,7 +266,7 @@ async fn send_subgraph_paginated_empty_response() {
 
     //* When
     let res = tokio::time::timeout(
-        Duration::from_secs(10),
+        Duration::from_secs(30),
         client.paginated_query::<Subgraph>(SUBGRAPHS_QUERY_DOCUMENT, 200),
     )
     .await
