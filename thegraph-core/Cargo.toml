@@ -1,6 +1,6 @@
 [package]
 name = "thegraph-core"
-description = "A collection of Rust modules shared between The Graph's network services"
+description = "Rust core modules for The Graph network"
 version = "0.7.0"
 repository = "https://github.com/edgeandnode/toolshed"
 authors = ["Lorenzo Delgado (LNSD) <lorenzo@edgeandnode.com>"]
