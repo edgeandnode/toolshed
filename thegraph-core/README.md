@@ -1,11 +1,12 @@
 thegraph-core
 -------------
 
-[![Crates.io](https://img.shields.io/crates/v/thegraph-core)](https://crates.io/crates/thegraph-core)
-[![License](https://img.shields.io/badge/License-MIT-blue.svg)](../LICENSE)
+[![crates.io](https://img.shields.io/crates/v/thegraph-core)](https://crates.io/crates/thegraph-core)
+[![license](https://img.shields.io/badge/License-MIT-blue.svg)](../LICENSE)
 [![ci](https://github.com/edgeandnode/toolshed/actions/workflows/ci.yml/badge.svg)](https://github.com/edgeandnode/toolshed/actions/workflows/ci.yml)
+[![docs.rs](https://img.shields.io/docsrs/thegraph-core)](https://docs.rs/thegraph-core)
 
-A collection of Rust modules shared between The Graph's network services.
+Rust core modules for _The Graph_ network.
 
 ## Usage
 

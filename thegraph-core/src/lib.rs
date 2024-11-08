@@ -1,4 +1,4 @@
-//! A collection of Rust modules that are shared between _The Graph_'s network services.
+//! Rust core modules for _The Graph_ network.
 
 #[doc(inline)]
 pub use alloy_primitives::{address, Address, BlockHash, BlockNumber, BlockTimestamp, ChainId};
