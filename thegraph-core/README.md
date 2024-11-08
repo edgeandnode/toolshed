@@ -2,7 +2,8 @@ thegraph-core
 -------------
 
 [![crates.io](https://img.shields.io/crates/v/thegraph-core)](https://crates.io/crates/thegraph-core)
-[![license](https://img.shields.io/badge/License-MIT-blue.svg)](../LICENSE)
+![msrv](https://img.shields.io/crates/msrv/thegraph-core?color=darkgray)
+[![license](https://img.shields.io/crates/l/thegraph-core)](../LICENSE)
 [![ci](https://github.com/edgeandnode/toolshed/actions/workflows/ci.yml/badge.svg)](https://github.com/edgeandnode/toolshed/actions/workflows/ci.yml)
 [![docs.rs](https://img.shields.io/docsrs/thegraph-core)](https://docs.rs/thegraph-core)
 
