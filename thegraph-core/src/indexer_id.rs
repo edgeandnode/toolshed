@@ -1,4 +1,4 @@
-use alloy_primitives::Address;
+use alloy::primitives::Address;
 
 /// A unique identifier for an indexer: the indexer's Ethereum address.
 ///
@@ -189,18 +189,22 @@ impl serde::Serialize for IndexerId {
 /// If no argument is provided, the macro will create an `IndexerId` with the zero address:
 ///
 /// ```rust
-/// use thegraph_core::{Address, indexer_id, IndexerId};
+/// use thegraph_core::{
+///     alloy::primitives::Address,
+///     indexer_id, IndexerId
+/// };
 ///
 /// const INDEXER_ID: IndexerId = indexer_id!();
 ///
 /// assert_eq!(INDEXER_ID, Address::ZERO);
 /// ```
 #[macro_export]
-macro_rules! indexer_id {
+#[doc(hidden)]
+macro_rules! __indexer_id {
     () => {
-        $crate::IndexerId::new($crate::alloy_primitives::Address::ZERO)
+        $crate::IndexerId::new($crate::alloy::primitives::Address::ZERO)
     };
     ($value:tt) => {
-        $crate::IndexerId::new($crate::alloy_primitives::address!($value))
+        $crate::IndexerId::new($crate::alloy::primitives::address!($value))
     };
 }

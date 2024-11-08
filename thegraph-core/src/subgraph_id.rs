@@ -1,4 +1,4 @@
-use alloy_primitives::B256;
+use alloy::primitives::B256;
 
 /// Subgraph ID parsing error.
 #[derive(Debug, Clone, PartialEq, Eq, thiserror::Error)]
@@ -155,7 +155,8 @@ impl std::fmt::Debug for SubgraphId {
 /// assert_eq!(SUBGRAPH_ID, SubgraphId::ZERO);
 /// ```
 #[macro_export]
-macro_rules! subgraph_id {
+#[doc(hidden)]
+macro_rules! __subgraph_id {
     () => {
         $crate::SubgraphId::ZERO
     };
@@ -174,10 +175,10 @@ pub const fn __parse_subgraph_id_const(value: &str) -> B256 {
 
 #[cfg(test)]
 mod tests {
-    use alloy_primitives::{b256, B256};
+    use alloy::primitives::{b256, B256};
 
-    use super::SubgraphId;
-    use crate::ParseSubgraphIdError;
+    use super::{ParseSubgraphIdError, SubgraphId};
+    use crate::subgraph_id;
 
     const VALID_SUBGRAPH_ID: &str = "7xB3yxxD8okmq4dZPky3eP1nYRgLfZrwMyUQBGo32t4U";
 

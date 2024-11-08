@@ -1,4 +1,4 @@
-use alloy_primitives::Address;
+use alloy::primitives::Address;
 
 /// A unique identifier for an allocation: the allocation's Ethereum address.
 ///
@@ -189,18 +189,22 @@ impl serde::Serialize for AllocationId {
 /// If no argument is provided, the macro will create an `AllocationId` with the zero address:
 ///
 /// ```rust
-/// use thegraph_core::{Address, allocation_id, AllocationId };
+/// use thegraph_core::{
+///     alloy::primitives::Address,
+///     allocation_id, AllocationId
+/// };
 ///
 /// const ALLOCATION_ID: AllocationId = allocation_id!();
 ///
 /// assert_eq!(ALLOCATION_ID, Address::ZERO);
 /// ```
 #[macro_export]
-macro_rules! allocation_id {
+#[doc(hidden)]
+macro_rules! __allocation_id {
     () => {
-        $crate::AllocationId::new($crate::alloy_primitives::Address::ZERO)
+        $crate::AllocationId::new($crate::alloy::primitives::Address::ZERO)
     };
     ($value:tt) => {
-        $crate::AllocationId::new($crate::alloy_primitives::address!($value))
+        $crate::AllocationId::new($crate::alloy::primitives::address!($value))
     };
 }

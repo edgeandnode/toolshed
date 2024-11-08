@@ -1,6 +1,6 @@
 use std::sync::{atomic::AtomicU64, Arc};
 
-use alloy_primitives::aliases::BlockNumber;
+use alloy::primitives::BlockNumber;
 use serde::de::Deserialize;
 use thegraph_graphql_http::{
     graphql::IntoDocument, http::request::IntoRequestParameters, http_client::ResponseError,

@@ -1,8 +1,12 @@
 //! Attestation types and functions for verifying attestations.
 
-use alloy_primitives::{b256, keccak256, Address, ChainId, Signature, B256};
-use alloy_signer::SignerSync;
-use alloy_sol_types::{eip712_domain, Eip712Domain, SolStruct};
+use alloy::{
+    primitives::{
+        b256, keccak256, normalize_v, Address, ChainId, PrimitiveSignature as Signature, B256,
+    },
+    signers::SignerSync,
+    sol_types::{eip712_domain, Eip712Domain, SolStruct},
+};
 
 use crate::{allocation_id::AllocationId, deployment_id::DeploymentId};
 
@@ -38,7 +42,7 @@ pub struct Attestation {
     pub v: u8,
 }
 
-alloy_sol_types::sol! {
+alloy::sol_types::sol! {
     /// EIP-712 receipt struct for attestation signing.
     struct Receipt {
         bytes32 requestCID;
@@ -144,12 +148,11 @@ pub fn recover_allocation(
     domain: &Eip712Domain,
     attestation: &Attestation,
 ) -> Result<AllocationId, VerificationError> {
-    let signature = Signature::from_rs_and_parity(
-        attestation.r.into(),
-        attestation.s.into(),
-        attestation.v as u64,
-    )
-    .map_err(|_| VerificationError::FailedSignerRecovery)?;
+    // Recover the signature components
+    let signature_parity =
+        normalize_v(attestation.v as u64).ok_or(VerificationError::FailedSignerRecovery)?;
+    let signature_r = attestation.r.into();
+    let signature_s = attestation.s.into();
 
     // Calculate the signing hash
     let msg = Receipt {
@@ -160,7 +163,7 @@ pub fn recover_allocation(
     let signing_hash = msg.eip712_signing_hash(domain);
 
     // Recover the allocation ID from the signature
-    signature
+    Signature::new(signature_r, signature_s, signature_parity)
         .recover_address_from_prehash(&signing_hash)
         .map(Into::into)
         .map_err(|_| VerificationError::FailedSignerRecovery)
@@ -168,13 +171,14 @@ pub fn recover_allocation(
 
 #[cfg(test)]
 mod tests {
-    use alloy_primitives::{b256, ChainId, B256};
-    use alloy_signer::SignerSync;
-    use alloy_signer_local::PrivateKeySigner;
-    use alloy_sol_types::Eip712Domain;
+    use alloy::{
+        primitives::{address, b256, Address, ChainId, B256},
+        signers::{local::PrivateKeySigner, SignerSync},
+        sol_types::Eip712Domain,
+    };
 
     use super::{create, eip712_domain, verify, Attestation};
-    use crate::{address, deployment_id, Address, DeploymentId};
+    use crate::{deployment_id, DeploymentId};
 
     const CHAIN_ID: ChainId = 1337;
     const DISPUTE_MANAGER_ADDRESS: Address = address!("16def7e0108a5467a106DBd7537F8591F470342e");
