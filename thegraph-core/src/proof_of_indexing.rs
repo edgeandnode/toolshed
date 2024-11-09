@@ -4,7 +4,7 @@
 //! The POI is essentially a signature over a message digest that is generated during the indexing
 //! of a subgraph from genesis. Each time a subgraph’s state is updated, so does the message digest.
 
-use alloy_primitives::B256;
+use alloy::primitives::B256;
 
 /// A Proof of Indexing, "POI", is a cryptographic proof submitted by indexers to demonstrate that
 /// they have accurately indexed a subgraph.
@@ -107,27 +107,28 @@ impl serde::Serialize for ProofOfIndexing {
 /// To create an `ProofOfIndexing` from a string literal (no `0x` prefix) at compile time:
 ///
 /// ```rust
-/// use thegraph_core::{poi, ProofOfIndexing};
+/// use thegraph_core::{proof_of_indexing, ProofOfIndexing};
 ///
 /// const PROOF_OF_INDEXING: ProofOfIndexing =
-///     poi!("bb31abb3bb85428d894fb4b3cee8a0889bbe8585939b70910bbdda31b30d2240");
+///     proof_of_indexing!("bb31abb3bb85428d894fb4b3cee8a0889bbe8585939b70910bbdda31b30d2240");
 /// ```
 ///
 /// If no argument is provided, the macro will create an `ProofOfIndexing` with the zero POI:
 ///
 /// ```rust
-/// use thegraph_core::{poi, ProofOfIndexing};
+/// use thegraph_core::{proof_of_indexing, ProofOfIndexing};
 ///
-/// const PROOF_OF_INDEXING: ProofOfIndexing = poi!();
+/// const PROOF_OF_INDEXING: ProofOfIndexing = proof_of_indexing!();
 ///
 /// assert_eq!(PROOF_OF_INDEXING, ProofOfIndexing::ZERO);
 /// ```
 #[macro_export]
-macro_rules! poi {
+#[doc(hidden)]
+macro_rules! __proof_of_indexing {
     () => {
         $crate::ProofOfIndexing::ZERO
     };
     ($id:tt) => {
-        $crate::ProofOfIndexing::new($crate::alloy_primitives::b256!($id))
+        $crate::ProofOfIndexing::new($crate::alloy::primitives::b256!($id))
     };
 }

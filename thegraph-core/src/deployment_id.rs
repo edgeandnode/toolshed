@@ -1,4 +1,4 @@
-use alloy_primitives::B256;
+use alloy::primitives::B256;
 
 /// Subgraph deployment ID parsing error.
 #[derive(Debug, Clone, PartialEq, Eq, thiserror::Error)]
@@ -234,7 +234,8 @@ fn parse_hex_str(value: &str) -> Result<DeploymentId, ParseDeploymentIdError> {
 /// assert_eq!(DEPLOYMENT_ID, DeploymentId::ZERO);
 /// ```
 #[macro_export]
-macro_rules! deployment_id {
+#[doc(hidden)]
+macro_rules! __deployment_id {
     () => {
         $crate::DeploymentId::ZERO
     };
@@ -275,11 +276,12 @@ pub const fn __parse_cid_v0_const(value: &str) -> B256 {
 mod tests {
     use std::str::FromStr;
 
-    use alloy_primitives::{b256, B256};
+    use alloy::primitives::{b256, B256};
 
     use super::{
         format_cid_v0, parse_cid_v0_str, parse_hex_str, DeploymentId, ParseDeploymentIdError,
     };
+    use crate::deployment_id;
 
     const VALID_CID: &str = "QmWmyoMoctfbAaiEs2G46gpeUmhqFRDW6KWo64y5r581Vz";
     const VALID_HEX: &str = "0x7d5a99f603f231d53a4f39d1521f98d2e8bb279cf29bebfd0687dc98458e7f89";

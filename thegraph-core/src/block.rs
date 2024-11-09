@@ -1,6 +1,6 @@
 //! A pointer to a block in the chain.
 
-use alloy_primitives::{BlockHash, BlockNumber};
+use alloy::primitives::{BlockHash, BlockNumber};
 
 /// A pointer to a block in the chain.
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]

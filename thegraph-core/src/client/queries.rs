@@ -79,7 +79,7 @@ pub mod meta {
 }
 
 pub mod page {
-    use alloy_primitives::{BlockHash, BlockNumber};
+    use alloy::primitives::{BlockHash, BlockNumber};
     use indoc::indoc;
     use serde::{ser::SerializeMap as _, Deserialize, Serialize, Serializer};
     use serde_json::value::RawValue;
