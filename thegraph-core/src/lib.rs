@@ -2,11 +2,14 @@
 //!
 //! # Re-exports
 //!
-//! This crate re-exports the `alloy` crate, which provides core types, traits and macros.
+//! This crate re-exports the `alloy` crate, which provides essential types, traits, and macros.
 //!
-//! As this crate exports types from the `alloy` crate, it is recommended to use the re-exported
-//! types and traits from this crate instead of importing the `alloy` crate directly in order to
-//! avoid future version conflicts.
+//! As this crate relies on types from the `alloy` crate, it is advisable to use the re-exported
+//! `alloy` crate instead of adding it to your `Cargo.toml` file. This approach helps to avoid
+//! potential future crate version conflicts.
+
+// Enable `doc_cfg` feature for `docs.rs`
+#![cfg_attr(docsrs, feature(doc_cfg))]
 
 // Re-export `alloy` crate
 pub use alloy;
@@ -21,14 +24,12 @@ pub use self::{
     proof_of_indexing::ProofOfIndexing,
     subgraph_id::{ParseSubgraphIdError, SubgraphId},
 };
-// Re-export functions required by the `deployment_id!(...)` and `subgraph_id!(...)` macros.
-#[doc(hidden)]
-pub use self::{deployment_id::__parse_cid_v0_const, subgraph_id::__parse_subgraph_id_const};
 
 mod allocation_id;
 pub mod attestation;
 mod block;
 #[cfg(feature = "subgraph-client")]
+#[cfg_attr(docsrs, doc(cfg(feature = "subgraph-client")))]
 pub mod client;
 mod deployment_id;
 mod indexer_id;
@@ -37,12 +38,15 @@ mod subgraph_id;
 
 // Export macros
 #[doc(inline)]
-pub use __allocation_id as allocation_id;
+pub use self::__allocation_id as allocation_id;
 #[doc(inline)]
-pub use __deployment_id as deployment_id;
+pub use self::__deployment_id as deployment_id;
 #[doc(inline)]
-pub use __indexer_id as indexer_id;
+pub use self::__indexer_id as indexer_id;
 #[doc(inline, alias = "poi")]
-pub use __proof_of_indexing as proof_of_indexing;
+pub use self::__proof_of_indexing as proof_of_indexing;
 #[doc(inline)]
-pub use __subgraph_id as subgraph_id;
+pub use self::__subgraph_id as subgraph_id;
+// Export internal functions required by macros
+#[doc(hidden)]
+pub use self::{deployment_id::__parse_cid_v0_const, subgraph_id::__parse_subgraph_id_const};

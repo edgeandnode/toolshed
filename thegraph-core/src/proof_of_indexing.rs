@@ -9,6 +9,7 @@ use alloy::primitives::B256;
 /// A Proof of Indexing, "POI", is a cryptographic proof submitted by indexers to demonstrate that
 /// they have accurately indexed a subgraph.
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[doc(alias = "poi")]
 pub struct ProofOfIndexing(B256);
 
 impl ProofOfIndexing {
