@@ -6,6 +6,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.0](https://github.com/edgeandnode/toolshed/compare/thegraph-core-v0.7.0...thegraph-core-v0.8.0) - 2024-11-09
+
+### Added
+
+- *(thegraph-core)* re-export alloy meta-crate ([#360](https://github.com/edgeandnode/toolshed/pull/360))
+- *(thegraph-core)* remove serde feature from default features set ([#359](https://github.com/edgeandnode/toolshed/pull/359))
+
+### Fixed
+
+- pin alloy-signer ([#353](https://github.com/edgeandnode/toolshed/pull/353))
+
+### Other
+
+- *(thegraph-core)* improve crate docs.rs docs ([#363](https://github.com/edgeandnode/toolshed/pull/363))
+- *(thegraph-core)* extend subgraph client integration tests timeout to 30s ([#362](https://github.com/edgeandnode/toolshed/pull/362))
+- *(thegraph-core)* update crate readme ([#361](https://github.com/edgeandnode/toolshed/pull/361))
+- *(thegraph-core)* update crate readme ([#357](https://github.com/edgeandnode/toolshed/pull/357))
+- *(deps)* update alloy-rs crates to 0.5 ([#336](https://github.com/edgeandnode/toolshed/pull/336))
+
 ## [0.7.0](https://github.com/edgeandnode/toolshed/compare/thegraph-core-v0.6.1...thegraph-core-v0.7.0) - 2024-10-02
 
 ### Other
