@@ -1,7 +1,7 @@
 [package]
 name = "thegraph-core"
 description = "Rust core modules for The Graph network"
-version = "0.7.0"
+version = "0.8.0"
 repository = "https://github.com/edgeandnode/toolshed"
 authors = ["Lorenzo Delgado (LNSD) <lorenzo@edgeandnode.com>"]
 license = "MIT"
