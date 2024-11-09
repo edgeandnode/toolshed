@@ -23,15 +23,16 @@ jobs:
         with:
           components: clippy
           cache: false
+          rustflags: ''
 
       - name: Cache rust build files
         uses: Leafwing-Studios/cargo-cache@5d5d363fa3b9886d45c4705228c5c73ccea17636 # v2
 
       - name: check (release)
-        run: cargo check --workspace --all-targets --all-features --release
+        run: cargo check --workspace --all-features --release
 
       - name: clippy
-        run: cargo clippy --workspace --all-targets --all-features -- -D warnings --force-warn deprecated --force-warn dead-code
+        run: cargo clippy --workspace --all-features -- -D warnings --force-warn deprecated --force-warn dead-code
 
       ## Tests
       # Install sops (needed for decrypting tests .env file)

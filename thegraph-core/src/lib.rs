@@ -28,6 +28,10 @@ pub use self::{
 mod allocation_id;
 pub mod attestation;
 mod block;
+#[deprecated(
+    note = "Use the `thegraph-client-subgraphs` crate instead",
+    since = "0.8.1"
+)]
 #[cfg(feature = "subgraph-client")]
 #[cfg_attr(docsrs, doc(cfg(feature = "subgraph-client")))]
 pub mod client;
