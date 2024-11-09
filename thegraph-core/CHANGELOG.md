@@ -6,6 +6,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.1](https://github.com/edgeandnode/toolshed/compare/thegraph-core-v0.8.0...thegraph-core-v0.8.1) - 2024-11-09
+
+### Added
+
+- *(thegraph-core)* set crate msrv to 1.79.0 ([#370](https://github.com/edgeandnode/toolshed/pull/370))
+
+### Other
+
+- *(thegraph-core)* deprecate subgraph-client feature in favor of thegraph-client-subgraphs crate ([#368](https://github.com/edgeandnode/toolshed/pull/368))
+
 ## [0.8.0](https://github.com/edgeandnode/toolshed/compare/thegraph-core-v0.7.0...thegraph-core-v0.8.0) - 2024-11-09
 
 ### Added
