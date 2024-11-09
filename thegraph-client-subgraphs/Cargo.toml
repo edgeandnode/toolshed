@@ -1,0 +1,29 @@
+[package]
+name = "thegraph-client-subgraphs"
+description = "A client for The Graph network's Subgraphs data service"
+version = "0.1.0"
+repository = "https://github.com/edgeandnode/toolshed"
+authors = ["Lorenzo Delgado (LNSD) <lorenzo@edgeandnode.com>"]
+license = "MIT"
+edition = "2021"
+rust-version = "1.79.0"
+
+[dependencies]
+indoc = "2.0.5"
+reqwest = { version = "0.12.9", features = ["json"] }
+serde = { version = "1.0.214", features = ["derive"] }
+serde_json = { version = "1.0.132", features = ["raw_value"] }
+thegraph-core = { version = "0.8.0", path = "../thegraph-core", features = ["serde"] }
+thegraph-graphql-http = { version = "0.2.4", path = "../thegraph-graphql-http", features = ["http-client-reqwest"] }
+thiserror = "2.0.1"
+tracing = { version = "0.1.40", default-features = false, features = ["attributes"] }
+url = "2.5.3"
+
+[dev-dependencies]
+test-with = { version = "0.14.4", default-features = false }
+tokio = { version = "1.41.1", features = ["macros", "rt"] }
+tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
+
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs"]
