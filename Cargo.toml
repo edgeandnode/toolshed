@@ -4,5 +4,6 @@ members = [
     "graphql",
     "thegraph-core",
     "thegraph-graphql-http",
+    "thegraph-client-subgraphs",
     "toolshed",
 ]

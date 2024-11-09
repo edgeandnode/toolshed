@@ -3,15 +3,16 @@ toolshed
 [![ci](https://github.com/edgeandnode/toolshed/actions/workflows/ci.yml/badge.svg)](https://github.com/edgeandnode/toolshed/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-This repository contains a collection of crates that constitute the foundation for the different Rust projects of the
-_The Graph network_ (e.g., _The Graph Gateway_ and its _Candidate Selection_, etc.).
+This repository contains a collection of crates that constitute the foundation for the different Rust projects of
+_The Graph_ network (e.g., _The Graph Gateway_ and its _Candidate Selection_, etc.).
 
 ### Crates
 
-| Name                                             |                                                          Latest version                                                           |
-|:-------------------------------------------------|:---------------------------------------------------------------------------------------------------------------------------------:|
-| [thegraph-core](./thegraph-core)                 |             [![thegraph-core](https://img.shields.io/crates/v/thegraph-core)](https://crates.io/crates/thegraph-core)             |
-| [thegraph-graphql-http](./thegraph-graphql-http) | [![thegraph-graphql-http](https://img.shields.io/crates/v/thegraph-graphql-http)](https://crates.io/crates/thegraph-graphql-http) |
+| Name                                                     |                                                                Latest version                                                                 |
+|:---------------------------------------------------------|:---------------------------------------------------------------------------------------------------------------------------------------------:|
+| [thegraph-core](./thegraph-core)                         |                   [![thegraph-core](https://img.shields.io/crates/v/thegraph-core)](https://crates.io/crates/thegraph-core)                   |
+| [thegraph-graphql-http](./thegraph-graphql-http)         |       [![thegraph-graphql-http](https://img.shields.io/crates/v/thegraph-graphql-http)](https://crates.io/crates/thegraph-graphql-http)       |
+| [thegraph-client-subgraphs](./thegraph-client-subgraphs) | [![thegraph-client-subgraphs](https://img.shields.io/crates/v/thegraph-client-subgraphs)](https://crates.io/crates/thegraph-client-subgraphs) |
 
 ### Internal (not published to crates.io)
 
