@@ -4124,7 +4124,7 @@ dependencies = [
 
 [[package]]
 name = "thegraph-core"
-version = "0.8.1"
+version = "0.8.2"
 dependencies = [
  "alloy",
  "assert_matches",
