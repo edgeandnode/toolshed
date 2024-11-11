@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.2](https://github.com/edgeandnode/toolshed/compare/thegraph-core-v0.8.1...thegraph-core-v0.8.2) - 2024-11-11
+
+### Fixed
+
+- *(thegraph-core)* remove explicit dependency on alloy-sol-types ([#374](https://github.com/edgeandnode/toolshed/pull/374))
+
 ## [0.8.1](https://github.com/edgeandnode/toolshed/compare/thegraph-core-v0.8.0...thegraph-core-v0.8.1) - 2024-11-09
 
 ### Added
