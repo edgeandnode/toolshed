@@ -42,7 +42,7 @@ pub struct Attestation {
     pub v: u8,
 }
 
-alloy::sol_types::sol! {
+alloy::sol! {
     /// EIP-712 receipt struct for attestation signing.
     struct Receipt {
         bytes32 requestCID;

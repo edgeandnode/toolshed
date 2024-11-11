@@ -4127,7 +4127,6 @@ name = "thegraph-core"
 version = "0.8.1"
 dependencies = [
  "alloy",
- "alloy-sol-types",
  "assert_matches",
  "async-graphql",
  "bs58",
