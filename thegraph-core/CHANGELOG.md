@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.0](https://github.com/edgeandnode/toolshed/compare/thegraph-core-v0.8.4...thegraph-core-v0.9.0) - 2024-11-26
+
+### Added
+
+- *(thegraph-core)* gate the attestation module behind a crate feature ([#390](https://github.com/edgeandnode/toolshed/pull/390))
+
 ## [0.8.4](https://github.com/edgeandnode/toolshed/compare/thegraph-core-v0.8.3...thegraph-core-v0.8.4) - 2024-11-26
 
 ### Added
