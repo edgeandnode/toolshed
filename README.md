@@ -4,7 +4,8 @@ toolshed
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 This repository contains a collection of crates that constitute the foundation for the different Rust projects of
-_The Graph_ network (e.g., _The Graph Gateway_ and its _Candidate Selection_, etc.).
+_The Graph_ network (e.g., [_the Subgraphs Gateway_](https://github.com/edgeandnode/gateway), [_the Indexer
+software_](https://github.com/graphprotocol/indexer-rs), etc.).
 
 ### Crates
 
@@ -20,12 +21,6 @@ _The Graph_ network (e.g., _The Graph Gateway_ and its _Candidate Selection_, et
 
     ```toml
     graphql = { git = "https://github.com/edgeandnode/toolshed", tag = "graphql-v0.3.0" }
-    ```
-
-* **toolshed:** A collection of miscellaneous rust modules.
-
-    ```toml
-    toolshed = { git = "https://github.com/edgeandnode/toolshed", tag = "toolshed-v0.6.0" }
     ```
 
 ### Contributing

@@ -1,8 +1,0 @@
-[package]
-name = "toolshed"
-description = "A collection of Rust modules that are shared between The Graph's network services"
-version = "0.6.0"
-edition = "2021"
-rust-version = "1.65.0"
-
-[dependencies]
