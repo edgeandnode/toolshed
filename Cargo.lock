@@ -4667,10 +4667,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "toolshed"
-version = "0.6.0"
-
-[[package]]
 name = "tower"
 version = "0.4.13"
 source = "registry+https://github.com/rust-lang/crates.io-index"
