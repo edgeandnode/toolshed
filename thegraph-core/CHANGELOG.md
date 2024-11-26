@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.4](https://github.com/edgeandnode/toolshed/compare/thegraph-core-v0.8.3...thegraph-core-v0.8.4) - 2024-11-26
+
+### Added
+
+- *(thegraph-core)* add alloy-full feature ([#387](https://github.com/edgeandnode/toolshed/pull/387))
+- *(thegraph-core)* add alloy-contract feature ([#386](https://github.com/edgeandnode/toolshed/pull/386))
+
 ## [0.8.3](https://github.com/edgeandnode/toolshed/compare/thegraph-core-v0.8.2...thegraph-core-v0.8.3) - 2024-11-26
 
 ### Added
