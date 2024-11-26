@@ -10,6 +10,7 @@ rust-version = "1.79.0"
 
 [features]
 default = []
+alloy-contract = ["alloy/contract"]
 alloy-rlp = ["alloy/rlp"]
 alloy-signer-local = ["alloy/signer-local"]
 async-graphql-support = ["dep:async-graphql"]
