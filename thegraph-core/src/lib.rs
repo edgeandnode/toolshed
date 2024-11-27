@@ -14,10 +14,6 @@
 // Re-export `alloy` crate
 pub use alloy;
 
-#[cfg(feature = "attestation")]
-#[cfg_attr(docsrs, doc(cfg(feature = "attestation")))]
-#[cfg_attr(feature = "attestation", doc(inline))]
-pub use self::attestation::Attestation; // TODO: Remove as part of the next major version release
 #[doc(inline)]
 pub use self::{
     allocation_id::AllocationId,
