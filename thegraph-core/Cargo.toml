@@ -9,15 +9,11 @@ edition = "2021"
 rust-version = "1.79.0"
 
 [features]
-default = ["attestation"]
-attestation = ["alloy-eip712", "alloy-signers", "alloy-sol-types"]
+default = []
 alloy-contract = ["alloy/contract"]
-alloy-eip712 = ["alloy/eip712"]
 alloy-full = ["alloy/full"]
 alloy-rlp = ["alloy/rlp"]
 alloy-signer-local = ["alloy/signer-local"]
-alloy-signers = ["alloy/signers"]
-alloy-sol-types = ["alloy/sol-types"]
 async-graphql-support = ["dep:async-graphql"]
 serde = ["dep:serde", "dep:serde_with", "alloy/serde"]
 subgraph-client = [
@@ -32,7 +28,7 @@ subgraph-client = [
 ]
 
 [dependencies]
-alloy = "0.6"
+alloy = { version = "0.6", features = ["eip712", "signers", "sol-types"] }
 async-graphql = { version = "7.0", optional = true }
 bs58 = "0.5"
 indoc = { version = "2.0.5", optional = true }

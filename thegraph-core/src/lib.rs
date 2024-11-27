@@ -14,12 +14,10 @@
 // Re-export `alloy` crate
 pub use alloy;
 
-#[cfg(feature = "attestation")]
-#[cfg_attr(feature = "attestation", doc(hidden))]
-pub use self::attestation::Attestation;
 #[doc(inline)]
 pub use self::{
     allocation_id::AllocationId,
+    attestation::Attestation,
     block::BlockPointer,
     deployment_id::{DeploymentId, ParseDeploymentIdError},
     indexer_id::IndexerId,
@@ -28,8 +26,6 @@ pub use self::{
 };
 
 mod allocation_id;
-#[cfg(feature = "attestation")]
-#[cfg_attr(docsrs, doc(cfg(feature = "attestation")))]
 pub mod attestation;
 mod block;
 #[deprecated(
