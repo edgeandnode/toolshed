@@ -21,7 +21,7 @@
 //!
 //! - `attestation`: Enables the `attestation` module, which provides types and functions for
 //!    attestation-related operations.
-//! - `async-graphql-support`: Enables support for the [`async-graphql`] crate.
+//! - `async-graphql`: Enables support for the [`async-graphql`] crate.
 //! - `fake`: Enables the [`fake`] crate integration for generating random test data.
 //! - `serde`: Enables [`serde`] serialization and deserialization support for types in this crate.
 //!
