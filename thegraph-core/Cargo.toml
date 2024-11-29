@@ -9,7 +9,7 @@ edition = "2021"
 rust-version = "1.79.0"
 
 [features]
-default = ["attestation"]
+default = []
 attestation = ["alloy-eip712", "alloy-signers", "alloy-sol-types"]
 alloy-contract = ["alloy/contract"]
 alloy-eip712 = ["alloy/eip712"]
