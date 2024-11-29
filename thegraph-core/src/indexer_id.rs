@@ -8,13 +8,26 @@ use alloy::primitives::Address;
 ///
 /// The `IndexerId` type implements the following formatting traits:
 ///
-/// - Use [`Display`] for formatting the `IndexerId` as an [EIP-55] checksum string.
-/// - Use [`LowerHex`] (or [`UpperHex`]) for formatting the `IndexerId` as a hexadecimal string.
+/// - Use [`std::fmt::Display`] for formatting the `IndexerId` as an [EIP-55] checksum string.
+/// - Use [`std::fmt::LowerHex`] (or [`std::fmt::UpperHex`]) for formatting   the `IndexerId` as a
+///   hexadecimal string.
+///
+/// See the [`Display`], [`LowerHex`], and [`UpperHex`] trait implementations for usage examples.
+///
+/// ## Generating test data
+///
+/// The `IndexerId` type implements the [`fake`] crate's [`fake::Dummy`] trait, allowing you to
+/// generate random `IndexerId` values for testing.
+///
+/// Note that the `fake` feature must be enabled to use this functionality.
+///
+/// See the [`Dummy`] trait impl for usage examples.
 ///
 /// [EIP-55]: https://eips.ethereum.org/EIPS/eip-55
-/// [`Display`]: struct.IndexerId.html#impl-Display-for-IndexerId
-/// [`LowerHex`]: struct.IndexerId.html#impl-LowerHex-for-IndexerId
-/// [`UpperHex`]: struct.IndexerId.html#impl-UpperHex-for-IndexerId
+/// [`Display`]: #impl-Display-for-IndexerId
+/// [`LowerHex`]: #impl-LowerHex-for-IndexerId
+/// [`UpperHex`]: #impl-UpperHex-for-IndexerId
+/// [`Dummy`]: #impl-Dummy<Faker>-for-IndexerId
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct IndexerId(Address);
 
@@ -41,7 +54,7 @@ impl std::fmt::Display for IndexerId {
     /// [`UpperHex`]: struct.IndexerId.html#impl-UpperHex-for-IndexerId
     ///
     /// ```rust
-    /// use thegraph_core::{indexer_id, IndexerId};
+    /// # use thegraph_core::{indexer_id, IndexerId};
     ///
     /// const ID: IndexerId = indexer_id!("0002c67268fb8c8917f36f865a0cbdf5292fa68d");
     ///
@@ -66,8 +79,7 @@ impl std::fmt::Debug for IndexerId {
     /// [`UpperHex`]: struct.IndexerId.html#impl-UpperHex-for-IndexerId
     ///
     /// ```rust
-    /// use thegraph_core::{indexer_id, IndexerId};
-    ///
+    /// # use thegraph_core::{indexer_id, IndexerId};
     /// const ID: IndexerId = indexer_id!("0002c67268fb8c8917f36f865a0cbdf5292fa68d");
     ///
     /// assert_eq!(format!("{:?}", ID), "0x0002c67268fb8c8917f36f865a0cbdf5292fa68d");
@@ -83,8 +95,7 @@ impl std::fmt::LowerHex for IndexerId {
     /// Note that the alternate flag, `#`, adds a `0x` in front of the output.
     ///
     /// ```rust
-    /// use thegraph_core::{indexer_id, IndexerId};
-    ///
+    /// # use thegraph_core::{indexer_id, IndexerId};
     /// const ID: IndexerId = indexer_id!("0002c67268fb8c8917f36f865a0cbdf5292fa68d");
     ///
     /// // Lower hex
@@ -104,8 +115,7 @@ impl std::fmt::UpperHex for IndexerId {
     /// Note that the alternate flag, `#`, adds a `0x` in front of the output.
     ///
     /// ```rust
-    /// use thegraph_core::{indexer_id, IndexerId};
-    ///
+    /// # use thegraph_core::{indexer_id, IndexerId};
     /// const ID: IndexerId = indexer_id!("0002c67268fb8c8917f36f865a0cbdf5292fa68d");
     ///
     /// // Upper hex
@@ -175,25 +185,41 @@ impl serde::Serialize for IndexerId {
     }
 }
 
+#[cfg(feature = "fake")]
+/// To use the [`fake`] crate to generate random [`IndexerId`] values, **the `fake` feature must
+/// be enabled.**
+///
+/// ```rust
+/// # use thegraph_core::IndexerId;
+/// # use fake::Fake;
+/// let indexer_id = fake::Faker.fake::<IndexerId>();
+///
+/// println!("IndexerId: {:#x}", indexer_id);
+/// ```
+impl fake::Dummy<fake::Faker> for IndexerId {
+    fn dummy_with_rng<R: fake::Rng + ?Sized>(config: &fake::Faker, rng: &mut R) -> Self {
+        let bytes = <[u8; 20]>::dummy_with_rng(config, rng);
+        Self(Address::from(bytes))
+    }
+}
+
 /// Converts a sequence of string literals containing hex-encoded data into a new [`IndexerId`]
 /// at compile time.
 ///
 /// To create an `IndexerId` from a string literal (no `0x` prefix) at compile time:
 ///
 /// ```rust
-/// use thegraph_core::{indexer_id, IndexerId};
-///
+/// # use thegraph_core::{indexer_id, IndexerId};
 /// const INDEXER_ID: IndexerId = indexer_id!("0002c67268fb8c8917f36f865a0cbdf5292fa68d");
 /// ```
 ///
 /// If no argument is provided, the macro will create an `IndexerId` with the zero address:
 ///
 /// ```rust
-/// use thegraph_core::{
-///     alloy::primitives::Address,
-///     indexer_id, IndexerId
-/// };
-///
+/// # use thegraph_core::{
+/// #    alloy::primitives::Address,
+/// #    indexer_id, IndexerId
+/// # };
 /// const INDEXER_ID: IndexerId = indexer_id!();
 ///
 /// assert_eq!(INDEXER_ID, Address::ZERO);

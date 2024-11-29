@@ -13,6 +13,17 @@ pub enum ParseSubgraphIdError {
 }
 
 /// A Subgraph ID is a 32-byte identifier for a subgraph.
+///
+/// ## Generating test data
+///
+/// The `SubgraphId` type implements the [`fake`] crate's [`fake::Dummy`] trait, allowing you to
+/// generate random `SubgraphId` values for testing.
+///
+/// Note that the `fake` feature must be enabled to use this functionality.
+///
+/// See the [`Dummy`] trait impl for usage examples.
+///
+/// [`Dummy`]: #impl-Dummy<Faker>-for-SubgraphId
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(
     feature = "serde",
@@ -107,8 +118,7 @@ impl std::fmt::Display for SubgraphId {
     /// Format the `SubgraphId` as a base58-encoded string.
     ///
     /// ```rust
-    /// use thegraph_core::{subgraph_id, SubgraphId};
-    ///
+    /// # use thegraph_core::{subgraph_id, SubgraphId};
     /// const ID: SubgraphId = subgraph_id!("DZz4kDTdmzWLWsV373w2bSmoar3umKKH9y82SUKr5qmp");
     ///
     /// assert_eq!(format!("{}", ID), "DZz4kDTdmzWLWsV373w2bSmoar3umKKH9y82SUKr5qmp");
@@ -123,8 +133,7 @@ impl std::fmt::Debug for SubgraphId {
     /// Format the `SubgraphId` as a debug string.
     ///
     /// ```rust
-    /// use thegraph_core::{subgraph_id, SubgraphId};
-    ///
+    /// # use thegraph_core::{subgraph_id, SubgraphId};
     /// const ID: SubgraphId = subgraph_id!("DZz4kDTdmzWLWsV373w2bSmoar3umKKH9y82SUKr5qmp");
     ///
     /// assert_eq!(format!("{:?}", ID), "SubgraphId(DZz4kDTdmzWLWsV373w2bSmoar3umKKH9y82SUKr5qmp)");
@@ -134,22 +143,38 @@ impl std::fmt::Debug for SubgraphId {
     }
 }
 
+#[cfg(feature = "fake")]
+/// To use the [`fake`] crate to generate random [`SubgraphId`] values, **the `fake` feature must
+/// be enabled.**
+///
+/// ```rust
+/// # use thegraph_core::SubgraphId;
+/// # use fake::Fake;
+/// let subgraph_id = fake::Faker.fake::<SubgraphId>();
+///
+/// println!("SubgraphId: {}", subgraph_id);
+/// ```
+impl fake::Dummy<fake::Faker> for SubgraphId {
+    fn dummy_with_rng<R: fake::Rng + ?Sized>(config: &fake::Faker, rng: &mut R) -> Self {
+        let bytes = <[u8; 32]>::dummy_with_rng(config, rng);
+        Self(B256::new(bytes))
+    }
+}
+
 /// Converts a sequence of string literals containing 32-bytes Base58-encoded data into a new
 /// [`SubgraphId`] at compile time.
 ///
 /// To create an `SubgraphId` from a string literal (Base58) at compile time:
 ///
 /// ```rust
-/// use thegraph_core::{subgraph_id, SubgraphId};
-///
+/// # use thegraph_core::{subgraph_id, SubgraphId};
 /// const SUBGRAPH_ID: SubgraphId = subgraph_id!("DZz4kDTdmzWLWsV373w2bSmoar3umKKH9y82SUKr5qmp");
 /// ```
 ///
 /// If no argument is provided, the macro will create an `SubgraphId` with the zero ID:
 ///
 /// ```rust
-/// use thegraph_core::{subgraph_id, SubgraphId};
-///
+/// # use thegraph_core::{subgraph_id, SubgraphId};
 /// const SUBGRAPH_ID: SubgraphId = subgraph_id!();
 ///
 /// assert_eq!(SUBGRAPH_ID, SubgraphId::ZERO);

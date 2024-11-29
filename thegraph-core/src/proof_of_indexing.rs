@@ -8,6 +8,17 @@ use alloy::primitives::B256;
 
 /// A Proof of Indexing, "POI", is a cryptographic proof submitted by indexers to demonstrate that
 /// they have accurately indexed a subgraph.
+///
+/// ## Generating test data
+///
+/// The `ProofOfIndexing` type implements the [`fake`] crate's [`fake::Dummy`] trait, allowing you
+/// to generate random `ProofOfIndexing` values for testing.
+///
+/// Note that the `fake` feature must be enabled to use this functionality.
+///
+/// See the [`Dummy`] trait impl for usage examples.
+///
+/// [`Dummy`]: #impl-Dummy<Faker>-for-ProofOfIndexing
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[doc(alias = "poi")]
 pub struct ProofOfIndexing(B256);
@@ -99,6 +110,24 @@ impl serde::Serialize for ProofOfIndexing {
         S: serde::Serializer,
     {
         self.0.serialize(serializer)
+    }
+}
+
+#[cfg(feature = "fake")]
+/// To use the [`fake`] crate to generate random [`ProofOfIndexing`] values, **the `fake` feature
+/// must be enabled.**
+///
+/// ```rust
+/// # use thegraph_core::ProofOfIndexing;
+/// # use fake::Fake;
+/// let poi = fake::Faker.fake::<ProofOfIndexing>();
+///
+/// println!("ProofOfIndexing: {}", poi);
+/// ```
+impl fake::Dummy<fake::Faker> for ProofOfIndexing {
+    fn dummy_with_rng<R: fake::Rng + ?Sized>(config: &fake::Faker, rng: &mut R) -> Self {
+        let bytes = <[u8; 32]>::dummy_with_rng(config, rng);
+        Self(B256::new(bytes))
     }
 }
 

@@ -8,13 +8,26 @@ use alloy::primitives::Address;
 ///
 /// The `AllocationId` type implements the following formatting traits:
 ///
-/// - Use [`Display`] for formatting the `AllocationId` as an [EIP-55] checksum string.
-/// - Use [`LowerHex`] (or [`UpperHex`]) for formatting the `AllocationId` as a hexadecimal string.
+/// - Use [`std::fmt::Display`] for formatting the `AllocationId` as an [EIP-55] checksum string.
+/// - Use [`std::fmt::LowerHex`] (or [`std::fmt::UpperHex`]) for formatting   the `AllocationId` as
+///   a hexadecimal string.
+///
+/// See the [`Display`], [`LowerHex`], and [`UpperHex`] trait implementations for usage examples.
+///
+/// ## Generating test data
+///
+/// The `AllocationId` type implements the [`fake`] crate's [`fake::Dummy`] trait, allowing you to
+/// generate random `AllocationId` values for testing.
+///
+/// Note that the `fake` feature must be enabled to use this functionality.
+///
+/// See the [`Dummy`] trait impl for usage examples.
 ///
 /// [EIP-55]: https://eips.ethereum.org/EIPS/eip-55
-/// [`Display`]: struct.AllocationId.html#impl-Display-for-AllocationId
-/// [`LowerHex`]: struct.AllocationId.html#impl-LowerHex-for-AllocationId
-/// [`UpperHex`]: struct.AllocationId.html#impl-UpperHex-for-AllocationId
+/// [`Display`]: #impl-Display-for-AllocationId
+/// [`LowerHex`]: #impl-LowerHex-for-AllocationId
+/// [`UpperHex`]: #impl-UpperHex-for-AllocationId
+/// [`Dummy`]: #impl-Dummy<Faker>-for-AllocationId
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct AllocationId(Address);
 
@@ -41,8 +54,7 @@ impl std::fmt::Display for AllocationId {
     /// [`UpperHex`]: struct.AllocationId.html#impl-UpperHex-for-AllocationId
     ///
     /// ```rust
-    /// use thegraph_core::{allocation_id, AllocationId};
-    ///
+    /// # use thegraph_core::{allocation_id, AllocationId};
     /// const ID: AllocationId = allocation_id!("0002c67268fb8c8917f36f865a0cbdf5292fa68d");
     ///
     /// // Note the uppercase and lowercase hex characters in the checksum
@@ -66,8 +78,7 @@ impl std::fmt::Debug for AllocationId {
     /// [`UpperHex`]: struct.AllocationId.html#impl-UpperHex-for-AllocationId
     ///
     /// ```rust
-    /// use thegraph_core::{allocation_id, AllocationId};
-    ///
+    /// # use thegraph_core::{allocation_id, AllocationId};
     /// const ID: AllocationId = allocation_id!("0002c67268fb8c8917f36f865a0cbdf5292fa68d");
     ///
     /// assert_eq!(format!("{:?}", ID), "0x0002c67268fb8c8917f36f865a0cbdf5292fa68d");
@@ -83,8 +94,7 @@ impl std::fmt::LowerHex for AllocationId {
     /// Note that the alternate flag, `#`, adds a `0x` in front of the output.
     ///
     /// ```rust
-    /// use thegraph_core::{allocation_id, AllocationId};
-    ///
+    /// # use thegraph_core::{allocation_id, AllocationId};
     /// const ID: AllocationId = allocation_id!("0002c67268fb8c8917f36f865a0cbdf5292fa68d");
     ///
     /// // Lower hex
@@ -104,8 +114,7 @@ impl std::fmt::UpperHex for AllocationId {
     /// Note that the alternate flag, `#`, adds a `0x` in front of the output.
     ///
     /// ```rust
-    /// use thegraph_core::{allocation_id, AllocationId};
-    ///
+    /// # use thegraph_core::{allocation_id, AllocationId};
     /// const ID: AllocationId = allocation_id!("0002c67268fb8c8917f36f865a0cbdf5292fa68d");
     ///
     /// // Upper hex
@@ -172,6 +181,24 @@ impl serde::Serialize for AllocationId {
         S: serde::Serializer,
     {
         self.0.serialize(serializer)
+    }
+}
+
+#[cfg(feature = "fake")]
+/// To use the [`fake`] crate to generate random [`AllocationId`] values, **the `fake` feature must
+/// be enabled.**
+///
+/// ```rust
+/// # use thegraph_core::AllocationId;
+/// # use fake::Fake;
+/// let allocation_id = fake::Faker.fake::<AllocationId>();
+///
+/// println!("AllocationId: {:#x}", allocation_id);
+/// ```
+impl fake::Dummy<fake::Faker> for AllocationId {
+    fn dummy_with_rng<R: fake::Rng + ?Sized>(config: &fake::Faker, rng: &mut R) -> Self {
+        let bytes = <[u8; 20]>::dummy_with_rng(config, rng);
+        Self(Address::from(bytes))
     }
 }
 

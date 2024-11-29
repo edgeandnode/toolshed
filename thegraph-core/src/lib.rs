@@ -1,12 +1,31 @@
 //! Rust core modules for _The Graph_ network.
 //!
-//! # Re-exports
+//! # Re-export of the [`alloy`] crate
 //!
-//! This crate re-exports the `alloy` crate, which provides essential types, traits, and macros.
+//! This crate re-exports the [`alloy`] crate, which provides essential types, traits, and macros.
 //!
-//! As this crate relies on types from the `alloy` crate, it is advisable to use the re-exported
-//! `alloy` crate instead of adding it to your `Cargo.toml` file. This approach helps to avoid
-//! potential future crate version conflicts.
+//! To avoid potential future crate version conflicts, it is recommended to use the re-exported
+//! `alloy` crate instead of adding it directly to your `Cargo.toml` file.
+//!
+//! For convenience, this crate also re-exports the features of the `alloy` crate. These features
+//! follow the naming convention `alloy-<feature>`. For example, the `alloy-signers` and
+//! `alloy-signer-local` features enable the `signers` and `signer-local` optional features of the
+//! `alloy` crate, respectively.
+//!
+//! If you need to enable an `alloy` crate feature that is not yet re-exported by this crate, you
+//! can enable the `alloy-full` feature to enable all `alloy` features.
+//!
+//! # Features
+//!
+//! The following features are available for this crate:
+//!
+//! - `attestation`: Enables the `attestation` module, which provides types and functions for
+//!    attestation-related operations.
+//! - `async-graphql-support`: Enables support for the [`async-graphql`] crate.
+//! - `fake`: Enables the [`fake`] crate integration for generating random test data.
+//! - `serde`: Enables [`serde`] serialization and deserialization support for types in this crate.
+//!
+//! Additionally, this crate re-exports other features from the `alloy` crate as described above.
 
 // Enable `doc_cfg` feature for `docs.rs`
 #![cfg_attr(docsrs, feature(doc_cfg))]
