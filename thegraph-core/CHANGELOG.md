@@ -6,6 +6,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.0](https://github.com/edgeandnode/toolshed/compare/thegraph-core-v0.8.5...thegraph-core-v0.9.0) - 2024-11-29
+
+### Added
+
+- *(thegraph-core)* add fake-rs support ([#403](https://github.com/edgeandnode/toolshed/pull/403))
+- *(thegraph-core)* remove attestation feature from defaults set ([#397](https://github.com/edgeandnode/toolshed/pull/397))
+- *(thegraph-core)* remove deprecated client module ([#396](https://github.com/edgeandnode/toolshed/pull/396))
+
+### Other
+
+- *(thegraph-core)* rename async-graphql support feature ([#404](https://github.com/edgeandnode/toolshed/pull/404))
+- *(deps)* update rust crate alloy to 0.7 ([#400](https://github.com/edgeandnode/toolshed/pull/400))
+
 ## [0.8.5](https://github.com/edgeandnode/toolshed/compare/thegraph-core-v0.8.4...thegraph-core-v0.8.5) - 2024-11-27
 
 ### Added
