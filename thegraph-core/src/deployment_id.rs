@@ -19,6 +19,17 @@ pub enum ParseDeploymentIdError {
 /// A Subgraph's Deployment ID represents unique identifier for a deployed subgraph on The Graph.
 ///
 /// This is the content ID of the subgraph's manifest.
+///
+/// ## Generating test data
+///
+/// The `DeploymentId` type implements the [`fake`] crate's [`fake::Dummy`] trait, allowing you to
+/// generate random `DeploymentId` values for testing.
+///
+/// Note that the `fake` feature must be enabled to use this functionality.
+///
+/// See the [`Dummy`] trait impl for usage examples.
+///
+/// [`Dummy`]: #impl-Dummy<Faker>-for-DeploymentId
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(
     feature = "serde",
@@ -88,8 +99,7 @@ impl std::fmt::Display for DeploymentId {
     /// Format the `DeploymentId` as CIDv0 (base58-encoded sha256-hash) string.
     ///
     /// ```rust
-    /// use thegraph_core::{deployment_id, DeploymentId};
-    ///
+    /// # use thegraph_core::{deployment_id, DeploymentId};
     /// const ID: DeploymentId = deployment_id!("QmSWxvd8SaQK6qZKJ7xtfxCCGoRzGnoi2WNzmJYYJW9BXY");
     ///
     /// assert_eq!(format!("{}", ID), "QmSWxvd8SaQK6qZKJ7xtfxCCGoRzGnoi2WNzmJYYJW9BXY");
@@ -103,8 +113,7 @@ impl std::fmt::Debug for DeploymentId {
     /// Format the `DeploymentId` as a debug string.
     ///
     /// ```rust
-    /// use thegraph_core::{deployment_id, DeploymentId};
-    ///
+    /// # use thegraph_core::{deployment_id, DeploymentId};
     /// const ID: DeploymentId = deployment_id!("QmSWxvd8SaQK6qZKJ7xtfxCCGoRzGnoi2WNzmJYYJW9BXY");
     ///
     /// assert_eq!(
@@ -123,8 +132,7 @@ impl std::fmt::LowerHex for DeploymentId {
     /// Note that the alternate flag, `#`, adds a `0x` in front of the output.
     ///
     /// ```rust
-    /// use thegraph_core::{deployment_id, DeploymentId};
-    ///
+    /// # use thegraph_core::{deployment_id, DeploymentId};
     /// const ID: DeploymentId = deployment_id!("QmWmyoMoctfbAaiEs2G46gpeUmhqFRDW6KWo64y5r581Vz");
     ///
     /// // Lower hex
@@ -144,26 +152,38 @@ impl std::fmt::LowerHex for DeploymentId {
     }
 }
 
+#[cfg(feature = "fake")]
+/// To use the [`fake`] crate to generate random [`DeploymentId`] values, **the `fake` feature must
+/// be enabled.**
+///
+/// ```rust
+/// # use thegraph_core::DeploymentId;
+/// # use fake::Fake;
+/// let deployment_id = fake::Faker.fake::<DeploymentId>();
+///
+/// println!("DeploymentId: {}", deployment_id);
+/// ```
+impl fake::Dummy<fake::Faker> for DeploymentId {
+    fn dummy_with_rng<R: fake::Rng + ?Sized>(config: &fake::Faker, rng: &mut R) -> Self {
+        let bytes = <[u8; 32]>::dummy_with_rng(config, rng);
+        Self(B256::new(bytes))
+    }
+}
+
 #[cfg(feature = "async-graphql-support")]
-mod async_graphql_support {
-    use async_graphql::Scalar;
-
-    use super::DeploymentId;
-
-    #[Scalar]
-    impl async_graphql::ScalarType for DeploymentId {
-        fn parse(value: async_graphql::Value) -> async_graphql::InputValueResult<Self> {
-            if let async_graphql::Value::String(value) = &value {
-                Ok(value.parse::<DeploymentId>()?)
-            } else {
-                Err(async_graphql::InputValueError::expected_type(value))
-            }
+#[async_graphql::Scalar]
+impl async_graphql::ScalarType for DeploymentId {
+    fn parse(value: async_graphql::Value) -> async_graphql::InputValueResult<Self> {
+        if let async_graphql::Value::String(value) = &value {
+            Ok(value.parse::<DeploymentId>()?)
+        } else {
+            Err(async_graphql::InputValueError::expected_type(value))
         }
+    }
 
-        fn to_value(&self) -> async_graphql::Value {
-            // Convert to CIDv0 (Qm... base58-encoded sha256-hash)
-            async_graphql::Value::String(self.to_string())
-        }
+    fn to_value(&self) -> async_graphql::Value {
+        // Convert to CIDv0 (Qm... base58-encoded sha256-hash)
+        async_graphql::Value::String(self.to_string())
     }
 }
 
@@ -219,16 +239,14 @@ fn parse_hex_str(value: &str) -> Result<DeploymentId, ParseDeploymentIdError> {
 /// To create an `DeploymentId` from a string literal (Base58) at compile time:
 ///
 /// ```rust
-/// use thegraph_core::{deployment_id, DeploymentId};
-///
+/// # use thegraph_core::{deployment_id, DeploymentId};
 /// const DEPLOYMENT_ID: DeploymentId = deployment_id!("QmSWxvd8SaQK6qZKJ7xtfxCCGoRzGnoi2WNzmJYYJW9BXY");
 /// ```
 ///
 /// If no argument is provided, the macro will create an `DeploymentId` with the zero ID:
 ///
 /// ```rust
-/// use thegraph_core::{deployment_id, DeploymentId};
-///
+/// # use thegraph_core::{deployment_id, DeploymentId};
 /// const DEPLOYMENT_ID: DeploymentId = deployment_id!();
 ///
 /// assert_eq!(DEPLOYMENT_ID, DeploymentId::ZERO);

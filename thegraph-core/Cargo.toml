@@ -19,12 +19,14 @@ alloy-signer-local = ["alloy/signer-local"]
 alloy-signers = ["alloy/signers"]
 alloy-sol-types = ["alloy/sol-types"]
 async-graphql-support = ["dep:async-graphql"]
+fake = ["dep:fake"]
 serde = ["dep:serde", "dep:serde_with", "alloy/serde"]
 
 [dependencies]
 alloy = "0.7"
 async-graphql = { version = "7.0", optional = true }
 bs58 = "0.5"
+fake = { version = "3.0", optional = true }
 serde = { version = "1.0", optional = true }
 serde_with = { version = "3.8", optional = true }
 thiserror = "1.0"
