@@ -33,13 +33,6 @@ mod allocation_id;
 #[cfg_attr(docsrs, doc(cfg(feature = "attestation")))]
 pub mod attestation;
 mod block;
-#[deprecated(
-    note = "Use the `thegraph-client-subgraphs` crate instead",
-    since = "0.8.1"
-)]
-#[cfg(feature = "subgraph-client")]
-#[cfg_attr(docsrs, doc(cfg(feature = "subgraph-client")))]
-pub mod client;
 mod deployment_id;
 mod indexer_id;
 mod proof_of_indexing;
