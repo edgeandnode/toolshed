@@ -18,7 +18,7 @@ alloy-rlp = ["alloy/rlp"]
 alloy-signer-local = ["alloy/signer-local"]
 alloy-signers = ["alloy/signers"]
 alloy-sol-types = ["alloy/sol-types"]
-async-graphql-support = ["dep:async-graphql"]
+async-graphql = ["dep:async-graphql"]
 fake = ["dep:fake"]
 serde = ["dep:serde", "dep:serde_with", "alloy/serde"]
 

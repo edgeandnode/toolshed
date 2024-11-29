@@ -170,7 +170,7 @@ impl fake::Dummy<fake::Faker> for DeploymentId {
     }
 }
 
-#[cfg(feature = "async-graphql-support")]
+#[cfg(feature = "async-graphql")]
 #[async_graphql::Scalar]
 impl async_graphql::ScalarType for DeploymentId {
     fn parse(value: async_graphql::Value) -> async_graphql::InputValueResult<Self> {
