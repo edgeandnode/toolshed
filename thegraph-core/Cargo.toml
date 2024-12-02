@@ -38,3 +38,25 @@ alloy = { version = "0.7", features = ["signer-local"] }
 [package.metadata.docs.rs]
 all-features = true
 rustdoc-args = ["--cfg", "docsrs"]
+
+[package.metadata.cargo_check_external_types]
+allowed_external_types = [
+    "alloy",
+    "alloy::*",
+    "alloy_primitives",
+    "alloy_primitives::*",
+    "alloy_signer",
+    "alloy_signer::*",
+    "alloy_sol_types",
+    "alloy_sol_types::*",
+    "async_graphql",
+    "async_graphql::*",
+    "fake",
+    "fake::*",
+    "headers",
+    "headers::*",
+    "headers_core",
+    "headers_core::*",
+    "serde",
+    "serde::*",
+]

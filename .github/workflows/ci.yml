@@ -81,3 +81,26 @@ jobs:
           cache: false
 
       - run: cargo +nightly fmt --all -- --check
+
+  check-external-types:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+      - uses: actions-rust-lang/setup-rust-toolchain@11df97af8e8102fd60b60a77dfbf58d40cd843b8 # v1
+        with:
+          toolchain: nightly-2024-06-30
+          # ^ sync with https://github.com/awslabs/cargo-check-external-types/blob/main/rust-toolchain.toml
+          cache: false
+      - uses: baptiste0928/cargo-install@904927dbe77864e0f2281519fe9d5bd097a220b3 # v3
+        with:
+          crate: cargo-check-external-types
+      - run: cargo check-external-types --all-features --manifest-path thegraph-core/Cargo.toml
+
+  check-semver-compat:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+      - uses: obi1kenobi/cargo-semver-checks-action@v2
+        with:
+          package: thegraph-core
+
