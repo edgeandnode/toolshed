@@ -20,6 +20,11 @@ alloy-signers = ["alloy/signers"]
 alloy-sol-types = ["alloy/sol-types"]
 async-graphql = ["dep:async-graphql"]
 fake = ["dep:fake"]
+headers = [
+    "dep:headers",
+    # Required by headers::graph_attestation
+    "alloy/serde", "dep:serde", "dep:serde_json",
+]
 serde = ["dep:serde", "dep:serde_with", "alloy/serde"]
 
 [dependencies]
@@ -27,7 +32,9 @@ alloy = "0.7"
 async-graphql = { version = "7.0", optional = true }
 bs58 = "0.5"
 fake = { version = "3.0", optional = true }
+headers = { version = "0.4.0", optional = true }
 serde = { version = "1.0", optional = true }
+serde_json = { version = "1.0.133", optional = true }
 serde_with = { version = "3.8", optional = true }
 thiserror = "1.0"
 
