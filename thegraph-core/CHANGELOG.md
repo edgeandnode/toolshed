@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.1](https://github.com/edgeandnode/toolshed/compare/thegraph-core-v0.9.0...thegraph-core-v0.9.1) - 2024-12-04
+
+### Added
+
+- *(thegraph-core)* add graph-attestation http header ([#412](https://github.com/edgeandnode/toolshed/pull/412))
+
 ## [0.9.0](https://github.com/edgeandnode/toolshed/compare/thegraph-core-v0.8.5...thegraph-core-v0.9.0) - 2024-11-29
 
 ### Added
