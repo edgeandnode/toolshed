@@ -169,20 +169,6 @@ pub fn recover_allocation(
         .map_err(|_| VerificationError::FailedSignerRecovery)
 }
 
-#[cfg(feature = "fake")]
-impl fake::Dummy<fake::Faker> for Attestation {
-    fn dummy_with_rng<R: fake::Rng + ?Sized>(config: &fake::Faker, rng: &mut R) -> Self {
-        Self {
-            request_cid: B256::from(<[u8; 32]>::dummy_with_rng(config, rng)),
-            response_cid: B256::from(<[u8; 32]>::dummy_with_rng(config, rng)),
-            deployment: DeploymentId::dummy_with_rng(config, rng).into(),
-            r: B256::from(<[u8; 32]>::dummy_with_rng(config, rng)),
-            s: B256::from(<[u8; 32]>::dummy_with_rng(config, rng)),
-            v: u8::dummy_with_rng(config, rng),
-        }
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use alloy::{

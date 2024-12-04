@@ -23,8 +23,6 @@
 //!    attestation-related operations.
 //! - `async-graphql`: Enables support for the [`async-graphql`] crate.
 //! - `fake`: Enables the [`fake`] crate integration for generating random test data.
-//! - `headers`: Enables the `headers` module, which provides common HTTP _typed headers_ used
-//!    across _The Graph_ network services.
 //! - `serde`: Enables [`serde`] serialization and deserialization support for types in this crate.
 //!
 //! Additionally, this crate re-exports other features from the `alloy` crate as described above.
@@ -51,10 +49,6 @@ mod allocation_id;
 pub mod attestation;
 mod block;
 mod deployment_id;
-
-#[cfg(feature = "headers")]
-#[cfg_attr(docsrs, doc(cfg(feature = "headers")))]
-pub mod headers;
 mod indexer_id;
 mod proof_of_indexing;
 mod subgraph_id;
