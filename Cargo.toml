@@ -5,4 +5,5 @@ members = [
     "thegraph-core",
     "thegraph-graphql-http",
     "thegraph-client-subgraphs",
+    "thegraph-headers",
 ]
