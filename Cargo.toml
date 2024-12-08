@@ -2,7 +2,8 @@
 resolver = "2"
 members = [
     "graphql",
-    "thegraph-core",
     "thegraph-client-subgraphs",
+    "thegraph-core",
     "thegraph-graphql-http",
+    "thegraph-headers",
 ]
