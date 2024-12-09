@@ -1,14 +1,14 @@
 //! HTTP client extensions.
 
-#[cfg(feature = "http-client-reqwest")]
-#[cfg_attr(docsrs, doc(cfg(feature = "http-client-reqwest")))]
+#[cfg(feature = "reqwest")]
+#[cfg_attr(docsrs, doc(cfg(feature = "reqwest")))]
 pub use reqwest_ext::ReqwestExt;
 
 use crate::http::response::{Error, ResponseBody};
 
 /// The error type returned by `ReqwestExt`
-#[cfg(feature = "http-client-reqwest")]
-#[cfg_attr(docsrs, doc(cfg(feature = "http-client-reqwest")))]
+#[cfg(feature = "reqwest")]
+#[cfg_attr(docsrs, doc(cfg(feature = "reqwest")))]
 #[derive(thiserror::Error, Debug)]
 pub enum RequestError {
     /// An error occurred while serializing the GraphQL request.
@@ -78,7 +78,7 @@ where
     }
 }
 
-#[cfg(feature = "http-client-reqwest")]
+#[cfg(feature = "reqwest")]
 mod reqwest_ext {
     use async_trait::async_trait;
     use reqwest::header::{ACCEPT, CONTENT_TYPE};
@@ -90,7 +90,8 @@ mod reqwest_ext {
     };
 
     /// An extension trait for reqwest::RequestBuilder.
-    #[cfg_attr(docsrs, doc(cfg(feature = "http-client-reqwest")))]
+    #[cfg(feature = "reqwest")]
+    #[cfg_attr(docsrs, doc(cfg(feature = "reqwest")))]
     #[async_trait]
     pub trait ReqwestExt {
         /// Sets the `Content-Type` and `Accept` headers to the GraphQL-over-HTTP media types and
@@ -102,7 +103,7 @@ mod reqwest_ext {
             Self: Sized;
 
         /// Runs a GraphQL query with the parameters in RequestBuilder, deserializes
-        /// the and returns the result.
+        /// the body and returns the result.
         async fn send_graphql<ResponseData>(
             self,
             req: impl IntoRequestParameters + Send,
@@ -111,6 +112,8 @@ mod reqwest_ext {
             ResponseData: serde::de::DeserializeOwned;
     }
 
+    #[cfg(feature = "reqwest")]
+    #[cfg_attr(docsrs, doc(cfg(feature = "reqwest")))]
     #[async_trait]
     impl ReqwestExt for reqwest::RequestBuilder {
         fn graphql(self, req: impl IntoRequestParameters) -> Result<Self, serde_json::Error>
