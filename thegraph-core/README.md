@@ -11,7 +11,7 @@ Rust core modules for _The Graph_ network.
 
 ## Usage
 
-To add this crate to your project as a depenency use the `cargo add` command:
+To add this crate to your project as a dependency use the `cargo add` command:
 
 ```shell
 cargo add thegraph-core
