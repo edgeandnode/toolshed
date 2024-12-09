@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.1](https://github.com/edgeandnode/toolshed/compare/thegraph-graphql-http-v0.3.0...thegraph-graphql-http-v0.3.1) - 2024-12-09
+
+### Other
+
+- *(thegraph-graphql-http)* add docs.rs package metadata configuration (#430)
+
 ## [0.3.0](https://github.com/edgeandnode/toolshed/compare/thegraph-graphql-http-v0.2.4...thegraph-graphql-http-v0.3.0) - 2024-12-09
 
 ### Added
