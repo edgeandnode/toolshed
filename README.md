@@ -9,11 +9,11 @@ software_](https://github.com/graphprotocol/indexer-rs), etc.).
 
 ### Crates
 
-| Name                                                     |                                                                Latest version                                                                 |
-|:---------------------------------------------------------|:---------------------------------------------------------------------------------------------------------------------------------------------:|
-| [thegraph-core](./thegraph-core)                         |                   [![thegraph-core](https://img.shields.io/crates/v/thegraph-core)](https://crates.io/crates/thegraph-core)                   |
-| [thegraph-graphql-http](./thegraph-graphql-http)         |       [![thegraph-graphql-http](https://img.shields.io/crates/v/thegraph-graphql-http)](https://crates.io/crates/thegraph-graphql-http)       |
-| [thegraph-client-subgraphs](./thegraph-client-subgraphs) | [![thegraph-client-subgraphs](https://img.shields.io/crates/v/thegraph-client-subgraphs)](https://crates.io/crates/thegraph-client-subgraphs) |
+| Name                                                     |                                                                Latest version                                                                 |                                                  Documentation                                                   |
+|:---------------------------------------------------------|:---------------------------------------------------------------------------------------------------------------------------------------------:|:----------------------------------------------------------------------------------------------------------------:|
+| [thegraph-core](./thegraph-core)                         |                   [![thegraph-core](https://img.shields.io/crates/v/thegraph-core)](https://crates.io/crates/thegraph-core)                   |             [![docs.rs](https://img.shields.io/docsrs/thegraph-core)](https://docs.rs/thegraph-core)             |
+| [thegraph-graphql-http](./thegraph-graphql-http)         |       [![thegraph-graphql-http](https://img.shields.io/crates/v/thegraph-graphql-http)](https://crates.io/crates/thegraph-graphql-http)       |     [![docs.rs](https://img.shields.io/docsrs/thegraph-graphql-http)](https://docs.rs/thegraph-graphql-http)     |
+| [thegraph-client-subgraphs](./thegraph-client-subgraphs) | [![thegraph-client-subgraphs](https://img.shields.io/crates/v/thegraph-client-subgraphs)](https://crates.io/crates/thegraph-client-subgraphs) | [![docs.rs](https://img.shields.io/docsrs/thegraph-client-subgraphs)](https://docs.rs/thegraph-client-subgraphs) |
 
 ### Internal (not published to crates.io)
 
