@@ -1,6 +1,6 @@
-//! Integration tests for the `thegraph-graphql-http` crate for the `compat-graphql-parser`
+//! Integration tests for the `thegraph-graphql-http` crate for the `graphql-parser`
 //! compatibility feature.
-#![cfg(feature = "compat-graphql-parser")]
+#![cfg(all(feature = "graphql-parser", feature = "reqwest"))]
 
 use std::time::Duration;
 

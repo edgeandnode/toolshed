@@ -1,4 +1,6 @@
-#[cfg(feature = "compat-graphql-parser")]
+//! Compatibility layer for third-party GraphQL libraries.
+
+#[cfg(feature = "graphql-parser")]
 pub mod compat_graphql_parser {
     use graphql_parser::query::Text;
 
@@ -16,7 +18,7 @@ pub mod compat_graphql_parser {
     }
 }
 
-#[cfg(feature = "compat-graphql-client")]
+#[cfg(feature = "graphql-client")]
 pub mod compat_graphql_client {
     use graphql_client::QueryBody;
 
@@ -58,7 +60,7 @@ pub mod compat_graphql_client {
     }
 }
 
-#[cfg(feature = "compat-async-graphql")]
+#[cfg(feature = "async-graphql")]
 pub mod compat_async_graphql {
     use async_graphql::Request;
 

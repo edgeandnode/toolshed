@@ -1,5 +1,5 @@
 //! Integration tests for the `reqwest` HTTP client based client.
-#![cfg(feature = "http-client-reqwest")]
+#![cfg(feature = "reqwest")]
 
 use std::time::Duration;
 
