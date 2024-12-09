@@ -15,3 +15,6 @@ pub mod graph_attestable;
 #[cfg_attr(docsrs, doc(cfg(feature = "attestation")))]
 pub mod graph_attestation;
 pub mod graph_indexed;
+mod http_ext;
+
+pub use http_ext::HttpBuilderExt;
