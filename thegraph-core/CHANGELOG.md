@@ -6,6 +6,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.1](https://github.com/edgeandnode/toolshed/compare/thegraph-core-v0.9.0...thegraph-core-v0.9.1) - 2024-12-09
+
+### Added
+
+- *(thegraph-core)* implement fake trait for attestation type (#416)
+
+### Other
+
+- *(thegraph-core)* update msrv to 1.81.0 (#423)
+
 ## [0.9.0](https://github.com/edgeandnode/toolshed/compare/thegraph-core-v0.8.5...thegraph-core-v0.9.0) - 2024-11-29
 
 ### Added
