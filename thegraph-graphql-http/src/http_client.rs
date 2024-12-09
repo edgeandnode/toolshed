@@ -223,13 +223,25 @@ mod reqwest_ext {
         // > status codes for a failed well-formed GraphQL-over-HTTP request where the response uses
         // > the `application/json` media type, but it is **strongly discouraged**.
         if !status.is_success() && !status.is_client_error() && !status.is_server_error() {
-            return Err(RequestError::ResponseRecvError(status, resp.text().await?));
+            return Err(RequestError::ResponseRecvError(
+                status,
+                resp.text()
+                    .await
+                    .unwrap_or_else(|_| "Empty response body".to_string()),
+            ));
         }
 
         // Receive the response body.
         let response = resp.bytes().await.map_err(|err| {
             RequestError::ResponseRecvError(status, format!("Error reading response body: {}", err))
         })?;
+
+        if response.is_empty() {
+            return Err(RequestError::ResponseRecvError(
+                status,
+                "Empty response body".to_string(),
+            ));
+        }
 
         // Deserialize the response body.
         let response = serde_json::from_slice(&response).map_err(|error| {
