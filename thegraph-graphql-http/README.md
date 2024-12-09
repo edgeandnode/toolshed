@@ -1,9 +1,11 @@
 thegraph-graphql-http
 ---------------------
 
-[![Crates.io](https://img.shields.io/crates/v/thegraph-graphql-http)](https://crates.io/crates/thegraph-graphql-http)
-[![License](https://img.shields.io/badge/License-MIT-blue.svg)](../LICENSE)
+[![crates.io](https://img.shields.io/crates/v/thegraph-graphql-http)](https://crates.io/crates/thegraph-graphql-http)
+![msrv](https://img.shields.io/crates/msrv/thegraph-graphql-http?color=darkgray)
+[![license](https://img.shields.io/crates/l/thegraph-graphql-http)](../LICENSE)
 [![ci](https://github.com/edgeandnode/toolshed/actions/workflows/ci.yml/badge.svg)](https://github.com/edgeandnode/toolshed/actions/workflows/ci.yml)
+[![docs.rs](https://img.shields.io/docsrs/thegraph-graphql-http)](https://docs.rs/thegraph-graphql-http)
 
 A rust implementation of the GraphQL-over-HTTP spec for The Graph network services.
 
