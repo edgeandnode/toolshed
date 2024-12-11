@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.3](https://github.com/edgeandnode/toolshed/compare/thegraph-core-v0.9.2...thegraph-core-v0.9.3) - 2024-12-11
+
+### Added
+
+- *(thegraph-core)* add EIP-712 signed message module (#338)
+
 ## [0.9.2](https://github.com/edgeandnode/toolshed/compare/thegraph-core-v0.9.1...thegraph-core-v0.9.2) - 2024-12-11
 
 ### Added
