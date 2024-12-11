@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.2](https://github.com/edgeandnode/toolshed/compare/thegraph-core-v0.9.1...thegraph-core-v0.9.2) - 2024-12-11
+
+### Added
+
+- *(thegraph-core)* add more conversion trait implementations (#441)
+
 ## [0.9.1](https://github.com/edgeandnode/toolshed/compare/thegraph-core-v0.9.0...thegraph-core-v0.9.1) - 2024-12-09
 
 ### Added
