@@ -1,4 +1,4 @@
-use alloy::primitives::B256;
+use alloy::{hex, primitives::B256};
 
 /// Subgraph deployment ID parsing error.
 #[derive(Debug, Clone, PartialEq, Eq, thiserror::Error)]
@@ -14,6 +14,15 @@ pub enum ParseDeploymentIdError {
     /// Invalid hex string format. The input hex string could not be decoded.
     #[error("invalid hex string \"{value}\": {error}")]
     InvalidHexString { value: String, error: String },
+}
+
+impl From<hex::FromHexError> for ParseDeploymentIdError {
+    fn from(err: hex::FromHexError) -> Self {
+        ParseDeploymentIdError::InvalidHexString {
+            value: String::new(),
+            error: format!("{}", err),
+        }
+    }
 }
 
 /// A Subgraph's Deployment ID represents unique identifier for a deployed subgraph on The Graph.
@@ -35,6 +44,7 @@ pub enum ParseDeploymentIdError {
     feature = "serde",
     derive(serde_with::SerializeDisplay, serde_with::DeserializeFromStr)
 )]
+#[repr(transparent)]
 pub struct DeploymentId(B256);
 
 impl DeploymentId {
@@ -48,10 +58,47 @@ impl DeploymentId {
     pub const fn new(bytes: B256) -> Self {
         Self(bytes)
     }
+
+    /// Get the bytes of the [`DeploymentId`] as a slice.
+    pub fn as_bytes(&self) -> &[u8; 32] {
+        self.0.as_ref()
+    }
 }
 
 impl AsRef<B256> for DeploymentId {
     fn as_ref(&self) -> &B256 {
+        &self.0
+    }
+}
+
+impl AsRef<[u8]> for DeploymentId {
+    fn as_ref(&self) -> &[u8] {
+        self.0.as_ref()
+    }
+}
+
+impl AsRef<[u8; 32]> for DeploymentId {
+    fn as_ref(&self) -> &[u8; 32] {
+        self.0.as_ref()
+    }
+}
+
+impl std::borrow::Borrow<[u8]> for DeploymentId {
+    fn borrow(&self) -> &[u8] {
+        self.0.borrow()
+    }
+}
+
+impl std::borrow::Borrow<[u8; 32]> for DeploymentId {
+    fn borrow(&self) -> &[u8; 32] {
+        self.0.borrow()
+    }
+}
+
+impl std::ops::Deref for DeploymentId {
+    type Target = B256;
+
+    fn deref(&self) -> &Self::Target {
         &self.0
     }
 }
@@ -64,7 +111,21 @@ impl From<B256> for DeploymentId {
 
 impl From<[u8; 32]> for DeploymentId {
     fn from(value: [u8; 32]) -> Self {
-        Self(B256::from(value))
+        Self(value.into())
+    }
+}
+
+impl<'a> From<&'a [u8; 32]> for DeploymentId {
+    fn from(value: &'a [u8; 32]) -> Self {
+        Self(value.into())
+    }
+}
+
+impl<'a> TryFrom<&'a [u8]> for DeploymentId {
+    type Error = <B256 as TryFrom<&'a [u8]>>::Error;
+
+    fn try_from(value: &[u8]) -> Result<Self, Self::Error> {
+        value.try_into().map(Self)
     }
 }
 
@@ -85,13 +146,22 @@ impl std::str::FromStr for DeploymentId {
 
     /// Parse a deployment ID from a 32-byte hex string or a base58-encoded IPFS hash (CIDv0).
     fn from_str(value: &str) -> Result<Self, Self::Err> {
-        Ok(if value.starts_with("Qm") {
+        if value.starts_with("Qm") {
             // Attempt to decode base58-encoded CIDv0
-            parse_cid_v0_str(value)?
+            parse_cid_v0_str(value)
         } else {
             // Attempt to decode 32-byte hex string
-            parse_hex_str(value)?
-        })
+            hex::FromHex::from_hex(value).map_err(Into::into)
+        }
+    }
+}
+
+impl hex::FromHex for DeploymentId {
+    type Error = hex::FromHexError;
+
+    /// Parse a deployment ID from a 32-byte hex string.
+    fn from_hex<T: AsRef<[u8]>>(hex: T) -> Result<Self, Self::Error> {
+        B256::from_hex(hex).map(Self)
     }
 }
 
@@ -165,8 +235,7 @@ impl std::fmt::LowerHex for DeploymentId {
 /// ```
 impl fake::Dummy<fake::Faker> for DeploymentId {
     fn dummy_with_rng<R: fake::Rng + ?Sized>(config: &fake::Faker, rng: &mut R) -> Self {
-        let bytes = <[u8; 32]>::dummy_with_rng(config, rng);
-        Self(B256::new(bytes))
+        <[u8; 32]>::dummy_with_rng(config, rng).into()
     }
 }
 
@@ -220,17 +289,6 @@ fn parse_cid_v0_str(value: &str) -> Result<DeploymentId, ParseDeploymentIdError>
     bytes.copy_from_slice(&buffer[2..]);
 
     Ok(DeploymentId::new(B256::new(bytes)))
-}
-
-/// Parse a 32-byte hex string into a 32-byte hash.
-fn parse_hex_str(value: &str) -> Result<DeploymentId, ParseDeploymentIdError> {
-    let bytes = value
-        .parse()
-        .map_err(|err| ParseDeploymentIdError::InvalidHexString {
-            value: value.to_string(),
-            error: format!("{}", err),
-        })?;
-    Ok(DeploymentId::new(bytes))
 }
 
 /// Converts a sequence of string literals containing CIDv0 data into a new [`DeploymentId`] at
@@ -296,9 +354,7 @@ mod tests {
 
     use alloy::primitives::{b256, B256};
 
-    use super::{
-        format_cid_v0, parse_cid_v0_str, parse_hex_str, DeploymentId, ParseDeploymentIdError,
-    };
+    use super::{format_cid_v0, parse_cid_v0_str, DeploymentId, ParseDeploymentIdError};
     use crate::deployment_id;
 
     const VALID_CID: &str = "QmWmyoMoctfbAaiEs2G46gpeUmhqFRDW6KWo64y5r581Vz";
@@ -359,38 +415,6 @@ mod tests {
                     index: 20,
                 }
                 .to_string(),
-            }
-        );
-    }
-
-    #[test]
-    fn parse_valid_hex_str() {
-        //* Given
-        let valid_hex = VALID_HEX;
-
-        //* When
-        let result = parse_hex_str(valid_hex);
-
-        //* Then
-        let id = result.expect("expected a valid ID");
-        assert_eq!(id, EXPECTED_DEPLOYMENT_ID);
-    }
-
-    #[test]
-    fn parse_invalid_hex_str() {
-        //* Given
-        let invalid_hex = "0x0123456789ABCDEF";
-
-        //* When
-        let result = parse_hex_str(invalid_hex);
-
-        //* Then
-        let err = result.expect_err("expected an error");
-        assert_eq!(
-            err,
-            ParseDeploymentIdError::InvalidHexString {
-                value: invalid_hex.to_string(),
-                error: "invalid string length".to_string(),
             }
         );
     }

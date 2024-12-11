@@ -29,6 +29,7 @@ pub enum ParseSubgraphIdError {
     feature = "serde",
     derive(serde_with::SerializeDisplay, serde_with::DeserializeFromStr)
 )]
+#[repr(transparent)]
 pub struct SubgraphId(B256);
 
 impl SubgraphId {
@@ -42,6 +43,49 @@ impl SubgraphId {
     pub const fn new(value: B256) -> Self {
         Self(value)
     }
+
+    /// Get the bytes of the [`SubgraphId`] as a slice.
+    pub fn as_bytes(&self) -> &[u8; 32] {
+        self.0.as_ref()
+    }
+}
+
+impl AsRef<B256> for SubgraphId {
+    fn as_ref(&self) -> &B256 {
+        &self.0
+    }
+}
+
+impl AsRef<[u8]> for SubgraphId {
+    fn as_ref(&self) -> &[u8] {
+        self.0.as_ref()
+    }
+}
+
+impl AsRef<[u8; 32]> for SubgraphId {
+    fn as_ref(&self) -> &[u8; 32] {
+        self.0.as_ref()
+    }
+}
+
+impl std::borrow::Borrow<[u8]> for SubgraphId {
+    fn borrow(&self) -> &[u8] {
+        self.0.borrow()
+    }
+}
+
+impl std::borrow::Borrow<[u8; 32]> for SubgraphId {
+    fn borrow(&self) -> &[u8; 32] {
+        self.0.borrow()
+    }
+}
+
+impl std::ops::Deref for SubgraphId {
+    type Target = B256;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
 }
 
 impl From<B256> for SubgraphId {
@@ -52,7 +96,21 @@ impl From<B256> for SubgraphId {
 
 impl From<[u8; 32]> for SubgraphId {
     fn from(value: [u8; 32]) -> Self {
-        Self(B256::from(value))
+        Self(value.into())
+    }
+}
+
+impl<'a> From<&'a [u8; 32]> for SubgraphId {
+    fn from(value: &'a [u8; 32]) -> Self {
+        Self(value.into())
+    }
+}
+
+impl<'a> TryFrom<&'a [u8]> for SubgraphId {
+    type Error = <B256 as TryFrom<&'a [u8]>>::Error;
+
+    fn try_from(value: &[u8]) -> Result<Self, Self::Error> {
+        value.try_into().map(Self)
     }
 }
 
@@ -65,12 +123,6 @@ impl From<SubgraphId> for B256 {
 impl From<&SubgraphId> for B256 {
     fn from(id: &SubgraphId) -> Self {
         id.0
-    }
-}
-
-impl AsRef<B256> for SubgraphId {
-    fn as_ref(&self) -> &B256 {
-        &self.0
     }
 }
 
@@ -156,8 +208,7 @@ impl std::fmt::Debug for SubgraphId {
 /// ```
 impl fake::Dummy<fake::Faker> for SubgraphId {
     fn dummy_with_rng<R: fake::Rng + ?Sized>(config: &fake::Faker, rng: &mut R) -> Self {
-        let bytes = <[u8; 32]>::dummy_with_rng(config, rng);
-        Self(B256::new(bytes))
+        <[u8; 32]>::dummy_with_rng(config, rng).into()
     }
 }
 
