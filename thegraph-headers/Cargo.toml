@@ -16,7 +16,7 @@ headers = "0.4"
 http = "1.2.0"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
-thegraph-core = { version = "0.9.0", path = "../thegraph-core", features = ["serde"] }
+thegraph-core = { version = "0.9", path = "../thegraph-core", features = ["serde"] }
 
 [dev-dependencies]
 fake = "3.0.1"
