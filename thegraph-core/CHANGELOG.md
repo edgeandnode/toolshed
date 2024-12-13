@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.4](https://github.com/edgeandnode/toolshed/compare/thegraph-core-v0.9.3...thegraph-core-v0.9.4) - 2024-12-13
+
+### Added
+
+- *(thegraph-core)* add more POI conversion trait implementations (#446)
+
 ## [0.9.3](https://github.com/edgeandnode/toolshed/compare/thegraph-core-v0.9.2...thegraph-core-v0.9.3) - 2024-12-11
 
 ### Added
