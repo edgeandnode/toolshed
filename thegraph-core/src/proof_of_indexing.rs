@@ -36,15 +36,41 @@ impl ProofOfIndexing {
     }
 }
 
-impl std::fmt::Display for ProofOfIndexing {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", self.0)
+impl AsRef<B256> for ProofOfIndexing {
+    fn as_ref(&self) -> &B256 {
+        &self.0
     }
 }
 
-impl std::fmt::Debug for ProofOfIndexing {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "ProofOfIndexing({})", self.0)
+impl AsRef<[u8]> for ProofOfIndexing {
+    fn as_ref(&self) -> &[u8] {
+        self.0.as_ref()
+    }
+}
+
+impl AsRef<[u8; 32]> for ProofOfIndexing {
+    fn as_ref(&self) -> &[u8; 32] {
+        self.0.as_ref()
+    }
+}
+
+impl std::borrow::Borrow<[u8]> for ProofOfIndexing {
+    fn borrow(&self) -> &[u8] {
+        self.0.borrow()
+    }
+}
+
+impl std::borrow::Borrow<[u8; 32]> for ProofOfIndexing {
+    fn borrow(&self) -> &[u8; 32] {
+        self.0.borrow()
+    }
+}
+
+impl std::ops::Deref for ProofOfIndexing {
+    type Target = B256;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
     }
 }
 
@@ -56,7 +82,21 @@ impl From<B256> for ProofOfIndexing {
 
 impl From<[u8; 32]> for ProofOfIndexing {
     fn from(value: [u8; 32]) -> Self {
-        Self(B256::from(value))
+        Self(value.into())
+    }
+}
+
+impl<'a> From<&'a [u8; 32]> for ProofOfIndexing {
+    fn from(value: &'a [u8; 32]) -> Self {
+        Self(value.into())
+    }
+}
+
+impl<'a> TryFrom<&'a [u8]> for ProofOfIndexing {
+    type Error = <B256 as TryFrom<&'a [u8]>>::Error;
+
+    fn try_from(value: &[u8]) -> Result<Self, Self::Error> {
+        value.try_into().map(Self)
     }
 }
 
@@ -72,23 +112,21 @@ impl From<&ProofOfIndexing> for B256 {
     }
 }
 
-impl AsRef<B256> for ProofOfIndexing {
-    fn as_ref(&self) -> &B256 {
-        &self.0
-    }
-}
-
-impl std::ops::Deref for ProofOfIndexing {
-    type Target = B256;
-
-    fn deref(&self) -> &Self::Target {
-        &self.0
-    }
-}
-
 impl PartialEq<B256> for ProofOfIndexing {
     fn eq(&self, other: &B256) -> bool {
         self.0.eq(other)
+    }
+}
+
+impl std::fmt::Display for ProofOfIndexing {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(&self.0, f)
+    }
+}
+
+impl std::fmt::Debug for ProofOfIndexing {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "ProofOfIndexing({})", self.0)
     }
 }
 
@@ -98,8 +136,7 @@ impl<'de> serde::Deserialize<'de> for ProofOfIndexing {
     where
         D: serde::Deserializer<'de>,
     {
-        let bytes = B256::deserialize(deserializer)?;
-        Ok(ProofOfIndexing(bytes))
+        serde::Deserialize::deserialize(deserializer).map(Self)
     }
 }
 
