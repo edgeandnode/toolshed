@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.5](https://github.com/edgeandnode/toolshed/compare/thegraph-core-v0.9.4...thegraph-core-v0.9.5) - 2024-12-13
+
+### Fixed
+
+- *(thegraph-core)* reexport signed message additional types (#448)
+
 ## [0.9.4](https://github.com/edgeandnode/toolshed/compare/thegraph-core-v0.9.3...thegraph-core-v0.9.4) - 2024-12-13
 
 ### Added
