@@ -4448,7 +4448,7 @@ dependencies = [
 
 [[package]]
 name = "thegraph-core"
-version = "0.9.3"
+version = "0.9.4"
 dependencies = [
  "alloy",
  "async-graphql",
