@@ -76,7 +76,7 @@
 mod message;
 mod signing;
 
-pub use message::{SignedMessage, ToSolStruct};
+pub use message::{MessageHash, SignatureBytes, SignedMessage, ToSolStruct};
 pub use signing::{
     recover_signer_address, sign, verify, RecoverSignerError, SigningError, VerificationError,
 };
