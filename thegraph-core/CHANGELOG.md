@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.6](https://github.com/edgeandnode/toolshed/compare/thegraph-core-v0.9.5...thegraph-core-v0.9.6) - 2024-12-19
+
+### Added
+
+- *(thegraph-core)* re-export various alloy crate features (#452)
+
 ## [0.9.5](https://github.com/edgeandnode/toolshed/compare/thegraph-core-v0.9.4...thegraph-core-v0.9.5) - 2024-12-13
 
 ### Fixed
