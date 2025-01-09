@@ -19,6 +19,7 @@ use thegraph_graphql_http::{
 const TEST_SERVER_URL: &str = "https://swapi-graphql.netlify.app/.netlify/functions/index";
 
 #[tokio::test]
+#[ignore = "Test server unavailable"]
 async fn send_valid_graphql_request_no_variables() {
     //* Given
     let client = reqwest::Client::new();
@@ -88,6 +89,7 @@ async fn send_valid_graphql_request_no_variables() {
 }
 
 #[tokio::test]
+#[ignore = "Test server unavailable"]
 async fn send_valid_graphql_request_with_variables() {
     //* Given
     let client = reqwest::Client::new();
