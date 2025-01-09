@@ -26,7 +26,7 @@ jobs:
           rustflags: ''
 
       - name: Cache rust build files
-        uses: Leafwing-Studios/cargo-cache@5d5d363fa3b9886d45c4705228c5c73ccea17636 # v2
+        uses: Leafwing-Studios/cargo-cache@a0709d80dd96c8734ac8f186c1f238c8f528d198 # v2
 
       - name: check (release)
         run: cargo check --workspace --all-features --release
