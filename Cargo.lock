@@ -144,7 +144,7 @@ dependencies = [
  "alloy-transport",
  "futures",
  "futures-util",
- "thiserror 2.0.8",
+ "thiserror 2.0.10",
 ]
 
 [[package]]
@@ -254,7 +254,7 @@ dependencies = [
  "alloy-sol-types",
  "serde",
  "serde_json",
- "thiserror 2.0.8",
+ "thiserror 2.0.10",
  "tracing",
 ]
 
@@ -280,7 +280,7 @@ dependencies = [
  "futures-utils-wasm",
  "serde",
  "serde_json",
- "thiserror 2.0.8",
+ "thiserror 2.0.10",
 ]
 
 [[package]]
@@ -357,7 +357,7 @@ dependencies = [
  "schnellru",
  "serde",
  "serde_json",
- "thiserror 2.0.8",
+ "thiserror 2.0.10",
  "tokio",
  "tracing",
  "url",
@@ -515,7 +515,7 @@ dependencies = [
  "auto_impl",
  "elliptic-curve",
  "k256",
- "thiserror 2.0.8",
+ "thiserror 2.0.10",
 ]
 
 [[package]]
@@ -532,7 +532,7 @@ dependencies = [
  "aws-sdk-kms",
  "k256",
  "spki",
- "thiserror 2.0.8",
+ "thiserror 2.0.10",
  "tracing",
 ]
 
@@ -550,7 +550,7 @@ dependencies = [
  "gcloud-sdk",
  "k256",
  "spki",
- "thiserror 2.0.8",
+ "thiserror 2.0.10",
  "tracing",
 ]
 
@@ -570,7 +570,7 @@ dependencies = [
  "coins-ledger",
  "futures-util",
  "semver 1.0.24",
- "thiserror 2.0.8",
+ "thiserror 2.0.10",
  "tracing",
 ]
 
@@ -589,7 +589,7 @@ dependencies = [
  "coins-bip39",
  "k256",
  "rand",
- "thiserror 2.0.8",
+ "thiserror 2.0.10",
 ]
 
 [[package]]
@@ -677,7 +677,7 @@ dependencies = [
  "futures-utils-wasm",
  "serde",
  "serde_json",
- "thiserror 2.0.8",
+ "thiserror 2.0.10",
  "tokio",
  "tower 0.5.2",
  "tracing",
@@ -3361,7 +3361,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8b7cafe60d6cf8e62e1b9b2ea516a089c008945bb5a275416789e7db0bc199dc"
 dependencies = [
  "memchr",
- "thiserror 2.0.8",
+ "thiserror 2.0.10",
  "ucd-trie",
 ]
 
@@ -3614,7 +3614,7 @@ dependencies = [
  "rustc-hash",
  "rustls",
  "socket2",
- "thiserror 2.0.8",
+ "thiserror 2.0.10",
  "tokio",
  "tracing",
 ]
@@ -3633,7 +3633,7 @@ dependencies = [
  "rustls",
  "rustls-pki-types",
  "slab",
- "thiserror 2.0.8",
+ "thiserror 2.0.10",
  "tinyvec",
  "tracing",
  "web-time",
@@ -4526,7 +4526,7 @@ dependencies = [
  "test-with",
  "thegraph-core",
  "thegraph-graphql-http",
- "thiserror 2.0.8",
+ "thiserror 2.0.10",
  "tokio",
  "tracing",
  "tracing-subscriber",
@@ -4586,11 +4586,11 @@ dependencies = [
 
 [[package]]
 name = "thiserror"
-version = "2.0.8"
+version = "2.0.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "08f5383f3e0071702bf93ab5ee99b52d26936be9dedd9413067cbdcddcb6141a"
+checksum = "a3ac7f54ca534db81081ef1c1e7f6ea8a3ef428d2fc069097c079443d24124d3"
 dependencies = [
- "thiserror-impl 2.0.8",
+ "thiserror-impl 2.0.10",
 ]
 
 [[package]]
@@ -4606,9 +4606,9 @@ dependencies = [
 
 [[package]]
 name = "thiserror-impl"
-version = "2.0.8"
+version = "2.0.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f2f357fcec90b3caef6623a099691be676d033b40a058ac95d2a6ade6fa0c943"
+checksum = "9e9465d30713b56a37ede7185763c3492a91be2f5fa68d958c44e41ab9248beb"
 dependencies = [
  "proc-macro2",
  "quote",
