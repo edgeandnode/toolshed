@@ -196,9 +196,9 @@ impl serde::Serialize for AllocationId {
 /// println!("AllocationId: {:#x}", allocation_id);
 /// ```
 impl fake::Dummy<fake::Faker> for AllocationId {
-    fn dummy_with_rng<R: fake::Rng + ?Sized>(config: &fake::Faker, rng: &mut R) -> Self {
-        let bytes = <[u8; 20]>::dummy_with_rng(config, rng);
-        Self(Address::from(bytes))
+    fn dummy_with_rng<R: fake::Rng + ?Sized>(_: &fake::Faker, rng: &mut R) -> Self {
+        use crate::fake_impl::alloy::Alloy;
+        Self(Address::dummy_with_rng(&Alloy, rng))
     }
 }
 
