@@ -34,7 +34,7 @@ bs58 = "0.5"
 fake = { version = "3.0", optional = true }
 serde = { version = "1.0", optional = true }
 serde_with = { version = "3.8", optional = true }
-thiserror = "1.0"
+thiserror = "2.0"
 
 [dev-dependencies]
 alloy = { version = "0.8", features = ["signer-local"] }

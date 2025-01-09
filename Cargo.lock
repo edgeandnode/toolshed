@@ -4518,7 +4518,7 @@ dependencies = [
  "fake",
  "serde",
  "serde_with",
- "thiserror 1.0.69",
+ "thiserror 2.0.10",
 ]
 
 [[package]]
