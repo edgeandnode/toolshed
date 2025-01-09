@@ -37,7 +37,7 @@ jobs:
       ## Tests
       # Install sops (needed for decrypting tests .env file)
       - name: Setup sops
-        uses: nhedger/setup-sops@358bac533e4e92f9ce9f9da563d6265929c88cda # v2
+        uses: nhedger/setup-sops@1912bba1caef48d5b7967a3b4d85d930004b7719 # v2
 
       # Install age (needed for decrypting tests .env file)
       - name: Setup age
