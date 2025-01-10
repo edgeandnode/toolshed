@@ -51,6 +51,9 @@ mod allocation_id;
 pub mod attestation;
 mod block;
 mod deployment_id;
+#[cfg(feature = "fake")]
+#[cfg_attr(docsrs, doc(cfg(feature = "fake")))]
+pub mod fake_impl;
 mod indexer_id;
 mod proof_of_indexing;
 #[cfg(feature = "signed-message")]
