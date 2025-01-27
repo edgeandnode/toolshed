@@ -15,7 +15,7 @@ use thegraph_graphql_http::{
 ///
 /// This a GraphQL server that implements the [Star Wars API](https://swapi.dev/). See
 /// https://github.com/graphql/swapi-graphql for more information.
-const TEST_SERVER_URL: &str = "https://swapi-graphql.netlify.app/.netlify/functions/index";
+const TEST_SERVER_URL: &str = "https://graphql.org/graphql/";
 
 #[tokio::test]
 async fn send_valid_graphql_request_no_variables() {
@@ -277,7 +277,7 @@ async fn send_invalid_request_operation_cannot_be_determined_failure_null_operat
 
     //* Then
     assert_matches!(response, Err(err) => {
-        assert!(err.to_string().contains(r#"Must provide operation name if query contains multiple operations"#));
+        assert!(err.to_string().contains(r#"Unable to detect operation AST"#));
     });
 }
 
@@ -335,8 +335,7 @@ async fn send_invalid_request_operation_cannot_be_determined_failure_invalid_ope
     //* Then
     assert_matches!(response, Err(ResponseError::Failure { errors }) => {
         assert_eq!(errors.len(), 1);
-
-        assert!(errors[0].message.contains(r#"Unknown operation named "invalidOperationName""#));
+        assert!(errors[0].message.contains(r#"Unable to detect operation AST"#));
     });
 }
 

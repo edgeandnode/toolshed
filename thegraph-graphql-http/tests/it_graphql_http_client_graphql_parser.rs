@@ -16,7 +16,7 @@ use thegraph_graphql_http::{
 ///
 /// This a GraphQL server that implements the [Star Wars API](https://swapi.dev/). See
 /// https://github.com/graphql/swapi-graphql for more information.
-const TEST_SERVER_URL: &str = "https://swapi-graphql.netlify.app/.netlify/functions/index";
+const TEST_SERVER_URL: &str = "https://graphql.org/graphql/";
 
 #[tokio::test]
 async fn send_valid_graphql_request_no_variables() {

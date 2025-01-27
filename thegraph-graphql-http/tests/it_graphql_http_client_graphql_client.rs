@@ -13,7 +13,7 @@ use thegraph_graphql_http::http_client::ReqwestExt;
 ///
 /// This a GraphQL server that implements the [Star Wars API](https://swapi.dev/). See
 /// https://github.com/graphql/swapi-graphql for more information.
-const TEST_SERVER_URL: &str = "https://swapi-graphql.netlify.app/.netlify/functions/index";
+const TEST_SERVER_URL: &str = "https://graphql.org/graphql/";
 
 // As `graphql_client` generates code that specifies the query, variables and response types, we
 // need to cage them under a module to avoid name collisions.
