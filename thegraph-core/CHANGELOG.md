@@ -6,6 +6,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.11.0](https://github.com/edgeandnode/toolshed/compare/thegraph-core-v0.10.0...thegraph-core-v0.11.0) - 2025-01-27
+
+### Added
+
+- *(thegraph-core)* add fake_impl module and alloy fake support (#469)
+
+### Other
+
+- *(deps)* update rust crate alloy to 0.9 (#439)
+- *(deps)* update rust crate thiserror to v2 (#467)
+
 ## [0.10.0](https://github.com/edgeandnode/toolshed/compare/thegraph-core-v0.10.0...thegraph-core-v0.10.0) - 2025-01-09
 
 ### Other
