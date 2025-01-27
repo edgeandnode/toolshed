@@ -18,7 +18,6 @@ use thegraph_graphql_http::{
 const TEST_SERVER_URL: &str = "https://swapi-graphql.netlify.app/.netlify/functions/index";
 
 #[tokio::test]
-#[ignore = "Test server unavailable"]
 async fn send_valid_graphql_request_no_variables() {
     //* Given
     let client = reqwest::Client::new();
@@ -87,7 +86,6 @@ async fn send_valid_graphql_request_no_variables() {
 }
 
 #[tokio::test]
-#[ignore = "Test server unavailable"]
 async fn send_valid_graphql_request_with_variables() {
     //* Given
     let client = reqwest::Client::new();
@@ -161,7 +159,6 @@ async fn send_valid_graphql_request_with_variables() {
 
 // https://graphql.github.io/graphql-over-http/draft/#sec-application-json.Examples.Document-parsing-failure
 #[tokio::test]
-#[ignore = "Test server unavailable"]
 async fn send_invalid_request_document_parsing_failure() {
     //* Given
     let client = reqwest::Client::new();
@@ -189,7 +186,6 @@ async fn send_invalid_request_document_parsing_failure() {
 
 // https://graphql.github.io/graphql-over-http/draft/#sec-application-json.Examples.Field-errors-encountered-during-execution
 #[tokio::test]
-#[ignore = "Test server unavailable"]
 async fn send_invalid_request_field_errors_encountered_during_execution_failure() {
     //* Given
     let client = reqwest::Client::new();
@@ -230,7 +226,6 @@ async fn send_invalid_request_field_errors_encountered_during_execution_failure(
 
 // https://graphql.github.io/graphql-over-http/draft/#sec-application-json.Examples.Operation-cannot-be-determined
 #[tokio::test]
-#[ignore = "Test server unavailable"]
 async fn send_invalid_request_operation_cannot_be_determined_failure_null_operation_name() {
     //* Given
     let client = reqwest::Client::new();
@@ -288,7 +283,6 @@ async fn send_invalid_request_operation_cannot_be_determined_failure_null_operat
 
 // https://graphql.github.io/graphql-over-http/draft/#sec-application-json.Examples.Operation-cannot-be-determined
 #[tokio::test]
-#[ignore = "Test server unavailable"]
 async fn send_invalid_request_operation_cannot_be_determined_failure_invalid_operation_name() {
     //* Given
     let client = reqwest::Client::new();
@@ -348,7 +342,6 @@ async fn send_invalid_request_operation_cannot_be_determined_failure_invalid_ope
 
 // https://graphql.github.io/graphql-over-http/draft/#sec-application-json.Examples.Variable-coercion-failure
 #[tokio::test]
-#[ignore = "Test server unavailable"]
 async fn send_invalid_request_variable_coercion_failure() {
     //* Given
     let client = reqwest::Client::new();
