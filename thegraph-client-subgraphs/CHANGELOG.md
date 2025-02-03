@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [0.1.6](https://github.com/edgeandnode/toolshed/compare/thegraph-client-subgraphs-v0.1.5...thegraph-client-subgraphs-v0.1.6) - 2025-02-03
+
+### Other
+
+- update Cargo.lock dependencies
+
 ## [0.1.5](https://github.com/edgeandnode/toolshed/compare/thegraph-client-subgraphs-v0.1.4...thegraph-client-subgraphs-v0.1.5) - 2025-01-27
 
 ### Other
