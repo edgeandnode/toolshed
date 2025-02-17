@@ -19,7 +19,7 @@ serde_json = "1.0"
 thegraph-core = { version = "0.11", path = "../thegraph-core", features = ["serde"] }
 
 [dev-dependencies]
-fake = "3.0.1"
+fake = "4.0.0"
 thegraph-core = { path = "../thegraph-core", features = ["fake"] }
 
 [package.metadata.docs.rs]
