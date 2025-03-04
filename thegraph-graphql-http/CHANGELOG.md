@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.3](https://github.com/edgeandnode/toolshed/compare/thegraph-graphql-http-v0.3.2...thegraph-graphql-http-v0.3.3) - 2025-03-04
+
+### Other
+
+- *(thegraph-graphql-http)* update test server URL ([#478](https://github.com/edgeandnode/toolshed/pull/478))
+- *(thegraph-graphql-http)* disable tests due to unavailable test dependency (II) ([#464](https://github.com/edgeandnode/toolshed/pull/464))
+- *(thegraph-graphql-http)* disable tests due to unavailable test dependency ([#462](https://github.com/edgeandnode/toolshed/pull/462))
+
 ## [0.3.2](https://github.com/edgeandnode/toolshed/compare/thegraph-graphql-http-v0.3.1...thegraph-graphql-http-v0.3.2) - 2024-12-09
 
 ### Fixed
