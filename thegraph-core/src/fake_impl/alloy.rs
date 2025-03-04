@@ -119,7 +119,7 @@ pub mod primitives {
             PrimitiveSignature::from_scalars_and_parity(
                 B256::dummy_with_rng(config, rng),
                 B256::dummy_with_rng(config, rng),
-                rng.gen(),
+                rng.random(),
             )
         }
     }
