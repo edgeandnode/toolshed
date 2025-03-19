@@ -6,6 +6,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.11.1](https://github.com/edgeandnode/toolshed/compare/thegraph-core-v0.11.0...thegraph-core-v0.11.1) - 2025-03-19
+
+### Fixed
+
+- *(alloy)* replace rng.gen() with rng.random() to fix the deprecation warning ([#503](https://github.com/edgeandnode/toolshed/pull/503))
+
+### Other
+
+- *(deps)* update rust crate fake to v4 ([#491](https://github.com/edgeandnode/toolshed/pull/491))
+
 ## [0.11.0](https://github.com/edgeandnode/toolshed/compare/thegraph-core-v0.10.0...thegraph-core-v0.11.0) - 2025-01-27
 
 ### Added
