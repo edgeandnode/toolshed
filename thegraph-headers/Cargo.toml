@@ -1,7 +1,7 @@
 [package]
 name = "thegraph-headers"
 description = "Common HTTP headers for _The Graph_ network services"
-version = "0.1.4"
+version = "0.1.5"
 repository = "https://github.com/edgeandnode/toolshed"
 authors = ["Lorenzo Delgado (LNSD) <lorenzo@edgeandnode.com>"]
 license = "MIT"
@@ -16,7 +16,7 @@ headers = "0.4"
 http = "1.2.0"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
-thegraph-core = { version = "0.11", path = "../thegraph-core", features = ["serde"] }
+thegraph-core = { version = "0.12", path = "../thegraph-core", features = ["serde"] }
 
 [dev-dependencies]
 fake = "4.0.0"
