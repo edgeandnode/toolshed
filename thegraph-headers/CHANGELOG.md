@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Other
 
+- updated the following local packages: thegraph-core
 - *(deps)* update rust crate fake to v4 ([#491](https://github.com/edgeandnode/toolshed/pull/491))
 
 ## [0.1.4](https://github.com/edgeandnode/toolshed/compare/thegraph-headers-v0.1.3...thegraph-headers-v0.1.4) - 2025-01-27

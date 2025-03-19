@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.11.1](https://github.com/edgeandnode/toolshed/compare/thegraph-core-v0.11.0...thegraph-core-v0.11.1) - 2025-03-19
+## [0.12.0](https://github.com/edgeandnode/toolshed/compare/thegraph-core-v0.11.0...thegraph-core-v0.12.0) - 2025-03-19
 
 ### Fixed
 
