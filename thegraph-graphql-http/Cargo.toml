@@ -4,9 +4,9 @@ description = "A rust implementation of the GraphQL-over-HTTP spec for The Graph
 version = "0.3.3"
 repository = "https://github.com/edgeandnode/toolshed"
 authors = ["Lorenzo Delgado (LNSD) <lorenzo@edgeandnode.com>"]
-license = "MIT"
-edition = "2021"
-rust-version = "1.81.0"
+license.workspace = true
+edition.workspace = true
+rust-version.workspace = true
 
 [features]
 reqwest = ["dep:async-trait", "dep:reqwest"]

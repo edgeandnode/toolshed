@@ -1,9 +1,9 @@
 use std::time::Duration;
 
 use super::testlib::{
-    init_test_tracing, test_auth_token, test_subgraph_url, GRAPH_NETWORK_ARBITRUM_SUBGRAPH_ID,
+    GRAPH_NETWORK_ARBITRUM_SUBGRAPH_ID, init_test_tracing, test_auth_token, test_subgraph_url,
 };
-use crate::queries::page::{send_subgraph_page_query, BlockHeight};
+use crate::queries::page::{BlockHeight, send_subgraph_page_query};
 
 #[test_with::env(IT_TEST_ARBITRUM_GATEWAY_URL, IT_TEST_ARBITRUM_GATEWAY_AUTH)]
 #[tokio::test]

@@ -352,9 +352,9 @@ pub const fn __parse_cid_v0_const(value: &str) -> B256 {
 mod tests {
     use std::str::FromStr;
 
-    use alloy::primitives::{b256, B256};
+    use alloy::primitives::{B256, b256};
 
-    use super::{format_cid_v0, parse_cid_v0_str, DeploymentId, ParseDeploymentIdError};
+    use super::{DeploymentId, ParseDeploymentIdError, format_cid_v0, parse_cid_v0_str};
     use crate::deployment_id;
 
     const VALID_CID: &str = "QmWmyoMoctfbAaiEs2G46gpeUmhqFRDW6KWo64y5r581Vz";

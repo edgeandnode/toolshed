@@ -1,6 +1,6 @@
 //! Test helpers for the subgraph-client queries integration tests.
 
-use tracing_subscriber::{fmt::TestWriter, EnvFilter};
+use tracing_subscriber::{EnvFilter, fmt::TestWriter};
 use url::Url;
 
 /// The Graph Network Arbitrum subgraph in the network.
