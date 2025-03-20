@@ -78,15 +78,15 @@ mod signing;
 
 pub use message::{MessageHash, SignatureBytes, SignedMessage, ToSolStruct};
 pub use signing::{
-    recover_signer_address, sign, verify, RecoverSignerError, SigningError, VerificationError,
+    RecoverSignerError, SigningError, VerificationError, recover_signer_address, sign, verify,
 };
 
 #[cfg(test)]
 mod tests {
     use alloy::{
-        primitives::{address, b256, keccak256, PrimitiveSignature as Signature},
+        primitives::{PrimitiveSignature as Signature, address, b256, keccak256},
         signers::local::PrivateKeySigner,
-        sol_types::{eip712_domain, Eip712Domain},
+        sol_types::{Eip712Domain, eip712_domain},
     };
 
     use super::{message::SignedMessage, signing, signing::VerificationError};

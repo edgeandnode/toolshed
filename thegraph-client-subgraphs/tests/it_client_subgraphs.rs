@@ -4,7 +4,7 @@ use std::time::Duration;
 
 use thegraph_client_subgraphs::Client as SubgraphClient;
 use thegraph_core::{BlockPointer, SubgraphId};
-use tracing_subscriber::{fmt::TestWriter, EnvFilter};
+use tracing_subscriber::{EnvFilter, fmt::TestWriter};
 use url::Url;
 
 /// Initialize the tests tracing subscriber.

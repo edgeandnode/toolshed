@@ -2,10 +2,10 @@
 
 use alloy::{
     primitives::{
-        b256, keccak256, normalize_v, Address, ChainId, PrimitiveSignature as Signature, B256,
+        Address, B256, ChainId, PrimitiveSignature as Signature, b256, keccak256, normalize_v,
     },
     signers::SignerSync,
-    sol_types::{eip712_domain, Eip712Domain, SolStruct},
+    sol_types::{Eip712Domain, SolStruct, eip712_domain},
 };
 
 use crate::{allocation_id::AllocationId, deployment_id::DeploymentId};
@@ -186,13 +186,13 @@ impl fake::Dummy<fake::Faker> for Attestation {
 #[cfg(test)]
 mod tests {
     use alloy::{
-        primitives::{address, b256, Address, ChainId, B256},
-        signers::{local::PrivateKeySigner, SignerSync},
+        primitives::{Address, B256, ChainId, address, b256},
+        signers::{SignerSync, local::PrivateKeySigner},
         sol_types::Eip712Domain,
     };
 
-    use super::{create, eip712_domain, verify, Attestation};
-    use crate::{deployment_id, DeploymentId};
+    use super::{Attestation, create, eip712_domain, verify};
+    use crate::{DeploymentId, deployment_id};
 
     const CHAIN_ID: ChainId = 1337;
     const DISPUTE_MANAGER_ADDRESS: Address = address!("16def7e0108a5467a106DBd7537F8591F470342e");

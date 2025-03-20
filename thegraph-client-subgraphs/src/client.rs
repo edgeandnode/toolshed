@@ -1,15 +1,15 @@
-use std::sync::{atomic::AtomicU64, Arc};
+use std::sync::{Arc, atomic::AtomicU64};
 
-use thegraph_core::{alloy::primitives::BlockNumber, BlockPointer};
+use thegraph_core::{BlockPointer, alloy::primitives::BlockNumber};
 use thegraph_graphql_http::{
     graphql::IntoDocument, http::request::IntoRequestParameters, http_client::ResponseError,
 };
-use tracing::{instrument, Instrument};
+use tracing::{Instrument, instrument};
 use url::Url;
 
 use crate::queries::{
     bootstrap::send_bootstrap_meta_query,
-    page::{send_subgraph_page_query, BlockHeight, SubgraphPageQueryResponseOpaqueEntry},
+    page::{BlockHeight, SubgraphPageQueryResponseOpaqueEntry, send_subgraph_page_query},
     send_subgraph_query,
 };
 
