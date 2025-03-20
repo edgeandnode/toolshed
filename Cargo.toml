@@ -7,3 +7,7 @@ members = [
     "thegraph-graphql-http",
     "thegraph-headers",
 ]
+
+[workspace.package]
+edition = "2024"
+license = "MIT"
