@@ -5,7 +5,7 @@
 //! which block the query was effectively executed.
 use url::Url;
 
-use super::common::{send_query, Meta};
+use super::common::{Meta, send_query};
 
 const SUBGRAPH_META_QUERY_DOCUMENT: &str = r#"{ meta: _meta { block { number hash } } }"#;
 
