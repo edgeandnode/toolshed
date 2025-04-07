@@ -20,12 +20,12 @@
 //! The following features are available for this crate:
 //!
 //! - `attestation`: Enables the `attestation` module, which provides types and functions for
-//!    attestation-related operations.
+//!   attestation-related operations.
 //! - `async-graphql`: Enables support for the [`async-graphql`] crate.
 //! - `fake`: Enables the [`fake`] crate integration for generating random test data.
 //! - `serde`: Enables [`serde`] serialization and deserialization support for types in this crate.
 //! - `signed-message`: Enables the `signed_message` module, which provides types and functions for
-//!                     EIP-712 message signing and verification.
+//!   EIP-712 message signing and verification.
 //!
 //! Additionally, this crate re-exports other features from the `alloy` crate as described above.
 
