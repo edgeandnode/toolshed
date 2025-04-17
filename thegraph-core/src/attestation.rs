@@ -22,7 +22,7 @@ const ATTESTATION_EIP712_DOMAIN_SALT: B256 =
 /// The attestation is signed by the indexer that processed the request. The indexer signs the
 /// allocation by signing the EIP-712 hash with the private key of the allocation associated with
 /// the deployment being queried.
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Attestation {
     /// The keccak-256 hash of the request being attested.
