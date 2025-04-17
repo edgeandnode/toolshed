@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [0.2.0](https://github.com/edgeandnode/toolshed/compare/thegraph-client-subgraphs-v0.1.6...thegraph-client-subgraphs-v0.2.0) - 2025-04-17
+
+### Other
+
+- set Rust edition to 2024 ([#519](https://github.com/edgeandnode/toolshed/pull/519))
+- updated the following local packages: thegraph-core
+- updated the following local packages: thegraph-graphql-http
+
 ## [0.1.6](https://github.com/edgeandnode/toolshed/compare/thegraph-client-subgraphs-v0.1.5...thegraph-client-subgraphs-v0.1.6) - 2025-03-19
 
 ### Other

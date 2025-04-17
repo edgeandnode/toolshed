@@ -5,6 +5,7 @@ version = "0.3.0"
 edition.workspace = true
 license.workspace = true
 rust-version.workspace = true
+publish = false
 
 [dependencies]
 firestorm = "0.5"
