@@ -4,9 +4,9 @@ description = "Common HTTP headers for _The Graph_ network services"
 version = "0.1.5"
 repository = "https://github.com/edgeandnode/toolshed"
 authors = ["Lorenzo Delgado (LNSD) <lorenzo@edgeandnode.com>"]
-license = "MIT"
-edition = "2021"
-rust-version = "1.81.0"
+license.workspace = true
+edition.workspace = true
+rust-version.workspace = true
 
 [features]
 attestation = ["thegraph-core/attestation"]

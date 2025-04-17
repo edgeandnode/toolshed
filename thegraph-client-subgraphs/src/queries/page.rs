@@ -7,7 +7,7 @@ use thegraph_graphql_http::{
 };
 use url::Url;
 
-use super::common::{send_query, Meta};
+use super::common::{Meta, send_query};
 
 /// The block at which the query should be executed.
 ///

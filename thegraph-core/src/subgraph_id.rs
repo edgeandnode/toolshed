@@ -251,7 +251,7 @@ pub const fn __parse_subgraph_id_const(value: &str) -> B256 {
 
 #[cfg(test)]
 mod tests {
-    use alloy::primitives::{b256, B256};
+    use alloy::primitives::{B256, b256};
 
     use super::{ParseSubgraphIdError, SubgraphId};
     use crate::subgraph_id;

@@ -1,8 +1,8 @@
 use alloy::{
     primitives::{Address, SignatureError},
     signers::{
-        k256::ecdsa::Error as EcdsaError, Error as SignerError, SignerSync,
-        UnsupportedSignerOperation,
+        Error as SignerError, SignerSync, UnsupportedSignerOperation,
+        k256::ecdsa::Error as EcdsaError,
     },
     sol_types::{Eip712Domain, SolStruct},
 };

@@ -1,7 +1,7 @@
 use std::time::Duration;
 
 use super::testlib::{
-    init_test_tracing, test_auth_token, test_subgraph_url, GRAPH_NETWORK_ARBITRUM_SUBGRAPH_ID,
+    GRAPH_NETWORK_ARBITRUM_SUBGRAPH_ID, init_test_tracing, test_auth_token, test_subgraph_url,
 };
 use crate::queries::bootstrap::send_bootstrap_meta_query;
 

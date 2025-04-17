@@ -83,9 +83,9 @@ mod reqwest_ext {
     use async_trait::async_trait;
     use reqwest::header::{ACCEPT, CONTENT_TYPE};
 
-    use super::{process_response_body, RequestError, ResponseResult};
+    use super::{RequestError, ResponseResult, process_response_body};
     use crate::http::{
-        request::{IntoRequestParameters, GRAPHQL_REQUEST_MEDIA_TYPE},
+        request::{GRAPHQL_REQUEST_MEDIA_TYPE, IntoRequestParameters},
         response::{GRAPHQL_LEGACY_RESPONSE_MEDIA_TYPE, GRAPHQL_RESPONSE_MEDIA_TYPE},
     };
 

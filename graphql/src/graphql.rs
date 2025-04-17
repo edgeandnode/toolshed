@@ -8,8 +8,8 @@ use firestorm::profile_fn;
 pub use graphql_parser;
 use graphql_parser::query as q;
 use serde::{
-    ser::{SerializeMap, SerializeSeq},
     Deserialize, Deserializer, Serialize, Serializer,
+    ser::{SerializeMap, SerializeSeq},
 };
 
 // TODO: (Performance) may want to do zero-copy here later.

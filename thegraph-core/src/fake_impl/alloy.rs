@@ -28,7 +28,7 @@ pub struct Alloy;
 
 #[doc(hidden)]
 pub mod primitives {
-    use alloy::primitives::{Address, PrimitiveSignature, B128, B256, U256};
+    use alloy::primitives::{Address, B128, B256, PrimitiveSignature, U256};
     use fake::{Dummy, Faker, Rng};
 
     use super::Alloy;
