@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0](https://github.com/edgeandnode/toolshed/compare/thegraph-graphql-http-v0.3.3...thegraph-graphql-http-v0.4.0) - 2025-04-17
+
+### Other
+
+- set Rust edition to 2024 ([#519](https://github.com/edgeandnode/toolshed/pull/519))
+
 ## [0.3.3](https://github.com/edgeandnode/toolshed/compare/thegraph-graphql-http-v0.3.2...thegraph-graphql-http-v0.3.3) - 2025-03-19
 
 ### Other
