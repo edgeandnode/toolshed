@@ -84,7 +84,7 @@ pub use signing::{
 #[cfg(test)]
 mod tests {
     use alloy::{
-        primitives::{PrimitiveSignature as Signature, address, b256, keccak256},
+        primitives::{Signature, address, b256, keccak256},
         signers::local::PrivateKeySigner,
         sol_types::{Eip712Domain, eip712_domain},
     };

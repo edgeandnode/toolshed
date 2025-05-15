@@ -1,4 +1,4 @@
-use alloy::{primitives::PrimitiveSignature as Signature, sol_types::SolStruct};
+use alloy::{primitives::Signature, sol_types::SolStruct};
 
 /// EIP-712 signed message
 ///

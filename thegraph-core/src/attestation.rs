@@ -1,9 +1,7 @@
 //! Attestation types and functions for verifying attestations.
 
 use alloy::{
-    primitives::{
-        Address, B256, ChainId, PrimitiveSignature as Signature, b256, keccak256, normalize_v,
-    },
+    primitives::{Address, B256, ChainId, Signature, b256, keccak256, normalize_v},
     signers::SignerSync,
     sol_types::{Eip712Domain, SolStruct, eip712_domain},
 };
