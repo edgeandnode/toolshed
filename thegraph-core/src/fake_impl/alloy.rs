@@ -4,7 +4,7 @@
 //! ```rust
 //! use fake::Fake;
 //! use thegraph_core::{
-//!    alloy::primitives::{Address, B256, PrimitiveSignature, U256},
+//!    alloy::primitives::{Address, B256, Signature, U256},
 //!    fake_impl::alloy::Alloy
 //! };
 //!
@@ -17,8 +17,8 @@
 //! // Generate random address
 //! let address: Address = Alloy.fake();
 //!
-//! // Generate random PrimitiveSignature
-//! let signature: PrimitiveSignature = Alloy.fake();
+//! // Generate random Signature
+//! let signature: Signature = Alloy.fake();
 //!
 //! // etc.
 //! ```
@@ -28,7 +28,7 @@ pub struct Alloy;
 
 #[doc(hidden)]
 pub mod primitives {
-    use alloy::primitives::{Address, B128, B256, PrimitiveSignature, U256};
+    use alloy::primitives::{Address, B128, B256, Signature, U256};
     use fake::{Dummy, Faker, Rng};
 
     use super::Alloy;
@@ -103,20 +103,20 @@ pub mod primitives {
         }
     }
 
-    impl Dummy<Alloy> for PrimitiveSignature {
-        /// Generate a random [`PrimitiveSignature`] value.
+    impl Dummy<Alloy> for Signature {
+        /// Generate a random [`Signature`] value.
         ///
         /// ```rust
         /// # use fake::Fake;
         /// use thegraph_core::{
-        ///     alloy::primitives::PrimitiveSignature,
+        ///     alloy::primitives::Signature,
         ///     fake_impl::alloy::Alloy
         /// };
         ///
-        /// let value: PrimitiveSignature = Alloy.fake();
+        /// let value: Signature = Alloy.fake();
         /// ```
         fn dummy_with_rng<R: Rng + ?Sized>(config: &Alloy, rng: &mut R) -> Self {
-            PrimitiveSignature::from_scalars_and_parity(
+            Signature::from_scalars_and_parity(
                 B256::dummy_with_rng(config, rng),
                 B256::dummy_with_rng(config, rng),
                 rng.random(),
