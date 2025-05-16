@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.15.0](https://github.com/edgeandnode/toolshed/compare/thegraph-core-v0.14.0...thegraph-core-v0.15.0) - 2025-05-16
+
+### Other
+
+- *(deps)* update rust crate alloy to 1.0 ([#545](https://github.com/edgeandnode/toolshed/pull/545))
+
 ## [0.14.0](https://github.com/edgeandnode/toolshed/compare/thegraph-core-v0.12.1...thegraph-core-v0.14.0) - 2025-04-17
 
 ### Other
