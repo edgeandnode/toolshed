@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [0.3.0](https://github.com/edgeandnode/toolshed/compare/thegraph-client-subgraphs-v0.2.0...thegraph-client-subgraphs-v0.3.0) - 2025-05-16
+
+### Other
+
+- updated the following local packages: thegraph-core
+
 ## [0.2.0](https://github.com/edgeandnode/toolshed/compare/thegraph-client-subgraphs-v0.1.6...thegraph-client-subgraphs-v0.2.0) - 2025-04-17
 
 ### Other

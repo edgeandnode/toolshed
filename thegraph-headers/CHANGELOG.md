@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0](https://github.com/edgeandnode/toolshed/compare/thegraph-headers-v0.2.0...thegraph-headers-v0.3.0) - 2025-05-16
+
+### Other
+
+- updated the following local packages: thegraph-core
+
 ## [0.2.0](https://github.com/edgeandnode/toolshed/compare/thegraph-headers-v0.1.5...thegraph-headers-v0.2.0) - 2025-04-17
 
 ### Other
