@@ -1,4 +1,5 @@
 use alloy::primitives::{Address, FixedBytes};
+
 use crate::allocation_id::AllocationId;
 
 /// A unique identifier for a collection: the Graph Tally's payment identifier.
