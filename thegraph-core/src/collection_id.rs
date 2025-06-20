@@ -144,7 +144,7 @@ impl From<FixedBytes<32>> for CollectionId {
 /// let address: Address = address!("3e1f9c2aB4C7F1b3d7E839EbE6Ae451c8A0b1d24");
 /// let collection_id: CollectionId = address.into();
 /// assert_eq!(format!("{:?}", collection_id), "0x0000000000000000000000003e1f9c2ab4c7f1b3d7e839ebe6ae451c8a0b1d24");
-/// 
+///
 /// let collection_id2: CollectionId = CollectionId::from(address!("3e1f9c2aB4C7F1b3d7E839EbE6Ae451c8A0b1d24"));
 /// assert_eq!(format!("{:?}", collection_id2), "0x0000000000000000000000003e1f9c2ab4c7f1b3d7e839ebe6ae451c8a0b1d24");
 /// ```
@@ -165,11 +165,11 @@ impl From<Address> for CollectionId {
 ///     collection_id, CollectionId,
 ///     allocation_id, AllocationId
 /// };
-/// 
+///
 /// let allocation_id: AllocationId = allocation_id!("3e1f9c2aB4C7F1b3d7E839EbE6Ae451c8A0b1d24");
 /// let collection_id: CollectionId = allocation_id.into();
 /// assert_eq!(format!("{:?}", collection_id), "0x0000000000000000000000003e1f9c2ab4c7f1b3d7e839ebe6ae451c8a0b1d24");
-/// 
+///
 /// let collection_id2: CollectionId = CollectionId::from(allocation_id!("3e1f9c2aB4C7F1b3d7E839EbE6Ae451c8A0b1d24"));
 /// assert_eq!(format!("{:?}", collection_id2), "0x0000000000000000000000003e1f9c2ab4c7f1b3d7e839ebe6ae451c8a0b1d24");
 /// ```
