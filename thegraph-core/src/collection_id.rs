@@ -42,6 +42,23 @@ impl CollectionId {
     pub fn into_inner(self) -> FixedBytes<32> {
         self.0
     }
+
+    /// Converts this `CollectionId` into an `Address`, assuming it was originally derived from a
+    /// left-padded address (i.e., the last 20 bytes are the address).
+    ///
+    /// ```rust
+    /// use thegraph_core::{
+    ///     alloy::primitives::Address,
+    ///     alloy::primitives::address,
+    ///     collection_id, CollectionId,
+    /// };
+    ///
+    /// let collection_id: CollectionId = collection_id!("0000000000000000000000003e1f9c2ab4c7f1b3d7e839ebe6ae451c8a0b1d24");
+    /// assert_eq!(collection_id.as_address(), address!("3e1f9c2ab4c7f1b3d7e839ebe6ae451c8a0b1d24"));
+    /// ```
+    pub fn as_address(&self) -> Address {
+        Address::from_slice(&self.0.as_slice()[12..])
+    }
 }
 
 impl std::fmt::Display for CollectionId {
