@@ -1,5 +1,7 @@
 use alloy::primitives::Address;
 
+use crate::collection_id::CollectionId;
+
 /// A unique identifier for an allocation: the allocation's Ethereum address.
 ///
 /// This is a "new-type" wrapper around [`Address`] to provide type safety.
@@ -131,6 +133,31 @@ impl std::fmt::UpperHex for AllocationId {
 impl From<Address> for AllocationId {
     fn from(address: Address) -> Self {
         AllocationId(address)
+    }
+}
+
+/// Convert a [`CollectionId`] into an [`AllocationId`] by truncating to the last 20 bytes.
+///
+/// ```rust
+/// use thegraph_core::{
+///     alloy::primitives::Address,
+///     alloy::primitives::address,
+///     collection_id, CollectionId,
+///     allocation_id, AllocationId
+/// };
+///
+/// let collection_id: CollectionId = collection_id!("0000000000000000000000003e1f9c2ab4c7f1b3d7e839ebe6ae451c8a0b1d24");
+/// let allocation_id: AllocationId = collection_id.into();
+/// assert_eq!(format!("{:?}", allocation_id), "0x3e1f9c2ab4c7f1b3d7e839ebe6ae451c8a0b1d24");
+///
+/// let allocation_id2: AllocationId = AllocationId::from(collection_id!("0000000000000000000000003e1f9c2ab4c7f1b3d7e839ebe6ae451c8a0b1d24"));
+/// assert_eq!(format!("{:?}", allocation_id2), "0x3e1f9c2ab4c7f1b3d7e839ebe6ae451c8a0b1d24");
+/// ```
+impl From<CollectionId> for AllocationId {
+    fn from(collection_id: CollectionId) -> Self {
+        let bytes = collection_id.as_ref();
+        let addr_bytes: [u8; 20] = bytes[12..].try_into().expect("slice should be 20 bytes");
+        AllocationId(Address::from(addr_bytes))
     }
 }
 

@@ -39,6 +39,7 @@ pub use alloy;
 pub use self::{
     allocation_id::AllocationId,
     block::BlockPointer,
+    collection_id::CollectionId,
     deployment_id::{DeploymentId, ParseDeploymentIdError},
     indexer_id::IndexerId,
     proof_of_indexing::ProofOfIndexing,
@@ -50,6 +51,7 @@ mod allocation_id;
 #[cfg_attr(docsrs, doc(cfg(feature = "attestation")))]
 pub mod attestation;
 mod block;
+mod collection_id;
 mod deployment_id;
 #[cfg(feature = "fake")]
 #[cfg_attr(docsrs, doc(cfg(feature = "fake")))]
@@ -64,6 +66,8 @@ mod subgraph_id;
 // Export macros
 #[doc(inline)]
 pub use self::__allocation_id as allocation_id;
+#[doc(inline)]
+pub use self::__collection_id as collection_id;
 #[doc(inline)]
 pub use self::__deployment_id as deployment_id;
 #[doc(inline)]
