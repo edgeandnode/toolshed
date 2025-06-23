@@ -4733,7 +4733,7 @@ dependencies = [
 
 [[package]]
 name = "thegraph-client-subgraphs"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "indoc",
  "reqwest",
@@ -4751,7 +4751,7 @@ dependencies = [
 
 [[package]]
 name = "thegraph-core"
-version = "0.15.0"
+version = "0.15.1"
 dependencies = [
  "alloy",
  "async-graphql",
