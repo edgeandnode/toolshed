@@ -269,7 +269,7 @@ impl fake::Dummy<fake::Faker> for CollectionId {
 /// Converts a sequence of string literals containing hex-encoded data into a new [`CollectionId`]
 /// at compile time.
 ///
-/// To create an `CollectionId` from a string literal (no `0x` prefix) at compile time:
+/// To create a `CollectionId` from a string literal (no `0x` prefix) at compile time:
 ///
 /// ```rust
 /// use thegraph_core::{collection_id, CollectionId};
@@ -277,7 +277,7 @@ impl fake::Dummy<fake::Faker> for CollectionId {
 /// const COLLECTION_ID: CollectionId = collection_id!("8f2c4a779f66bde2e9c3d81d4315e91db8a42afee0d5f9947c20ab54be73e611");
 /// ```
 ///
-/// If no argument is provided, the macro will create an `CollectionId` with the zero address:
+/// If no argument is provided, the macro will create a `CollectionId` with the zero address:
 ///
 /// ```rust
 /// use thegraph_core::{
