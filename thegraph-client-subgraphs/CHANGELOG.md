@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [0.3.1](https://github.com/edgeandnode/toolshed/compare/thegraph-client-subgraphs-v0.3.0...thegraph-client-subgraphs-v0.3.1) - 2025-06-23
+
+### Other
+
+- *(deps)* update rust crate test-with to 0.15.0 ([#562](https://github.com/edgeandnode/toolshed/pull/562))
+
 ## [0.3.0](https://github.com/edgeandnode/toolshed/compare/thegraph-client-subgraphs-v0.2.0...thegraph-client-subgraphs-v0.3.0) - 2025-05-16
 
 ### Other
