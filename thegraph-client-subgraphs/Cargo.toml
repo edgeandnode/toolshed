@@ -20,7 +20,7 @@ tracing = { version = "0.1.40", default-features = false, features = ["attribute
 url = "2.5.3"
 
 [dev-dependencies]
-test-with = { version = "0.14.4", default-features = false }
+test-with = { version = "0.15.0", default-features = false }
 tokio = { version = "1.41.1", features = ["macros", "rt"] }
 tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
 
