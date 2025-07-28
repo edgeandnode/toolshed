@@ -20,7 +20,7 @@ impl From<hex::FromHexError> for ParseDeploymentIdError {
     fn from(err: hex::FromHexError) -> Self {
         ParseDeploymentIdError::InvalidHexString {
             value: String::new(),
-            error: format!("{}", err),
+            error: format!("{err}"),
         }
     }
 }
@@ -192,7 +192,7 @@ impl std::fmt::Debug for DeploymentId {
     /// );
     /// ```
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "DeploymentId({})", self)
+        write!(f, "DeploymentId({self})")
     }
 }
 

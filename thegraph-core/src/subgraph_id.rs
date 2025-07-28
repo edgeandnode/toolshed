@@ -191,7 +191,7 @@ impl std::fmt::Debug for SubgraphId {
     /// assert_eq!(format!("{:?}", ID), "SubgraphId(DZz4kDTdmzWLWsV373w2bSmoar3umKKH9y82SUKr5qmp)");
     /// ```
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "SubgraphId({})", self)
+        write!(f, "SubgraphId({self})")
     }
 }
 

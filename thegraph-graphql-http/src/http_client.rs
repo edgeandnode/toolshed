@@ -135,8 +135,7 @@ mod reqwest_ext {
                 .header(
                     ACCEPT,
                     format!(
-                        "{}; charset=utf-8, {}; charset=utf-8",
-                        GRAPHQL_RESPONSE_MEDIA_TYPE, GRAPHQL_LEGACY_RESPONSE_MEDIA_TYPE
+                        "{GRAPHQL_RESPONSE_MEDIA_TYPE}; charset=utf-8, {GRAPHQL_LEGACY_RESPONSE_MEDIA_TYPE}; charset=utf-8"
                     ),
                 )
                 .body(gql_request_body);
@@ -233,7 +232,7 @@ mod reqwest_ext {
 
         // Receive the response body.
         let response = resp.bytes().await.map_err(|err| {
-            RequestError::ResponseRecvError(status, format!("Error reading response body: {}", err))
+            RequestError::ResponseRecvError(status, format!("Error reading response body: {err}"))
         })?;
 
         if response.is_empty() {

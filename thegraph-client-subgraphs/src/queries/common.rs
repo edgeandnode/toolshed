@@ -45,6 +45,6 @@ where
 {
     send_query(client, subgraph_url, auth, query)
         .await
-        .map_err(|err| format!("Error sending subgraph graphql query: {}", err))?
+        .map_err(|err| format!("Error sending subgraph graphql query: {err}"))?
         .map_err(|err| err.to_string())
 }
