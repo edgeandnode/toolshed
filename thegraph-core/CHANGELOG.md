@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.15.2](https://github.com/edgeandnode/toolshed/compare/thegraph-core-v0.15.1...thegraph-core-v0.15.2) - 2025-07-28
+
+### Other
+
+- *(deps)* update dependency rust to v1.88.0 ([#570](https://github.com/edgeandnode/toolshed/pull/570))
+
 ## [0.15.1](https://github.com/edgeandnode/toolshed/compare/thegraph-core-v0.15.0...thegraph-core-v0.15.1) - 2025-06-23
 
 ### Added
