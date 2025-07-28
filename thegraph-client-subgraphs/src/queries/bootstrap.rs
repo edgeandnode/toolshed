@@ -21,6 +21,6 @@ pub async fn send_bootstrap_meta_query(
 ) -> Result<SubgraphMetaQueryResponse, String> {
     send_query(client, subgraph_url, auth, SUBGRAPH_META_QUERY_DOCUMENT)
         .await
-        .map_err(|err| format!("Error sending subgraph meta query: {}", err))?
+        .map_err(|err| format!("Error sending subgraph meta query: {err}"))?
         .map_err(|err| err.to_string())
 }

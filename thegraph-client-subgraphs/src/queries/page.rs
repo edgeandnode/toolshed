@@ -109,5 +109,5 @@ pub async fn send_subgraph_page_query(
         SubgraphPageQuery::new(query, block_height, batch_size, last.unwrap_or_default()),
     )
     .await
-    .map_err(|err| format!("Error sending subgraph graphql query: {}", err))
+    .map_err(|err| format!("Error sending subgraph graphql query: {err}"))
 }
