@@ -1,4 +1,18 @@
 # Changelog
+
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+
+## [0.15.2](https://github.com/edgeandnode/toolshed/compare/thegraph-core-v0.15.1...thegraph-core-v0.15.2) - 2025-08-08
+
+### Other
+
+- *(deps)* update dependency rust to v1.88.0 ([#570](https://github.com/edgeandnode/toolshed/pull/570))
+# Changelog
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
