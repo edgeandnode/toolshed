@@ -1,7 +1,7 @@
 [package]
 name = "thegraph-headers"
 description = "Common HTTP headers for _The Graph_ network services"
-version = "0.3.0"
+version = "0.3.1"
 repository = "https://github.com/edgeandnode/toolshed"
 authors = ["Lorenzo Delgado (LNSD) <lorenzo@edgeandnode.com>"]
 license.workspace = true
