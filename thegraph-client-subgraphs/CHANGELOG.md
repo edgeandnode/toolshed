@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+
+## [0.3.2](https://github.com/edgeandnode/toolshed/compare/thegraph-client-subgraphs-v0.3.1...thegraph-client-subgraphs-v0.3.2) - 2025-08-27
+
+### Other
+
+- update crates MSRV to 1.86 and 1.88 ([#595](https://github.com/edgeandnode/toolshed/pull/595))
+- *(deps)* update dependency rust to v1.88.0 ([#570](https://github.com/edgeandnode/toolshed/pull/570))
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]

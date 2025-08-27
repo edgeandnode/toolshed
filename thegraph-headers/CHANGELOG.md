@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.1](https://github.com/edgeandnode/toolshed/compare/thegraph-headers-v0.3.0...thegraph-headers-v0.3.1) - 2025-08-27
+
+### Other
+
+- update crates MSRV to 1.86 and 1.88 ([#595](https://github.com/edgeandnode/toolshed/pull/595))
+
 ## [0.3.0](https://github.com/edgeandnode/toolshed/compare/thegraph-headers-v0.2.0...thegraph-headers-v0.3.0) - 2025-05-16
 
 ### Other
