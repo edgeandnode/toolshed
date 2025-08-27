@@ -6,7 +6,7 @@ repository = "https://github.com/edgeandnode/toolshed"
 authors = ["Lorenzo Delgado (LNSD) <lorenzo@edgeandnode.com>"]
 license.workspace = true
 edition.workspace = true
-rust-version.workspace = true
+rust-version = "1.87"
 
 [features]
 attestation = ["thegraph-core/attestation"]
