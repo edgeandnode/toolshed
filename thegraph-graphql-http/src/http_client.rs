@@ -195,9 +195,22 @@ mod reqwest_ext {
     where
         ResponseData: serde::de::DeserializeOwned,
     {
-        // TODO: Add support for the GraphQL-over-HTTP response media type (non-legacy)
-        //  Fall back to legacy media type for now.
-        process_legacy_graphql_response(resp).await
+        let status = resp.status();
+
+        // [6.4.2 application/graphql-response+json](https://graphql.github.io/graphql-over-http/draft/#sec-application-graphql-response-json)
+        //
+        // > Clients should process a response using the `application/graphql-response+json` media
+        // > type as a well-formed GraphQL response independent of the HTTP status code.
+        //
+        // > In case of errors that completely prevent the generation of a well-formed GraphQL
+        // > response, the server SHOULD respond with the appropriate HTTP `4xx` or `5xx` status
+        // > code depending on the concrete error condition, and MUST NOT use the
+        // > `application/graphql-response+json` media type.
+        //
+        // Since this response already declared the `application/graphql-response+json` media type,
+        // its body is guaranteed by the spec to be a well-formed GraphQL response regardless of the
+        // HTTP status code, so unlike the legacy media type there is no need to gate on it here.
+        read_and_process_response_body(status, resp).await
     }
 
     /// Process the GraphQL-over-HTTP response when the legacy media type, `application/json`, is used.
@@ -230,6 +243,17 @@ mod reqwest_ext {
             ));
         }
 
+        read_and_process_response_body(status, resp).await
+    }
+
+    /// Read and deserialize the GraphQL-over-HTTP response body, then process it.
+    async fn read_and_process_response_body<ResponseData>(
+        status: reqwest::StatusCode,
+        resp: reqwest::Response,
+    ) -> Result<ResponseResult<ResponseData>, RequestError>
+    where
+        ResponseData: serde::de::DeserializeOwned,
+    {
         // Receive the response body.
         let response = resp.bytes().await.map_err(|err| {
             RequestError::ResponseRecvError(status, format!("Error reading response body: {err}"))
@@ -251,5 +275,103 @@ mod reqwest_ext {
         })?;
 
         Ok(process_response_body(response))
+    }
+
+    #[cfg(test)]
+    mod tests {
+        use assert_matches::assert_matches;
+
+        use super::*;
+        use crate::http::response::{
+            GRAPHQL_LEGACY_RESPONSE_MEDIA_TYPE, GRAPHQL_RESPONSE_MEDIA_TYPE,
+        };
+        use crate::http_client::ResponseError;
+
+        /// Build a `reqwest::Response` in-memory (no network I/O) with the given status,
+        /// `Content-Type` header and body.
+        fn build_response(
+            status: u16,
+            content_type: Option<&str>,
+            body: &str,
+        ) -> reqwest::Response {
+            let mut builder = http::Response::builder().status(status);
+            if let Some(content_type) = content_type {
+                builder = builder.header(CONTENT_TYPE, content_type);
+            }
+            let response = builder.body(body.to_string()).unwrap();
+            reqwest::Response::from(response)
+        }
+
+        #[derive(Debug, serde::Deserialize, PartialEq)]
+        struct Data {
+            value: String,
+        }
+
+        #[test]
+        fn legacy_response_detected_from_content_type() {
+            let resp = build_response(200, Some(GRAPHQL_LEGACY_RESPONSE_MEDIA_TYPE), "{}");
+            assert!(is_legacy_response(&resp));
+
+            let resp = build_response(200, Some(GRAPHQL_RESPONSE_MEDIA_TYPE), "{}");
+            assert!(!is_legacy_response(&resp));
+
+            // No `Content-Type` header SHOULD be interpreted as the legacy media type.
+            let resp = build_response(200, None, "{}");
+            assert!(is_legacy_response(&resp));
+        }
+
+        #[tokio::test]
+        async fn graphql_response_media_type_with_data_is_processed() {
+            let body = r#"{"data":{"value":"hello"}}"#;
+            let resp = build_response(200, Some(GRAPHQL_RESPONSE_MEDIA_TYPE), body);
+
+            let result = process_graphql_response::<Data>(resp).await;
+
+            assert_matches!(result, Ok(Ok(data)) => {
+                assert_eq!(data, Data { value: "hello".to_string() });
+            });
+        }
+
+        /// Per spec §6.4.2, a response using the `application/graphql-response+json` media type is
+        /// guaranteed to carry a well-formed GraphQL response body regardless of the HTTP status
+        /// code, so the body must still be parsed even on a `4xx`/`5xx` status.
+        #[tokio::test]
+        async fn graphql_response_media_type_ignores_status_code() {
+            let body = r#"{"errors":[{"message":"not found"}]}"#;
+            let resp = build_response(404, Some(GRAPHQL_RESPONSE_MEDIA_TYPE), body);
+
+            let result = process_graphql_response::<Data>(resp).await;
+
+            assert_matches!(result, Ok(Err(ResponseError::Failure { errors })) => {
+                assert_eq!(errors.len(), 1);
+                assert_eq!(errors[0].message, "not found");
+            });
+        }
+
+        /// Unlike the graphql-response+json path, the legacy media type bails out on statuses that
+        /// are neither success, client error nor server error (e.g. a redirect) without attempting
+        /// to parse the body, per the compatibility rationale in spec §6.4.1.
+        #[tokio::test]
+        async fn legacy_response_media_type_rejects_unexpected_status_class() {
+            let body = r#"{"data":{"value":"hello"}}"#;
+            let resp = build_response(304, Some(GRAPHQL_LEGACY_RESPONSE_MEDIA_TYPE), body);
+
+            let result = process_legacy_graphql_response::<Data>(resp).await;
+
+            assert_matches!(result, Err(RequestError::ResponseRecvError(status, _)) => {
+                assert_eq!(status.as_u16(), 304);
+            });
+        }
+
+        #[tokio::test]
+        async fn graphql_response_media_type_empty_body_errors() {
+            let resp = build_response(200, Some(GRAPHQL_RESPONSE_MEDIA_TYPE), "");
+
+            let result = process_graphql_response::<Data>(resp).await;
+
+            assert_matches!(result, Err(RequestError::ResponseRecvError(status, _)) => {
+                assert_eq!(status.as_u16(), 200);
+            });
+        }
     }
 }
